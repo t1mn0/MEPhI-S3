@@ -1,4 +1,7 @@
 #include "SharedPtr.h"
+#include "../../../../Data Structures CPP/src/Exceptions/Exception.h"
+
+#include <memory>
 
 
 
@@ -106,9 +109,7 @@ void SharedPtr<T>::reset(T* rhs) {
         --counter->strong_count;
         if (counter->strong_count == 0) {
             delete ptr;
-            if (counter->weak_count == 0) {
-                delete counter;
-            }
+            delete counter;
         }
 
         ptr = nullptr;
@@ -190,7 +191,7 @@ SharedPtr<T> MakeShared(Args&&... args) {
 // Output to stream :
 
 template <class CharT, class Traits, class T>
-auto tmn_smrt_ptr::operator<<(std::basic_ostream<CharT, Traits> &os, const SharedPtr<T>& p) 
+auto operator<<(std::basic_ostream<CharT, Traits> &os, const SharedPtr<T>& p) 
     -> std::basic_ostream<CharT, Traits> &
 {
     if (p) {

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-// g++ -std=c++23 -Wall -Wextra -o main main.cpp
+
 
 namespace tmn_smrt_ptr {
 
@@ -110,7 +110,3 @@ auto operator<<(std::basic_ostream<CharT, Traits>& os, const UniquePtr<T, D>& p)
 
 
 }
-
-
-
-#include "UniquePtr.cpp"

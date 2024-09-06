@@ -15,6 +15,13 @@
 *.idb
 
 build/
+CMakeFiles/
+CMakeCache.txt
+*.o
+*.a
+*.so
+*.dylib
+*.dll
 cmake-build-*/
 x64/Debug/
 x64/Release/

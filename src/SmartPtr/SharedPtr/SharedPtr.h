@@ -1,13 +1,15 @@
 #pragma once
 
-#include <memory>
-
-#include "../../../../Data Structures CPP/src/Exceptions/Exception.h"
+#include <cstddef>
 
 
 
 namespace tmn_smrt_ptr {
 
+
+
+template <class T>
+class WeakPtr;
 
 
 template <typename T>
@@ -16,8 +18,7 @@ private:
 // Supporting structures & constructor & friend:
     struct BaseControlBlock {
         std::size_t strong_count = 0;
-        std::size_t weak_count = 0;
-        virtual ~BaseControlBlock();
+        virtual ~BaseControlBlock() = default;
     };
 
     // ControlBlock является шаблонными для наследования
@@ -75,13 +76,6 @@ SharedPtr<T> MakeShared(Args&&... args);
 
 
 
-// Output to stream :
-template <class CharT, class Traits, class T>
-auto operator<<(std::basic_ostream<CharT, Traits>& os, const SharedPtr<T>& p)
-    -> std::basic_ostream<CharT, Traits>&;
-
-
-
 // pointer_cast's :
 template<class T, class U>
 SharedPtr<T> static_pointer_cast(const SharedPtr<U>& r) noexcept;
@@ -98,7 +92,3 @@ SharedPtr<T> reinterpret_pointer_cast(const SharedPtr<U>& r) noexcept;
 
 
 }
-
-
-
-#include "SharedPtr.cpp"
