@@ -27,6 +27,7 @@ UniquePtr<T, Deleter>& UniquePtr<T, Deleter>::operator=(UniquePtr<U, E>&& rhs) n
     ptr = rhs.ptr;
     deleter = std::move(rhs.deleter);
     rhs.ptr = nullptr;
+    return *this;
 }
 
 template <typename T, typename Deleter>
@@ -74,7 +75,7 @@ UniquePtr<T, Deleter>::operator bool() const noexcept {
 }
 
 template <typename T, typename Deleter>
-tmn::Optional<T>& UniquePtr<T, Deleter>::operator*() const {
+tmn::Optional<T> UniquePtr<T, Deleter>::operator*() const {
     if (ptr){
         return tmn::Optional<T>(*ptr);
     }
@@ -165,7 +166,7 @@ UniquePtr<T[], std::default_delete<T[]>>::operator bool() const noexcept {
 }
 
 template <typename T>
-tmn::Optional<T>& UniquePtr<T[], std::default_delete<T[]>>::operator[](std::size_t i) const {
+tmn::Optional<T> UniquePtr<T[], std::default_delete<T[]>>::operator[](std::size_t i) const {
     if (ptr[i]){
         return tmn::Optional<T>(ptr[i]);
     }
