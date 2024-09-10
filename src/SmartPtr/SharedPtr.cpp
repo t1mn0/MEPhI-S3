@@ -1,5 +1,5 @@
-#include "SharedPtr.hpp"
-#include "../../Exceptions/Exception.h"
+#include "../../include/SmartPtr/SharedPtr.hpp"
+#include "../../include/Exceptions/Exception.hpp"
 
 #include <memory>
 

@@ -1,16 +1,12 @@
 #pragma once
 
 #include <cstddef>
-#include "../../Optional/Optional.hpp"
+#include "../Optional/Optional.hpp"
 
 
 
 namespace tmn_smrt_ptr {
 
-
-
-template <class T>
-class WeakPtr;
 
 
 template <typename T>
@@ -96,4 +92,4 @@ SharedPtr<T> reinterpret_pointer_cast(const SharedPtr<U>& r) noexcept;
 
 
 
-#include "SharedPtr.cpp"
+#include "../../src/SmartPtr/SharedPtr.cpp"

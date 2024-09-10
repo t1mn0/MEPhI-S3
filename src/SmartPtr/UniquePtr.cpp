@@ -1,4 +1,4 @@
-#include "UniquePtr.hpp"
+#include "../../include/SmartPtr/UniquePtr.hpp"
 
 
 
@@ -167,7 +167,7 @@ UniquePtr<T[], std::default_delete<T[]>>::operator bool() const noexcept {
 template <typename T>
 tmn::Optional<T>& UniquePtr<T[], std::default_delete<T[]>>::operator[](std::size_t i) const {
     if (ptr[i]){
-        return tmn::Optional<T>(ptr[i])
+        return tmn::Optional<T>(ptr[i]);
     }
     else{
         return tmn::Optional<T>();
