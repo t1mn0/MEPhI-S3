@@ -1,4 +1,4 @@
-#include "UniquePtr.h"
+#include "UniquePtr.hpp"
 
 
 
@@ -74,8 +74,13 @@ UniquePtr<T, Deleter>::operator bool() const noexcept {
 }
 
 template <typename T, typename Deleter>
-T& UniquePtr<T, Deleter>::operator*() const {
-    return *ptr;
+tmn::Optional<T>& UniquePtr<T, Deleter>::operator*() const {
+    if (ptr){
+        return tmn::Optional<T>(*ptr);
+    }
+    else{
+        return tmn::Optional<T>();
+    }
 }
 
 template <typename T, typename Deleter>
@@ -160,8 +165,13 @@ UniquePtr<T[], std::default_delete<T[]>>::operator bool() const noexcept {
 }
 
 template <typename T>
-T& UniquePtr<T[], std::default_delete<T[]>>::operator[](std::size_t i) const {
-    return ptr[i];
+tmn::Optional<T>& UniquePtr<T[], std::default_delete<T[]>>::operator[](std::size_t i) const {
+    if (ptr[i]){
+        return tmn::Optional<T>(ptr[i])
+    }
+    else{
+        return tmn::Optional<T>();
+    }
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

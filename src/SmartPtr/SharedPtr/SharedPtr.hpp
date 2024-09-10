@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include "../../Optional/Optional.hpp"
 
 
 
@@ -61,7 +62,7 @@ public:
 // Observers :
     T* get() const noexcept;
     explicit operator bool() const noexcept;
-    T& operator*() const;
+    tmn::Optional<T>& operator*() const;
     T* operator->() const noexcept;
 
     std::size_t use_count() const noexcept;
@@ -92,3 +93,7 @@ SharedPtr<T> reinterpret_pointer_cast(const SharedPtr<U>& r) noexcept;
 
 
 }
+
+
+
+#include "SharedPtr.cpp"

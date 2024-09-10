@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../Optional/Optional.hpp"
+
 #include <memory>
 
 
@@ -46,7 +48,7 @@ public:
 // Observers :
     pointer get() const noexcept;
     explicit operator bool() const noexcept;
-    T& operator*() const;
+    tmn::Optional<T>& operator*() const;
     pointer operator->() const noexcept;
 };
 
@@ -89,7 +91,7 @@ public:
 // Observers :
     T* get() const noexcept;
     explicit operator bool() const noexcept;
-    T& operator[](std::size_t i) const;
+    tmn::Optional<T>& operator[](std::size_t i) const;
 };
 
 

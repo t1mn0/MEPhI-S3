@@ -1,5 +1,5 @@
-#include "SharedPtr.h"
-#include "../../../../Data Structures CPP/src/Exceptions/Exception.h"
+#include "SharedPtr.hpp"
+#include "../../Exceptions/Exception.h"
 
 #include <memory>
 
@@ -149,8 +149,13 @@ SharedPtr<T>::operator bool() const noexcept {
 }
 
 template <typename T>
-T& SharedPtr<T>::operator*() const {
-    return *ptr;
+tmn::Optional<T>& SharedPtr<T>::operator*() const {
+    if (ptr){
+        return tmn::Optional<T>(*ptr);
+    }
+    else{
+        return tmn::Optional<T>();
+    }
 }
     
 template <typename T>
@@ -183,8 +188,8 @@ bool SharedPtr<T>::unique() const noexcept {
 
 template <typename T, typename... Args>
 SharedPtr<T> MakeShared(Args&&... args) {
-    auto* p = new SharedPtr<T>::ControlBlockForMakeShared{T(std::forward<Args>(args)...)};
-    return shared_ptr<T>(p);
+    auto* p = new typename SharedPtr<T>::ControlBlockForMakeShared{T(std::forward<Args>(args)...)};
+    return SharedPtr<T>(p);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
