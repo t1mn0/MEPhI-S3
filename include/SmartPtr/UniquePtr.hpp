@@ -67,7 +67,7 @@ public:
 // Constructors & assignment & conversion & destructors :
     UniquePtr() noexcept;
     template <typename U>
-    explicit UniquePtr(U ptr) noexcept;
+    explicit UniquePtr(U* ptr) noexcept;
 
     UniquePtr(const UniquePtr& other) = delete;
     UniquePtr& operator=(const UniquePtr& other) = delete;

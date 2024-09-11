@@ -104,7 +104,7 @@ UniquePtr<T[], std::default_delete<T[]>>::UniquePtr() noexcept : ptr(nullptr) {}
     
 template <typename T>
 template <typename U>
-UniquePtr<T[], std::default_delete<T[]>>::UniquePtr(U ptr) noexcept : ptr(static_cast<T*>(ptr)) {}
+UniquePtr<T[], std::default_delete<T[]>>::UniquePtr(U* ptr) noexcept : ptr(static_cast<T*>(ptr)) {}
 
 template <typename T>
 template <typename U, typename E>
@@ -121,6 +121,7 @@ auto UniquePtr<T[], std::default_delete<T[]>>::operator=(UniquePtr<U, E>&& rhs) 
     ptr = rhs.ptr;
     deleter = std::move(rhs.deleter);
     rhs.ptr = nullptr;
+    return *this;
 }
 
 template <typename T>
@@ -189,8 +190,11 @@ UniquePtr<T> MakeUnique(Args&&... args) {
 
 template <typename T>
 UniquePtr<T> MakeUnique(std::size_t size) {
+    if (size == 0){
+        throw tmn_exception::Exception("Bad size argument");
+    }
     T* ptr = new T[size];
-    return UniquePtr<T, std::default_delete<T[]>()>(ptr);
+    return UniquePtr<T[], std::default_delete<T[]>()>(ptr);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
