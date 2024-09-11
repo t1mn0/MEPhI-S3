@@ -33,6 +33,7 @@ SharedPtr<T>::SharedPtr() : ptr(nullptr), counter(new BaseControlBlock()) {
 
 template <typename T>
 SharedPtr<T>::SharedPtr(T* ptr) : ptr(ptr), counter(new BaseControlBlock()) {
+    ++counter->strong_count;
     if (counter == nullptr) {
         throw tmn_exception::Exception("Bad Control Block");
     }
@@ -130,9 +131,11 @@ void SharedPtr<T>::reset(T* rhs) {
 
 template <typename T>
 void SharedPtr<T>::swap(SharedPtr<T>& rhs) noexcept {
-    SharedPtr<T> tmp = std::move(*this);
-    *this = std::move(rhs);
-    rhs = std::move(tmp);
+    std::swap(this->ptr, rhs.ptr);
+    std::swap(this->counter, rhs.counter);
+    // SharedPtr<T> tmp = std::move(*this);
+    // *this = std::move(rhs);
+    // rhs = std::move(tmp);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -149,7 +152,7 @@ SharedPtr<T>::operator bool() const noexcept {
 }
 
 template <typename T>
-tmn::Optional<T>& SharedPtr<T>::operator*() const {
+tmn::Optional<T> SharedPtr<T>::operator*() const {
     if (ptr){
         return tmn::Optional<T>(*ptr);
     }
@@ -186,11 +189,11 @@ bool SharedPtr<T>::unique() const noexcept {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // MakeShared :
 
-template <typename T, typename... Args>
-SharedPtr<T> MakeShared(Args&&... args) {
-    auto* p = new typename SharedPtr<T>::ControlBlockForMakeShared{T(std::forward<Args>(args)...)};
-    return SharedPtr<T>(p);
-}
+// template <typename T, typename... Args>
+// SharedPtr<T> MakeShared(Args&&... args) {
+//     auto* p = new typename SharedPtr<T>::template ControlBlockForMakeShared(T(std::forward<Args>(args)...));
+//     return SharedPtr<T>(p);
+// }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Output to stream :

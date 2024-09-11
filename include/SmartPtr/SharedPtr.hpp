@@ -58,7 +58,7 @@ public:
 // Observers :
     T* get() const noexcept;
     explicit operator bool() const noexcept;
-    tmn::Optional<T>& operator*() const;
+    tmn::Optional<T> operator*() const;
     T* operator->() const noexcept;
 
     std::size_t use_count() const noexcept;
