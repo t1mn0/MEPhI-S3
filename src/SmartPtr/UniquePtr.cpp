@@ -1,4 +1,5 @@
 #include "../../include/SmartPtr/UniquePtr.hpp"
+#include "../../include/Exceptions/Exception.hpp"
 
 
 

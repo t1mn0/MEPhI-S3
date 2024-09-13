@@ -12,6 +12,22 @@ add_compile_options(
     -Wextra
 )
 
+add_library ( exceptions SHARED
+    src/Exceptions/main.cpp
+    src/Exceptions/Exception.cpp
+    src/Exceptions/AllocException.cpp
+    src/Exceptions/IOException.cpp
+    src/Exceptions/LogicException.cpp
+    src/Exceptions/RuntimeException.cpp
+)
+
+add_executable( main
+    main.cpp
+    src/tmn.cpp
+) 
+
+
+# target_link_libraries(main exceptions)
 
 
 find_package(GTest REQUIRED)
@@ -22,20 +38,24 @@ if(GTEST_FOUND)
     set(GTEST_LIBRARY "/usr/lib/libgtest.a") 
     set(GTEST_MAIN_LIBRARY "/usr/lib/libgtest_main.a")
 
-    add_executable( mephi-3 
-        main.cpp
-        src/tmn.cpp
-        #test/src/TestUniquePtr.cpp
-    ) 
-
-
 
     enable_testing()
-    add_executable(testing_uniqueptr test/src/TestUniquePtr.cpp)
-    add_executable(testing_sharedptr test/src/TestSharedPtr.cpp)
-    target_link_libraries(testing_uniqueptr GTest::gtest GTest::gtest_main)
-    target_link_libraries(testing_sharedptr GTest::gtest GTest::gtest_main)
-    add_test(NAME testing_uniqueptr COMMAND testing_uniqueptr)
-    add_test(NAME testing_sharedptr COMMAND testing_sharedptr)
+    add_executable(func_testing_uniqueptr test/src/FuncTestUniquePtr.cpp)
+    add_executable(func_testing_sharedptr test/src/FuncTestSharedPtr.cpp)
+
+    add_executable(load_testing_uniqueptr test/src/LoadTestUniquePtr.cpp)
+    add_executable(load_testing_sharedptr test/src/LoadTestSharedPtr.cpp)
+
+    target_link_libraries(func_testing_uniqueptr GTest::gtest GTest::gtest_main exceptions)
+    target_link_libraries(func_testing_sharedptr GTest::gtest GTest::gtest_main exceptions)
+
+    target_link_libraries(load_testing_uniqueptr GTest::gtest GTest::gtest_main exceptions)
+    target_link_libraries(load_testing_sharedptr GTest::gtest GTest::gtest_main exceptions)
+
+    add_test(NAME functesting_uniqueptr COMMAND func_testing_uniqueptr)
+    add_test(NAME functesting_sharedptr COMMAND func_testing_sharedptr)
+    
+    add_test(NAME loadtesting_uniqueptr COMMAND load_testing_uniqueptr)
+    add_test(NAME loadtesting_sharedptr COMMAND load_testing_sharedptr)
 
 endif()

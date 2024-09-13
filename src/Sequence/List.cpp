@@ -1,0 +1,448 @@
+#include "../../include/Sequence/List.hpp"
+#include "../../include/Exceptions/LogicException.hpp"
+
+namespace tmn_sequence{
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// Iterator implementation :
+
+template <typename T, class Allocator>
+template <bool isConst>
+List<T, Allocator>::common_iterator<isConst>& 
+List<T, Allocator>::common_iterator<isConst>::operator=(const common_iterator<isConst>& other){
+    ptr = other.ptr;
+    return *this;
+}
+
+template <typename T, class Allocator>
+template <bool isConst>
+typename List<T, Allocator>::common_iterator<isConst>::conditional_ref
+List<T, Allocator>::common_iterator<isConst>::operator*() const {
+    return ptr->value;
+}
+
+template <typename T, class Allocator>
+template <bool isConst>
+typename List<T, Allocator>::common_iterator<isConst>::conditional_ptr
+List<T, Allocator>::common_iterator<isConst>::operator->() const {
+    return &(ptr->value);
+}
+
+template <typename T, class Allocator>
+template <bool isConst>
+bool List<T, Allocator>::common_iterator<isConst>::operator==(const common_iterator<isConst>& other) const {
+    return ptr == other.ptr;
+}
+
+template <typename T, class Allocator>
+template <bool isConst>
+bool List<T, Allocator>::common_iterator<isConst>::operator!=(const common_iterator<isConst>& other) const {
+    return ptr != other.ptr;
+}
+
+template <typename T, class Allocator>
+template <bool isConst>
+List<T, Allocator>::common_iterator<isConst>& 
+List<T, Allocator>::common_iterator<isConst>::operator++() {
+    ptr = ptr->next;
+    return *this;
+}
+
+template <typename T, class Allocator>
+template <bool isConst>
+List<T, Allocator>::common_iterator<isConst> 
+List<T, Allocator>::common_iterator<isConst>::operator++(int) {
+   common_iterator<isConst> tmp(*this);
+   ptr = ptr->next;
+   return tmp;
+}
+
+template <typename T, class Allocator>
+template <bool isConst>
+List<T, Allocator>::common_iterator<isConst>& 
+List<T, Allocator>::common_iterator<isConst>::operator--() {
+    ptr = ptr->prev;
+    return *this;
+}
+
+template <typename T, class Allocator>
+template <bool isConst>
+List<T, Allocator>::common_iterator<isConst> 
+List<T, Allocator>::common_iterator<isConst>::operator--(int) {
+   common_iterator<isConst> tmp(*this);
+    ptr = ptr->prev;
+   return tmp;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// Constructors & assignment & conversion :
+
+template <typename T, class Allocator>
+List<T, Allocator>::List(std::size_t _size) : _size(_size), dummy_node(new Node(T())) {
+    if (_size == 0) {
+        return;
+    }
+
+    Node* prev_node = dummy_node;
+    for (std::size_t i = 0; i < _size; ++i) {
+        Node* new_node = new Node(T(), dummy_node, prev_node);
+        prev_node->next = new_node;
+        prev_node = new_node;
+    }
+
+    dummy_node->prev = prev_node;
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>::List(std::size_t _size, const T& default_element) : _size(_size), dummy_node(new Node(T())) {
+    if (_size == 0) {
+        return;
+    }
+
+    Node* prev_node = dummy_node;
+    for (std::size_t i = 0; i < _size; ++i) {
+        Node* new_node = new Node(T(default_element), dummy_node, prev_node);
+        prev_node->next = new_node;
+        prev_node = new_node;
+    }
+
+    dummy_node->prev = prev_node;
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>::List(const List<T, Allocator>& other) : _size(other._size), dummy_node(new Node(T())) {
+    if (other._size == 0) {
+        return;
+    }
+
+    Node* current = other.dummy_node->next;
+    Node* prev_node = dummy_node;
+    for (std::size_t i = 0; i < _size; ++i) {
+        Node* new_node = new Node(T(current->value), dummy_node, prev_node);
+        prev_node->next = new_node;
+        prev_node = new_node;
+        current = current->next;
+    }
+
+    dummy_node->prev = prev_node;
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>::List(std::initializer_list<T> lst) :_size(lst.size()), dummy_node(new Node(T())) {
+    if (_size == 0) {
+        return;
+    }
+    
+    Node* prev_node = dummy_node;
+    for (auto it = lst.begin(); it != lst.end(); ++it) {
+        Node* new_node = new Node(*it, dummy_node, prev_node);
+        prev_node->next = new_node;
+        prev_node = new_node;
+    }
+
+    dummy_node->prev = prev_node;
+}
+
+template <typename T, class Allocator>
+void List<T, Allocator>::swap(List<T, Allocator>& other) {
+    std::swap(dummy_node, other.dummy_node);
+    std::swap(_size, other._size);
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>& List<T, Allocator>::operator=(const List<T, Allocator>& other) {
+    List<T> tmp(other);
+    swap(tmp);
+    return *this;
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>::~List() {
+    clear();
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// Capacity & size :
+
+template <typename T, class Allocator>
+std::size_t List<T, Allocator>::size() const noexcept {
+    return _size;
+}
+
+template <typename T, class Allocator>
+bool List<T, Allocator>::empty() const noexcept{
+    return _size == 0;
+}
+
+template <typename T, class Allocator>
+void List<T, Allocator>::resize(std::size_t new_size, const T& value) {
+    if (new_size < _size) {
+        while (_size > new_size) {
+            pop_back();
+        }
+    } 
+    else if (new_size > _size) {
+        while (_size < new_size) {
+            push_back(value);
+        }
+    }
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>& List<T, Allocator>::clear() {
+    while (_size > 0) {
+        pop_front();
+    }
+
+    return *this; 
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>& List<T, Allocator>::push_front(const T& value) {
+    Node* new_node = new Node(value, dummy_node->next, dummy_node);
+
+    dummy_node->next->prev = new_node; 
+    dummy_node->next = new_node; 
+
+    ++_size;
+    return *this;
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>& List<T, Allocator>::push_back(const T& value) {
+    Node* new_node = new Node(value, dummy_node, dummy_node->prev);
+
+    dummy_node->prev->next = new_node; 
+    dummy_node->prev = new_node; 
+
+    ++_size;
+    return *this;
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>& List<T, Allocator>::pop_front() {
+    if (_size > 0) {
+        Node* node_to_delete = dummy_node->next; 
+        dummy_node->next = node_to_delete->next;
+        node_to_delete->next->prev = dummy_node; 
+        delete node_to_delete;
+        --_size;
+    }
+    else{
+        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+    }
+    return *this; 
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>& List<T, Allocator>::pop_back() {
+    if (_size > 0) {
+        Node* node_to_delete = dummy_node->prev; 
+        dummy_node->prev = node_to_delete->prev;
+        node_to_delete->prev->next = dummy_node; 
+        delete node_to_delete;
+        --_size;
+    }
+    else{
+        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+    }
+    return *this; 
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// Element access methods :
+
+
+template <typename T, class Allocator>
+const T& List<T, Allocator>::front() const {
+    if (_size == 0){
+        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+    }
+    return dummy_node->next->value;
+}
+
+template <typename T, class Allocator>
+T& List<T, Allocator>::front() {
+    if (_size == 0){
+        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+    }
+    return dummy_node->next->value;
+}
+
+template <typename T, class Allocator>
+const T& List<T, Allocator>::back() const {
+    if (_size == 0){
+        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+    }
+    return dummy_node->prev->value;
+}
+
+template <typename T, class Allocator>
+T& List<T, Allocator>::back() {
+    if (_size == 0){
+        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+    }
+    return dummy_node->prev->value;
+}
+
+template <typename T, class Allocator>
+List<T, Allocator>& List<T, Allocator>::set(std::size_t index, const T& item) {
+    if (index >= _size) {
+        throw tmn_exception::LogicException("Accessing an element by out of range index in list sequence");
+    }
+
+    Node* current = dummy_node->next;
+    for (std::size_t i = 0; i < index; ++i) {
+        current = current->next;
+    }
+
+    current->value = item;
+    return *this;
+}
+
+template <typename T, class Allocator>
+T& List<T, Allocator>::get(std::size_t index) {
+    if (index >= _size) {
+        throw tmn_exception::LogicException("Accessing an element by out of range index in list sequence");
+    }
+
+    Node* current = dummy_node->next;
+    for (std::size_t i = 0; i < index; ++i) {
+        current = current->next;
+    }
+    return current->value;
+}
+
+template <typename T, class Allocator>
+const T& List<T, Allocator>::get(std::size_t index) const {
+    if (index >= _size) {
+        throw tmn_exception::LogicException("Accessing an element by out of range index in list sequence");
+    }
+    
+    Node* current = dummy_node->next;
+    for (std::size_t i = 0; i < index; ++i) {
+        current = current->next;
+    }
+    return current->value;
+}
+
+template <typename T, class Allocator>
+T& List<T, Allocator>::operator[](std::size_t index) {
+    return get(index);
+}
+
+template <typename T, class Allocator>
+const T& List<T, Allocator>::operator[](std::size_t index) const {
+    return get(index);
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// Iterator methods :
+
+template <typename T, class Allocator>
+typename List<T, Allocator>::iterator List<T, Allocator>::begin() noexcept {
+    return iterator(dummy_node->next);
+}
+
+template <typename T, class Allocator>
+typename List<T, Allocator>::const_iterator List<T, Allocator>::begin() const noexcept {
+    return const_iterator(dummy_node->next);
+}
+
+template <typename T, class Allocator>
+typename List<T, Allocator>::const_iterator List<T, Allocator>::cbegin() const noexcept {
+    return const_iterator(dummy_node->next);
+}
+
+template <typename T, class Allocator>
+typename List<T, Allocator>::iterator List<T, Allocator>::end() noexcept {
+    return iterator(dummy_node);
+}
+
+template <typename T, class Allocator>
+typename List<T, Allocator>::const_iterator List<T, Allocator>::end() const noexcept {
+    return const_iterator(dummy_node);
+}
+
+template <typename T, class Allocator>
+typename List<T, Allocator>::const_iterator List<T, Allocator>::cend() const noexcept {
+        return const_iterator(dummy_node);
+}
+
+template <typename T, class Allocator>
+typename tmn_iterator::reverse_iterator<typename List<T, Allocator>::iterator> List<T, Allocator>::rbegin() noexcept {
+    iterator iter(dummy_node);
+    return tmn_iterator::reverse_iterator<iterator>(iter);
+}
+
+template <typename T, class Allocator>
+typename tmn_iterator::reverse_iterator<typename List<T, Allocator>::iterator> List<T, Allocator>::rend() noexcept {
+    iterator iter(dummy_node->next);
+    return tmn_iterator::reverse_iterator<iterator>(iter);   
+}
+
+template <typename T, class Allocator>
+typename List<T, Allocator>::iterator List<T, Allocator>::insert(iterator pos, const T& value) {
+    if (pos == end()) {
+        push_back(value);
+        return end();
+    }
+
+    Node* current = pos.ptr;
+    Node* new_node = new Node(value, current, current->prev);
+    
+    current->prev->next = new_node;
+    current->prev = new_node;
+    ++_size;
+    return iterator(new_node);
+}
+
+template <typename T, class Allocator>
+typename List<T, Allocator>::iterator List<T, Allocator>::insert(iterator pos, size_type count, const T& value) {
+    if (pos == end()) {
+        while (count > 0) {
+            push_back(value);
+            count--;
+        }
+        return end();
+    }
+    
+    Node* current = pos.ptr;
+    for (size_t i = 0; i < count; ++i) {
+        Node* new_node = new Node(value, current, current->prev);
+        current->prev->next = new_node;
+        current->prev = new_node;
+        ++_size;
+    }
+    return iterator(current);
+}
+
+template <typename T, class Allocator>
+typename List<T, Allocator>::iterator List<T, Allocator>::erase(iterator pos) {
+    if (pos == end()) {
+        throw tmn_exception::LogicException("Accessing an element by out of range index in list sequence");
+    }
+    
+    Node* node_to_delete = pos.ptr;
+    Node* next_node = node_to_delete->next;
+    Node* prev_node = node_to_delete->prev;
+    
+    prev_node->next = next_node;
+    next_node->prev = prev_node;
+    
+    delete node_to_delete;
+    --_size;
+    return iterator(next_node); 
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// Other modifiers :
+
+template <typename T, class Allocator>
+void List<T, Allocator>::merge(List<T, Allocator>& other) {
+    // ... (!)
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+}
