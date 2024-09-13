@@ -13,7 +13,6 @@ add_compile_options(
 )
 
 add_library ( exceptions SHARED
-    src/Exceptions/main.cpp
     src/Exceptions/Exception.cpp
     src/Exceptions/AllocException.cpp
     src/Exceptions/IOException.cpp
