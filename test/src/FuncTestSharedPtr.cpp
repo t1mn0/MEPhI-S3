@@ -138,7 +138,7 @@ TEST(SharedPtrTest, Unique) {
 
 
 // TEST(SharedPtrTest, MakeShared) {
-//     auto ptr = tmn_smrt_ptr::MakeShared<int>(10);
+//     auto ptr = tmn_smrt_ptr::make_shared<int>(10);
 //     ASSERT_NE(ptr.get(), nullptr);
 //     ASSERT_EQ((*ptr).value(), 10);
 // }

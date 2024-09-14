@@ -1,10 +1,23 @@
 #pragma once
 
 #include <cstddef>
+#include <type_traits>
 
 #include "../Optional/Optional.hpp"
 
 namespace tmn_smrt_ptr {
+
+// Forward declaration of SharedPtr
+template <typename T>
+struct SharedPtr;
+
+// Concept to check if a type is not a specialization of SharedPtr
+template <typename T>
+concept IsNotSharedPtr = !std::is_same_v<SharedPtr<std::remove_cvref_t<T>>, T>;
+
+// Concept to check if a type is derived from or the same as another type
+template <typename Derived, typename Base>
+concept IsDerivedOrSame = std::is_base_of_v<Base, Derived> || std::is_same_v<Base, Derived>;
 
 template <typename T>
 struct SharedPtr {
@@ -15,9 +28,11 @@ private:
         virtual ~BaseControlBlock() = default;
     };
 
-    // ControlBlock является шаблонными для наследования +CONCEPT !
+    // ControlBlock является шаблонными для наследования
     template <typename U>
     struct ControlBlockForMakeShared : BaseControlBlock {
+        template <typename... Args>
+        ControlBlockForMakeShared(Args&&... args) : value(std::forward<Args>(args)...) {}
         U value;
     };
 
@@ -34,14 +49,14 @@ private:
 public:
 // Constructors & assignment & conversion & destructors :
     SharedPtr();
-    explicit SharedPtr(T* ptr);
+    explicit SharedPtr(T* ptr) requires IsNotSharedPtr<T>;
 
     SharedPtr(const SharedPtr& rhs) noexcept;
     SharedPtr& operator=(const SharedPtr& rhs) noexcept;
     
     // Для наследования (кастов)
     template <typename U>
-    SharedPtr(const SharedPtr<U>& rhs, T* ptr) noexcept;
+    SharedPtr(const SharedPtr<U>& rhs, T* ptr) noexcept requires IsDerivedOrSame<U, T>;
 
     SharedPtr(SharedPtr&& rhs) noexcept;
     SharedPtr& operator=(SharedPtr&& rhs) noexcept;
@@ -68,20 +83,6 @@ public:
 template <typename T, typename... Args>
 SharedPtr<T> make_shared(Args&&... args);
 
-
-
-// pointer_cast's :
-template<class T, class U>
-SharedPtr<T> static_pointer_cast(const SharedPtr<U>& r) noexcept;
-
-template<class T, class U>
-SharedPtr<T> dynamic_pointer_cast(const SharedPtr<U>& r) noexcept;
-
-template<class T, class U>
-SharedPtr<T> const_pointer_cast(const SharedPtr<U>& r) noexcept;
-
-template<class T, class U>
-SharedPtr<T> reinterpret_pointer_cast(const SharedPtr<U>& r) noexcept;
 
 }
 
