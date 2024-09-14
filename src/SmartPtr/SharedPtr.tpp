@@ -1,9 +1,7 @@
-#include "../../include/SmartPtr/SharedPtr.hpp"
-#include "../../include/Exceptions/Exception.hpp"
-
 #include <memory>
 
-
+#include "../../include/SmartPtr/SharedPtr.hpp"
+#include "../../include/Exceptions/Exception.hpp"
 
 namespace tmn_smrt_ptr {
 

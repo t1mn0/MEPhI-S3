@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+
 #include "../Optional/Optional.hpp"
 
 namespace tmn_smrt_ptr {

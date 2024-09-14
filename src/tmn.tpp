@@ -1,6 +1,6 @@
-#include "../include/Exceptions/Exception.hpp"
-
 #include <utility>
+
+#include "../include/Exceptions/Exception.hpp"
 
 namespace tmn {
 

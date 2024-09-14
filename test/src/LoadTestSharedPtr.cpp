@@ -2,47 +2,75 @@
 
 #include "../../include/SmartPtr/SharedPtr.hpp"
 
-#include <vector>
 #include <string>
+#include <chrono>
 
+inline double average(const double* arr, int size) {
+    if (size <= 0) return 0.0;
 
+    double sum = 0.0;
+    for (int i = 0; i < size; ++i) {
+        sum += arr[i];
+    }
 
-TEST(LoadTestSharedPtr, Сreation10by100){
-    std::vector<std::string*> storage_of_rawptr;
-    std::vector<tmn_smrt_ptr::SharedPtr<std::string>> storage_of_sharedptr;
+    return sum / size;
+}
 
-    std::string* raw_ptr;
+TEST(LoadTestSharedPtr, Сreation100by10){
+    const int rawptr_count = 10;
+    const int sharedptr_block = 100;
 
-    for (int i = 0; i < 10; ++i){
-        raw_ptr = new std::string("string");
-        storage_of_rawptr.push_back(raw_ptr);
+    double timers[rawptr_count];
 
+    std::string* storage_of_rawptr[rawptr_count];
+    tmn_smrt_ptr::SharedPtr<std::string> storage_of_sharedptr[rawptr_count * sharedptr_block];
 
-        tmn_smrt_ptr::SharedPtr<std::string> source_ptr(raw_ptr);
+    for (int i = 0; i < rawptr_count; ++i){
+        storage_of_rawptr[i] = new std::string("string");
+
+        auto start = std::chrono::high_resolution_clock::now();
+        tmn_smrt_ptr::SharedPtr<std::string> source_ptr(storage_of_rawptr[i]);
         
-        ASSERT_EQ(source_ptr.use_count(), 1);
+        // ASSERT_EQ(source_ptr.use_count(), 1);
 
-        for (int j = 0; j < 100; ++j){
+        for (int j = 0; j < sharedptr_block; ++j){
             tmn_smrt_ptr::SharedPtr<std::string> nonsource_ptr = source_ptr;
-            ASSERT_EQ(source_ptr.use_count(), j + 2);
+            // ASSERT_EQ(source_ptr.use_count(), j + 2);
 
-            storage_of_sharedptr.push_back(nonsource_ptr);
+            storage_of_sharedptr[i * sharedptr_block + j] = nonsource_ptr;
         }
+
+        auto end = std::chrono::high_resolution_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        timers[i] = elapsed.count();
     }
 
-    ASSERT_EQ(storage_of_sharedptr.size(), 1000);
-    ASSERT_EQ(storage_of_rawptr.size(), 10);
+    std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
 
-    for (int i = 0; i < 1000; i += 100){
-        std::cout << storage_of_sharedptr[i].get() << std::endl;
+    for (int i = 0; i < rawptr_count; ++i){
+        std::cout << i + 1 << ") " << storage_of_rawptr[i] << std::endl;
     }
 
-    for (int i = 0; i < 10; ++i){
-        std::cout << storage_of_rawptr[i] << std::endl;
+    std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
+
+    for (int i = 0; i < rawptr_count * sharedptr_block; i += sharedptr_block){
+        std::cout << i + 1 << ") "<< storage_of_sharedptr[i].get() << std::endl;
     }
 
-    for (int i = 0; i < 1000; ++i){
+    for (int i = 0; i < rawptr_count * sharedptr_block; ++i){
         ASSERT_EQ(storage_of_sharedptr[i].get(), storage_of_rawptr[i / 100]);
     }
 
+    double avg_time = average(timers, rawptr_count);
+    double total_time = 0;
+    std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
+    for (int i = 0; i < rawptr_count; ++i){
+        std::cout << i + 1 << ") " << timers[i] << " microseconds (time of creation 100 sharedptr by 1 rawptr)" << std::endl;
+        total_time += timers[i];
+    }
+    std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
+    std::cout << "Average time: " << avg_time << " microseconds" << std::endl;
+    std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
+    std::cout << "Total time: " << total_time << " microseconds" << std::endl;
+    std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
 }

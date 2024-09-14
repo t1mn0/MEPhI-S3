@@ -1,5 +1,4 @@
 #include "../../include/Optional/Optional.hpp"
-
 #include "../../include/Exceptions/Exception.hpp"
 
 
