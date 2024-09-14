@@ -1,10 +1,6 @@
 #pragma once
 
-
-
 namespace tmn {
-
-
 
 template <typename T>
 class Optional {
@@ -40,10 +36,6 @@ public:
     const T& value_or(const T& other) const noexcept;
 };
 
-
-
 }
 
-
-
-#include "../../src/Optional/Optional.cpp"
+#include "../../src/Optional/Optional.tpp"

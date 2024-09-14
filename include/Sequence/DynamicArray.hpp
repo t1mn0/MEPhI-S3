@@ -136,6 +136,4 @@ public:
 
 }
 
-
-
-#include "../../src/Sequence/DynamicArray.cpp"
+#include "../../src/Sequence/DynamicArray.tpp"

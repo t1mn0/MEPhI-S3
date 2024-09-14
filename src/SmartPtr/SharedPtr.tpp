@@ -189,28 +189,11 @@ bool SharedPtr<T>::unique() const noexcept {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // MakeShared :
 
-// template <typename T, typename... Args>
-// SharedPtr<T> MakeShared(Args&&... args) {
-//     auto* p = new typename SharedPtr<T>::template ControlBlockForMakeShared(T(std::forward<Args>(args)...));
+// template <typename T, typename U, typename... Args>
+// SharedPtr<T> make_shared(Args&&... args) {
+//     auto* p = new typename SharedPtr<T>::template ControlBlockForMakeShared<U>(T(std::forward<Args>(args)...));
 //     return SharedPtr<T>(p);
 // }
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-// Output to stream :
-
-template <class CharT, class Traits, class T>
-auto operator<<(std::basic_ostream<CharT, Traits> &os, const SharedPtr<T>& p) 
-    -> std::basic_ostream<CharT, Traits> &
-{
-    if (p) {
-        os << *p;
-    } 
-    else {
-        os << "nullptr";
-    }
-    
-    return os;
-}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // pointer_cast's :

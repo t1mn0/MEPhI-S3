@@ -49,3 +49,5 @@ class reverse_iterator;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
+
+#include "../../src/Iterator/Iterator.tpp"

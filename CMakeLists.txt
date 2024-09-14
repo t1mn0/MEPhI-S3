@@ -22,11 +22,8 @@ add_library ( exceptions SHARED
 
 add_executable( main
     main.cpp
-    src/tmn.cpp
-) 
+)
 
-
-# target_link_libraries(main exceptions)
 
 
 find_package(GTest REQUIRED)

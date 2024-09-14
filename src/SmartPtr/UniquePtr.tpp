@@ -13,7 +13,7 @@ template <typename T, typename Deleter>
 UniquePtr<T, Deleter>::UniquePtr() noexcept : ptr(nullptr) {}
     
 template <typename T, typename Deleter>
-UniquePtr<T, Deleter>::UniquePtr(pointer ptr) noexcept : ptr(ptr), deleter(Deleter()) {}
+UniquePtr<T, Deleter>::UniquePtr(Pointer ptr) noexcept : ptr(ptr), deleter(Deleter()) {}
 
 template <typename T, typename Deleter>
 template <typename U, typename E>
@@ -41,15 +41,15 @@ UniquePtr<T, Deleter>::~UniquePtr() {
 
 template <typename T, typename Deleter>
 auto UniquePtr<T, Deleter>::release() noexcept 
-    -> UniquePtr<T, Deleter>::pointer 
+    -> UniquePtr<T, Deleter>::Pointer 
 {
-    pointer tmp = ptr;
+    Pointer tmp = ptr;
     ptr = nullptr;
     return tmp;
 }
 
 template <typename T, typename Deleter>
-void UniquePtr<T, Deleter>::reset(pointer p) noexcept {
+void UniquePtr<T, Deleter>::reset(Pointer p) noexcept {
     deleter(ptr);
     ptr = p;
 }
@@ -65,7 +65,7 @@ void UniquePtr<T, Deleter>::swap(UniquePtr<T, Deleter>& rhs) noexcept {
 
 template <typename T, typename Deleter>
 auto UniquePtr<T, Deleter>::get() const noexcept 
-    -> UniquePtr<T, Deleter>::pointer 
+    -> UniquePtr<T, Deleter>::Pointer 
 {
     return ptr;
 }
@@ -87,7 +87,7 @@ tmn::Optional<T> UniquePtr<T, Deleter>::operator*() const {
 
 template <typename T, typename Deleter>
 auto UniquePtr<T, Deleter>::operator->() const noexcept
-    -> UniquePtr<T, Deleter>::pointer 
+    -> UniquePtr<T, Deleter>::Pointer 
 {
     return ptr;
 }
@@ -185,34 +185,17 @@ tmn::Optional<T> UniquePtr<T[], std::default_delete<T[]>>::operator[](std::size_
 // MakeUnique :
 
 template <typename T, typename... Args>
-UniquePtr<T> MakeUnique(Args&&... args) {
+UniquePtr<T> make_unique(Args&&... args) {
     return UniquePtr<T>(new T(std::forward<Args>(args)...));
 }
 
 template <typename T>
-UniquePtr<T> MakeUnique(std::size_t size) {
+UniquePtr<T> make_unique(std::size_t size) {
     if (size == 0){
         throw tmn_exception::Exception("Bad size argument");
     }
     T* ptr = new T[size];
     return UniquePtr<T[], std::default_delete<T[]>()>(ptr);
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-// Output to stream :
-
-template <class CharT, class Traits, class T, class D>
-auto tmn_smrt_ptr::operator<<(std::basic_ostream<CharT, Traits> &os, const UniquePtr<T, D> &p) 
-    -> std::basic_ostream<CharT, Traits> &
-{
-    if (p) {
-        os << *p;
-    } 
-    else {
-        os << "nullptr";
-    }
-    
-    return os;
 }
 
 }

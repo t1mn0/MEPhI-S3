@@ -3,11 +3,7 @@
 #include <cstddef>
 #include "../Optional/Optional.hpp"
 
-
-
 namespace tmn_smrt_ptr {
-
-
 
 template <typename T>
 struct SharedPtr {
@@ -18,7 +14,7 @@ private:
         virtual ~BaseControlBlock() = default;
     };
 
-    // ControlBlock является шаблонными для наследования
+    // ControlBlock является шаблонными для наследования +CONCEPT !
     template <typename U>
     struct ControlBlockForMakeShared : BaseControlBlock {
         U value;
@@ -27,7 +23,7 @@ private:
     SharedPtr(BaseControlBlock* control_block);
 
     template <typename U, typename... Args>
-    friend SharedPtr<U> MakeShared(Args&&...);
+    friend SharedPtr<U> make_shared(Args&&...);
 
 private:
 // Fields :
@@ -69,7 +65,7 @@ public:
 
 // MakeShared :
 template <typename T, typename... Args>
-SharedPtr<T> MakeShared(Args&&... args);
+SharedPtr<T> make_shared(Args&&... args);
 
 
 
@@ -86,10 +82,6 @@ SharedPtr<T> const_pointer_cast(const SharedPtr<U>& r) noexcept;
 template<class T, class U>
 SharedPtr<T> reinterpret_pointer_cast(const SharedPtr<U>& r) noexcept;
 
-
-
 }
 
-
-
-#include "../../src/SmartPtr/SharedPtr.cpp"
+#include "../../src/SmartPtr/SharedPtr.tpp"

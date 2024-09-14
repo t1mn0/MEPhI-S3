@@ -115,4 +115,4 @@ public:
 
 }
 
-#include "../../src/Sequence/Array.cpp"
+#include "../../src/Sequence/Array.tpp"

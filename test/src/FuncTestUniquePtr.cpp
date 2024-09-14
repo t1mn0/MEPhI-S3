@@ -201,27 +201,27 @@ TEST(TestUniquePtrSpecial, OperatorBracket) {
 }
 
 
-// TEST MakeUnique :
+// TEST make_unique :
 
 TEST(TestMakeUnique, MakeUniqueWithDefaultConstructor) {
-  auto ptr = tmn_smrt_ptr::MakeUnique<int>();
+  auto ptr = tmn_smrt_ptr::make_unique<int>();
   ASSERT_NE(ptr.get(), nullptr);
 }
 
 TEST(TestMakeUnique, MakeUniqueWithArguments) {
-  auto ptr = tmn_smrt_ptr::MakeUnique<std::string>("Hello");
+  auto ptr = tmn_smrt_ptr::make_unique<std::string>("Hello");
   ASSERT_NE(ptr.get(), nullptr);
   ASSERT_EQ(*(ptr.get()), "Hello");
 }
 
 TEST(TestMakeUnique, MakeUniqueWithSize) {
-  auto ptr = tmn_smrt_ptr::MakeUnique<int>(10);
+  auto ptr = tmn_smrt_ptr::make_unique<int>(10);
   ASSERT_NE(ptr.get(), nullptr);
 }
 
 TEST(TestMakeUnique, MakeUniqueWithSizeZero) {
   try{
-    auto ptr = tmn_smrt_ptr::MakeUnique<int>(0);
+    auto ptr = tmn_smrt_ptr::make_unique<int>(0);
   }
   catch(...){
     ASSERT_TRUE(true);

@@ -1,14 +1,10 @@
 #pragma once
 
-#include "../../include/Optional/Optional.hpp"
-
 #include <memory>
 
-
+#include "../../include/Optional/Optional.hpp"
 
 namespace tmn_smrt_ptr {
-
-
 
 //                                      GENERAL REALIZATION :
 
@@ -21,13 +17,16 @@ private:
 
 public:
 // Using's :
-    using pointer = T*;
-    // using pointer = typename std::conditional<has_pointer<Deleter>, std::remove_reference_t<Deleter>::pointer, T*>;
+    // Типы с большой буквы
+    using Pointer = T*;
+
+    //                                           "concept has_pointer"
+    // using Pointer = typename std::conditional<has_pointer<Deleter>, std::remove_reference_t<Deleter>::Pointer, T*>;
 
 public:
 // Constructors & assignment & conversion & destructors :
     UniquePtr() noexcept;
-    explicit UniquePtr(pointer ptr) noexcept;
+    explicit UniquePtr(Pointer ptr) noexcept;
 
     UniquePtr(const UniquePtr& other) = delete;
     UniquePtr& operator=(const UniquePtr& other) = delete;
@@ -41,15 +40,15 @@ public:
     ~UniquePtr();
 
 // Modifiers :
-    pointer release() noexcept;
-    void reset(pointer p = pointer()) noexcept;
+    Pointer release() noexcept;
+    void reset(Pointer p = Pointer()) noexcept;
     void swap(UniquePtr<T, Deleter>& other) noexcept;
 
 // Observers :
-    pointer get() const noexcept;
+    Pointer get() const noexcept;
     explicit operator bool() const noexcept;
     tmn::Optional<T> operator*() const;
-    pointer operator->() const noexcept;
+    Pointer operator->() const noexcept;
 };
 
 
@@ -95,24 +94,15 @@ public:
 };
 
 
+    // Функции с маленькой буквы
+
 // MakeUnique :
 template <typename T, typename... Args>
-UniquePtr<T> MakeUnique(Args&&... args);
+UniquePtr<T> make_unique(Args&&... args);
 
 template <typename T>
-UniquePtr<T> MakeUnique(std::size_t size);
-
-
-
-// Output to stream :
-template <class CharT, class Traits, class T, class D>
-auto operator<<(std::basic_ostream<CharT, Traits>& os, const UniquePtr<T, D>& p)
-    -> std::basic_ostream<CharT, Traits>&;
-
-
+UniquePtr<T> make_unique(std::size_t size);
 
 }
 
-
-
-#include "../../src/SmartPtr/UniquePtr.cpp"
+#include "../../src/SmartPtr/UniquePtr.tpp"

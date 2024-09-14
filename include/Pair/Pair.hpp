@@ -1,9 +1,6 @@
 #pragma once
 
-
-
 namespace tmn {
-
 template <typename T1, typename T2>
 class Pair {
 public:
@@ -24,3 +21,5 @@ public:
 };
 
 }
+
+#include "../../src/Pair/Pair.tpp"

@@ -140,6 +140,4 @@ public:
 
 }
 
-
-
-#include "../../src/Sequence/List.cpp"
+#include "../../src/Sequence/List.tpp"
