@@ -14,7 +14,7 @@ TEST(LoadTestSUniquePtr, Сreation1000){
     double timer_for_uniqueptr;
 
     std::string* storage_of_rawptr[rawptr_count];
-    tmn_smrt_ptr::UniquePtr<std::string> storage_of_uniqueptr[rawptr_count];
+    tmn_smart_ptr::UniquePtr<std::string> storage_of_uniqueptr[rawptr_count];
 
 
     for (int i = 0; i < rawptr_count; ++i){
@@ -25,7 +25,7 @@ TEST(LoadTestSUniquePtr, Сreation1000){
         timer_for_rawptr += elapsed_for_rawptr.count();
 
         auto start_for_uniqueptr = std::chrono::high_resolution_clock::now();
-        tmn_smrt_ptr::UniquePtr<std::string> uniqueptr(storage_of_rawptr[i]);
+        tmn_smart_ptr::UniquePtr<std::string> uniqueptr(storage_of_rawptr[i]);
         storage_of_uniqueptr[i] = std::move(uniqueptr);
         auto end_for_uniqueptr = std::chrono::high_resolution_clock::now();
         auto elapsed_for_uniqueptr = std::chrono::duration_cast<std::chrono::microseconds>(end_for_uniqueptr - start_for_uniqueptr);

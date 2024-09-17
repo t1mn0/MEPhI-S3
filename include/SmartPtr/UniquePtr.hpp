@@ -4,7 +4,7 @@
 
 #include "../../include/Optional/Optional.hpp"
 
-namespace tmn_smrt_ptr {
+namespace tmn_smart_ptr {
 
 //                                      GENERAL REALIZATION :
 

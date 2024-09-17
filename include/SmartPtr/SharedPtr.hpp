@@ -5,22 +5,24 @@
 
 #include "../Optional/Optional.hpp"
 
-namespace tmn_smrt_ptr {
+namespace tmn_smart_ptr {
 
 // Forward declaration of SharedPtr
-template <typename T>
-struct SharedPtr;
+// template <typename T>
+// struct SharedPtr;
 
 // Concept to check if a type is not a specialization of SharedPtr
-template <typename T>
-concept IsNotSharedPtr = !std::is_same_v<SharedPtr<std::remove_cvref_t<T>>, T>;
+// template <typename T>
+// concept IsNotSharedPtr = !std::is_same_v<SharedPtr<std::remove_cvref_t<T>>, T>;
 
 // Concept to check if a type is derived from or the same as another type
-template <typename Derived, typename Base>
-concept IsDerivedOrSame = std::is_base_of_v<Base, Derived> || std::is_same_v<Base, Derived>;
+// template <typename Derived, typename Base>
+// concept IsDerivedOrSame = std::is_base_of_v<Base, Derived> || std::is_same_v<Base, Derived>;
+
+
 
 template <typename T>
-struct SharedPtr {
+class SharedPtr {
 private:
 // Supporting structures & constructor & friend:
     struct BaseControlBlock {
@@ -36,10 +38,10 @@ private:
         U value;
     };
 
-    SharedPtr(BaseControlBlock* control_block);
+    SharedPtr(ControlBlockForMakeShared<T>* control_block);
 
     template <typename U, typename... Args>
-    friend SharedPtr<U> make_shared(Args&&...);
+    friend SharedPtr<U>* MakeShared(Args&&...);
 
 private:
 // Fields :
@@ -49,14 +51,14 @@ private:
 public:
 // Constructors & assignment & conversion & destructors :
     SharedPtr();
-    explicit SharedPtr(T* ptr) requires IsNotSharedPtr<T>;
+    explicit SharedPtr(T* ptr);
 
     SharedPtr(const SharedPtr& rhs) noexcept;
     SharedPtr& operator=(const SharedPtr& rhs) noexcept;
     
     // Для наследования (кастов)
     template <typename U>
-    SharedPtr(const SharedPtr<U>& rhs, T* ptr) noexcept requires IsDerivedOrSame<U, T>;
+    SharedPtr(const SharedPtr<U>& rhs, T* ptr) noexcept;
 
     SharedPtr(SharedPtr&& rhs) noexcept;
     SharedPtr& operator=(SharedPtr&& rhs) noexcept;
@@ -81,7 +83,7 @@ public:
 
 // MakeShared :
 template <typename T, typename... Args>
-SharedPtr<T> make_shared(Args&&... args);
+SharedPtr<T>* MakeShared(Args&&... args);
 
 
 }

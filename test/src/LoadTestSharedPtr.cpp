@@ -23,18 +23,18 @@ TEST(LoadTestSharedPtr, Сreation100by10){
     double timers[rawptr_count];
 
     std::string* storage_of_rawptr[rawptr_count];
-    tmn_smrt_ptr::SharedPtr<std::string> storage_of_sharedptr[rawptr_count * sharedptr_block];
+    tmn_smart_ptr::SharedPtr<std::string> storage_of_sharedptr[rawptr_count * sharedptr_block];
 
     for (int i = 0; i < rawptr_count; ++i){
         storage_of_rawptr[i] = new std::string("string");
 
         auto start = std::chrono::high_resolution_clock::now();
-        tmn_smrt_ptr::SharedPtr<std::string> source_ptr(storage_of_rawptr[i]);
+        tmn_smart_ptr::SharedPtr<std::string> source_ptr(storage_of_rawptr[i]);
         
         // ASSERT_EQ(source_ptr.use_count(), 1);
 
         for (int j = 0; j < sharedptr_block; ++j){
-            tmn_smrt_ptr::SharedPtr<std::string> nonsource_ptr = source_ptr;
+            tmn_smart_ptr::SharedPtr<std::string> nonsource_ptr = source_ptr;
             // ASSERT_EQ(source_ptr.use_count(), j + 2);
 
             storage_of_sharedptr[i * sharedptr_block + j] = nonsource_ptr;

@@ -3,25 +3,21 @@
 #include "../../include/SmartPtr/SharedPtr.hpp"
 #include "../../include/Exceptions/Exception.hpp"
 
-namespace tmn_smrt_ptr {
+namespace tmn_smart_ptr {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Constructors & assignment & conversion & destructors :
 
 template <typename T>
-SharedPtr<T>::SharedPtr(BaseControlBlock* control_block) : ptr(nullptr), counter(control_block) {
+SharedPtr<T>::SharedPtr(ControlBlockForMakeShared<T>* control_block) : ptr(&control_block->value), counter(control_block) {
     ++counter->strong_count;
-
-    if (auto* cblock = dynamic_cast<ControlBlockForMakeShared<T>*>(counter)) {
-        ptr = &cblock->value; 
-    }
 }
 
 template <typename T>
 SharedPtr<T>::SharedPtr() : ptr(nullptr), counter(new BaseControlBlock()) { }
 
 template <typename T>
-SharedPtr<T>::SharedPtr(T* ptr) requires IsNotSharedPtr<T> : ptr(ptr), counter(new BaseControlBlock()) {
+SharedPtr<T>::SharedPtr(T* ptr) : ptr(ptr), counter(new BaseControlBlock()) {
     ++counter->strong_count;
 }
 
@@ -50,14 +46,13 @@ SharedPtr<T>& SharedPtr<T>::operator=(const SharedPtr<T>& rhs) noexcept {
 
 template <typename T>
 template <typename U>
-SharedPtr<T>::SharedPtr(const SharedPtr<U>& rhs, T* ptr) noexcept requires IsDerivedOrSame<U, T> 
-    : ptr(ptr), counter(rhs.counter) {
-        if (counter){
-            ++counter->strong_count;
-        }
-        else {
-            throw tmn_exception::Exception("Bad Control Block");
-        }
+SharedPtr<T>::SharedPtr(const SharedPtr<U>& rhs, T* ptr) noexcept : ptr(ptr), counter(rhs.counter) {
+    if (counter){
+        ++counter->strong_count;
+    }
+    else {
+        throw tmn_exception::Exception("Bad Control Block");
+    }
 }
 
 template <typename T>
@@ -175,11 +170,12 @@ bool SharedPtr<T>::unique() const noexcept {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // MakeShared :
 
-// template <typename T, typename... Args>
-// SharedPtr<T> make_shared(Args&&... args) requires IsNotSharedPtr<T> {
-//     auto* control_block = new typename SharedPtr<T>::template ControlBlockForMakeShared<T>{T(std::forward<Args>(args)...)};
-//     SharedPtr<T> sp(control_block);
-//     return sp;
-// }
+template <typename T, typename... Args>
+SharedPtr<T>* MakeShared(Args&&... args) {
+    auto* cb = new typename SharedPtr<T>::template ControlBlockForMakeShared<T>{T(std::forward<Args>(args)...)};
+    SharedPtr<T>* sp = new SharedPtr<T>(cb);
+
+    return sp;
+}
 
 }

@@ -1,7 +1,7 @@
 #include "../../include/SmartPtr/UniquePtr.hpp"
 #include "../../include/Exceptions/Exception.hpp"
 
-namespace tmn_smrt_ptr {
+namespace tmn_smart_ptr {
 
 //                                      GENERAL REALIZATION :
 
