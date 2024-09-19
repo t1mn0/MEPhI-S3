@@ -8,10 +8,10 @@ namespace tmn_smart_ptr {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Constructors & assignment & conversion & destructors :
 
-template <typename T>
-SharedPtr<T>::SharedPtr(ControlBlockForMakeShared<T>* control_block) : ptr(&control_block->value), counter(control_block) {
-    ++counter->strong_count;
-}
+// template <typename T>
+// SharedPtr<T>::SharedPtr(ControlBlockForMakeShared<T>* control_block) : ptr(&control_block->value), counter(control_block) {
+//     ++counter->strong_count;
+// }
 
 template <typename T>
 SharedPtr<T>::SharedPtr() : ptr(nullptr), counter(new BaseControlBlock()) { }
@@ -170,12 +170,12 @@ bool SharedPtr<T>::unique() const noexcept {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // MakeShared :
 
-template <typename T, typename... Args>
-SharedPtr<T>* MakeShared(Args&&... args) {
-    auto* cb = new typename SharedPtr<T>::template ControlBlockForMakeShared<T>{T(std::forward<Args>(args)...)};
-    SharedPtr<T>* sp = new SharedPtr<T>(cb);
+// template <typename T, typename... Args>
+// SharedPtr<T>* MakeShared(Args&&... args) {
+//     auto* cb = new typename SharedPtr<T>::template ControlBlockForMakeShared<T>{T(std::forward<Args>(args)...)};
+//     SharedPtr<T>* sp = new SharedPtr<T>(cb);
 
-    return sp;
-}
+//     return sp;
+// }
 
 }

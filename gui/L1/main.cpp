@@ -5,17 +5,19 @@
 #include <memory>
 #include <sstream>
 
+#include "../../include/SmartPtr/SharedPtr.hpp"
+#include "../../include/SmartPtr/UniquePtr.hpp"
 
 
 struct IntObject {
     int* raw_pointer;
-    std::shared_ptr<int> shared_pointer;
-    std::unique_ptr<int> unique_pointer;
+    tmn_smart_ptr::SharedPtr<int> shared_pointer;
+    tmn_smart_ptr::UniquePtr<int> unique_pointer;
     std::string type;
 
     IntObject(int* ptr) : raw_pointer(ptr), shared_pointer(nullptr), unique_pointer(nullptr), type("Raw") {}
-    IntObject(std::shared_ptr<int> ptr) : raw_pointer(nullptr), shared_pointer(ptr), unique_pointer(nullptr), type("Shared") {}
-    IntObject(std::unique_ptr<int> ptr) : raw_pointer(nullptr), shared_pointer(nullptr), unique_pointer(std::move(ptr)), type("Unique") {}
+    IntObject(tmn_smart_ptr::SharedPtr<int> ptr) : raw_pointer(nullptr), shared_pointer(ptr), unique_pointer(nullptr), type("Shared") {}
+    IntObject(tmn_smart_ptr::UniquePtr<int> ptr) : raw_pointer(nullptr), shared_pointer(nullptr), unique_pointer(std::move(ptr)), type("Unique") {}
 };
 
 
@@ -57,13 +59,13 @@ void draw_ui(const std::vector<IntObject>& objects, int selected, bool first_com
 
     for (size_t i = 0; i < objects.size(); ++i) {
         std::stringstream ss;
-        ss << (i == selected ? "> " : "  ") << objects[i].type << " Pointer: ";
+        ss << (i == static_cast<size_t>(selected) ? "> " : "  ") << objects[i].type << " Pointer: ";
         if (objects[i].type == "Raw") {
             ss << objects[i].raw_pointer << " (Value: " << *(objects[i].raw_pointer) << ")";
         } else if (objects[i].type == "Shared") {
-            ss << objects[i].shared_pointer.get() << " (Value: " << *(objects[i].shared_pointer) << ", Count: " << objects[i].shared_pointer.use_count() << ")";
+            ss << objects[i].shared_pointer.get() << " (Value: " << (*(objects[i].shared_pointer)).value() << ", Count: " << objects[i].shared_pointer.use_count() << ")";
         } else if (objects[i].type == "Unique") {
-            ss << objects[i].unique_pointer.get() << " (Value: " << *(objects[i].unique_pointer) << ")";
+            ss << objects[i].unique_pointer.get() << " (Value: " << (*(objects[i].unique_pointer)).value() << ")";
         }
         
         mvprintw(i + 1, 0, ss.str().c_str());
@@ -74,70 +76,22 @@ void draw_ui(const std::vector<IntObject>& objects, int selected, bool first_com
 
 
 
-void perform_operation(std::vector<IntObject>& objects, int selected) {
+void check_state(std::vector<IntObject>& objects, int selected) {
     clear();
-    if (selected >= 0 && selected < objects.size()) {
+    if (selected >= 0 && static_cast<size_t>(selected) < objects.size()) {
         if (objects[selected].type == "Raw") {
             mvprintw(0, 0, "Raw Pointer:");
             mvprintw(1, 0, "Address: %p", objects[selected].raw_pointer);
-            mvprintw(2, 0, "Value: %d", *(objects[selected].raw_pointer));
-            mvprintw(4, 0, "Operations:");
-            mvprintw(5, 0, "1. Delete from storage");
-
-            int ch = getch();
-            if (ch == '1') {
-                delete objects[selected].raw_pointer;
-                objects.erase(objects.begin() + selected);
-            }
+            mvprintw(2, 0, "Value: %d", *objects[selected].raw_pointer);
         } else if (objects[selected].type == "Shared") {
             mvprintw(0, 0, "Shared Pointer:");
             mvprintw(1, 0, "Address: %p", objects[selected].shared_pointer.get());
-            mvprintw(2, 0, "Value: %d", *(objects[selected].shared_pointer));
+            mvprintw(2, 0, "Value: %d", (*(objects[selected].shared_pointer)).value());
             mvprintw(3, 0, "Count: %lu", objects[selected].shared_pointer.use_count());
-            mvprintw(4, 0, "Operations:");
-            mvprintw(5, 0, "1. Delete from storage");
-            mvprintw(6, 0, "2. Swap with another shared_ptr");
-
-            int ch = getch();
-            if (ch == '1') {
-                objects.erase(objects.begin() + selected);
-            } 
-            else if (ch == '2') {
-                mvprintw(9, 0, "Select another shared_ptr to swap with:");
-                for (size_t i = 0; i < objects.size(); ++i) {
-                    if (objects[i].type == "Shared" && i != selected) {
-                        mvprintw(10 + i, 0, "%lu: Shared Pointer", i + 1);
-                    }
-                }
-                int swap_index = getch() - '1';
-                if (swap_index >= 0 && swap_index < objects.size() && objects[swap_index].type == "Shared") {
-                    std::swap(objects[selected].shared_pointer, objects[swap_index].shared_pointer);
-                }
-            }
         } else if (objects[selected].type == "Unique") {
             mvprintw(0, 0, "Unique Pointer:");
             mvprintw(1, 0, "Address: %p", objects[selected].unique_pointer.get());
-            mvprintw(2, 0, "Value: %d", *(objects[selected].unique_pointer));
-            mvprintw(4, 0, "Operations:");
-            mvprintw(5, 0, "1. Delete from storage");
-            mvprintw(6, 0, "2. Swap with another unique_ptr");
-
-            int ch = getch();
-            if (ch == '1') {
-                objects.erase(objects.begin() + selected);
-            } 
-            else if (ch == '2') {
-                mvprintw(9, 0, "Select another unique_ptr to swap with:");
-                for (size_t i = 0; i < objects.size(); ++i) {
-                    if (objects[i].type == "Unique" && i != selected) {
-                        mvprintw(10 + i, 0, "%lu: Unique Pointer", i + 1);
-                    }
-                }
-                int swap_index = getch() - '1';
-                if (swap_index >= 0 && swap_index < objects.size() && objects[swap_index].type == "Unique") {
-                    std::swap(objects[selected].unique_pointer, objects[swap_index].unique_pointer);
-                }
-            }
+            mvprintw(2, 0, "Value: %d", (*(objects[selected].unique_pointer)).value());
         }
 
         mvprintw(12, 0, "Press any key to return...");
@@ -158,28 +112,28 @@ void handle_keypress(int ch, int& selected, std::vector<IntObject>& objects, boo
             break;
         }
         case 19: { // Ctrl+S
-            if (selected >= 0 && selected < objects.size()) {
+            if (selected >= 0 && static_cast<size_t>(selected) < objects.size()) {
                 if (objects[selected].type == "Raw") {
-                    std::shared_ptr<int> shared_ptr(objects[selected].raw_pointer);
-                    objects.emplace_back(shared_ptr);
+                    tmn_smart_ptr::SharedPtr<int> SharedPtr(objects[selected].raw_pointer);
+                    objects.emplace_back(SharedPtr);
                 } else if (objects[selected].type == "Shared") {
                     objects.emplace_back(objects[selected].shared_pointer);
                 }
             } else {
-                std::shared_ptr<int> shared_ptr = std::make_shared<int>(rand() % 100);
-                objects.emplace_back(shared_ptr);
+                tmn_smart_ptr::SharedPtr<int> SharedPtr = *(new tmn_smart_ptr::SharedPtr<int>(new int(rand() % 100)));
+                objects.emplace_back(SharedPtr);
             }
             first_command = false;
             break;
         }
         case 21: { // Ctrl+U
-            if (selected >= 0 && selected < objects.size()) {
+            if (selected >= 0 && static_cast<size_t>(selected) < objects.size()) {
                 if (objects[selected].type == "Raw") {
-                    std::unique_ptr<int> unique_ptr(objects[selected].raw_pointer);
+                    tmn_smart_ptr::UniquePtr<int> unique_ptr(objects[selected].raw_pointer);
                     objects.emplace_back(std::move(unique_ptr));
                 }
             } else {
-                std::unique_ptr<int> unique_ptr = std::make_unique<int>(rand() % 100);
+                tmn_smart_ptr::UniquePtr<int> unique_ptr = tmn_smart_ptr::make_unique<int>(rand() % 100);
                 objects.emplace_back(std::move(unique_ptr));
             }
             first_command = false;
@@ -187,7 +141,7 @@ void handle_keypress(int ch, int& selected, std::vector<IntObject>& objects, boo
         }
         case 4: { // Ctrl+D
             clear();
-            mvprintw(0, 0, "Select an object to perform operations:");
+            mvprintw(0, 0, "Select an object to check state:");
             for (size_t i = 0; i < objects.size(); ++i) {
                 std::stringstream ss;
                 ss << (i + 1) << ". " << objects[i].type << " Pointer";
@@ -196,8 +150,8 @@ void handle_keypress(int ch, int& selected, std::vector<IntObject>& objects, boo
             refresh();
             int ch = getch();
             int selected_op = ch - '1';
-            if (selected_op >= 0 && selected_op < objects.size()) {
-                perform_operation(objects, selected_op);
+            if (selected_op >= 0 && static_cast<size_t>(selected_op) < objects.size()) {
+                check_state(objects, selected_op);
             }
             first_command = false;
             break;
@@ -206,7 +160,7 @@ void handle_keypress(int ch, int& selected, std::vector<IntObject>& objects, boo
             selected = (selected > 0) ? selected - 1 : selected;
             break;
         case KEY_DOWN:
-            selected = (selected < objects.size() - 1) ? selected + 1 : selected;
+            selected = (static_cast<size_t>(selected) < objects.size() - 1) ? selected + 1 : selected;
             break;
         default:
             break;

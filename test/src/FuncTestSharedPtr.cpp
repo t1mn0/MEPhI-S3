@@ -136,8 +136,8 @@ TEST(SharedPtrTest, Unique) {
 
 // TEST MakeShared :
 
-TEST(SharedPtrTest, MakeShared) {
-  auto ptr = tmn_smart_ptr::MakeShared<int>(256);
-  ASSERT_EQ(ptr->use_count(), 1);
-  ASSERT_EQ(ptr->operator*().value(), 256);
-}
+// TEST(SharedPtrTest, MakeShared) {
+//   auto ptr = tmn_smart_ptr::MakeShared<int>(256);
+//   ASSERT_EQ(ptr->use_count(), 1);
+//   ASSERT_EQ(ptr->operator*().value(), 256);
+// }

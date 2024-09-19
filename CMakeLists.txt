@@ -12,6 +12,8 @@ add_compile_options(
     -Wextra
 )
 
+
+
 add_library ( exceptions SHARED
     src/Exceptions/Exception.cpp
     src/Exceptions/AllocException.cpp
@@ -23,6 +25,14 @@ add_library ( exceptions SHARED
 add_executable( main
     main.cpp
 )
+
+find_package(Curses REQUIRED)
+
+add_executable( gui_l1
+    gui/L1/main.cpp
+)
+
+target_link_libraries(gui_l1 ${CURSES_LIBRARY} exceptions)
 
 
 

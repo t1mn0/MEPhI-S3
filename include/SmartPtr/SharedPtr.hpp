@@ -38,10 +38,10 @@ private:
         U value;
     };
 
-    SharedPtr(ControlBlockForMakeShared<T>* control_block);
+    //SharedPtr(ControlBlockForMakeShared<T>* control_block);
 
-    template <typename U, typename... Args>
-    friend SharedPtr<U>* MakeShared(Args&&...);
+    // template <typename U, typename... Args>
+    // friend SharedPtr<U>* MakeShared(Args&&...);
 
 private:
 // Fields :
@@ -82,8 +82,8 @@ public:
 
 
 // MakeShared :
-template <typename T, typename... Args>
-SharedPtr<T>* MakeShared(Args&&... args);
+// template <typename T, typename... Args>
+// SharedPtr<T>* MakeShared(Args&&... args);
 
 
 }
