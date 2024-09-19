@@ -41,7 +41,7 @@ TEST(LoadTestSharedPtr, Сreation100by10){
         }
 
         auto end = std::chrono::high_resolution_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
         timers[i] = elapsed.count();
     }
 
@@ -65,12 +65,12 @@ TEST(LoadTestSharedPtr, Сreation100by10){
     double total_time = 0;
     std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
     for (int i = 0; i < rawptr_count; ++i){
-        std::cout << i + 1 << ") " << timers[i] << " microseconds (time of creation 100 sharedptr by 1 rawptr)" << std::endl;
+        std::cout << i + 1 << ") " << timers[i] << " nanoseconds (time of creation 100 sharedptr by 1 rawptr)" << std::endl;
         total_time += timers[i];
     }
     std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
-    std::cout << "Average time: " << avg_time << " microseconds" << std::endl;
+    std::cout << "Average time: " << avg_time << " nanoseconds" << std::endl;
     std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
-    std::cout << "Total time: " << total_time << " microseconds" << std::endl;
+    std::cout << "Total time: " << total_time << " nanoseconds" << std::endl;
     std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
 }
