@@ -54,7 +54,7 @@ void draw_ui(const std::vector<IntObject>& objects, int selected, bool first_com
         mvwprintw(stdscr, row / 2, (col - strlen(mesg)) / 2, "%s", mesg);
     }
 
-    mvprintw(row - 2, 0, "'^Q' Quit, '^R' RawPtr, '^S' SharedPtr, '^U' UniquePtr, '^D' DoSome");
+    mvprintw(row - 2, 0, "'^Q' Quit, '^R' RawPtr, '^S' SharedPtr, '^U' UniquePtr, '^D' CheckState");
     attron(COLOR_PAIR(2));
 
     for (size_t i = 0; i < objects.size(); ++i) {
@@ -141,10 +141,20 @@ void handle_keypress(int ch, int& selected, std::vector<IntObject>& objects, boo
         }
         case 4: { // Ctrl+D
             clear();
+
+            attron(COLOR_PAIR(1));
             mvprintw(0, 0, "Select an object to check state:");
+            attron(COLOR_PAIR(2));
             for (size_t i = 0; i < objects.size(); ++i) {
                 std::stringstream ss;
-                ss << (i + 1) << ". " << objects[i].type << " Pointer";
+                ss << (i + 1) << ". " << objects[i].type << " Pointer: ";
+                if (objects[i].type == "Raw") {
+                    ss << objects[i].raw_pointer << " (Value: " << *(objects[i].raw_pointer) << ")";
+                } else if (objects[i].type == "Shared") {
+                    ss << objects[i].shared_pointer.get() << " (Value: " << (*(objects[i].shared_pointer)).value() << ", Count: " << objects[i].shared_pointer.use_count() << ")";
+                } else if (objects[i].type == "Unique") {
+                    ss << objects[i].unique_pointer.get() << " (Value: " << (*(objects[i].unique_pointer)).value() << ")";
+                }
                 mvprintw(i + 1, 0, ss.str().c_str());
             }
             refresh();

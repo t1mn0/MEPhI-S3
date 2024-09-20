@@ -5,13 +5,14 @@ project(mephi-3 VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
+
 add_compile_options(
-    -Werror
+    #-Werror
 
     -Wall
     -Wextra
 )
-
 
 
 add_library ( exceptions SHARED
@@ -44,6 +45,8 @@ if(GTEST_FOUND)
     set(GTEST_LIBRARY "/usr/lib/libgtest.a") 
     set(GTEST_MAIN_LIBRARY "/usr/lib/libgtest_main.a")
 
+
+    
 
     enable_testing()
     add_executable(func_testing_uniqueptr test/src/FuncTestUniquePtr.cpp)
