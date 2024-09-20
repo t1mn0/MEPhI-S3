@@ -3,23 +3,22 @@
 #include "../../include/SmartPtr/SharedPtr.hpp"
 #include "../../include/Exceptions/Exception.hpp"
 
+
+
 namespace tmn_smart_ptr {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Constructors & assignment & conversion & destructors :
 
 template <typename T>
-SharedPtr<T>::SharedPtr() : ptr(nullptr), counter(new size_t(0)) { 
-    // или counter(nullptr)
-}
+SharedPtr<T>::SharedPtr() : ptr(nullptr), counter(new size_t(0)) { }
 
 template <typename T>
-SharedPtr<T>::SharedPtr(T* ptr) : ptr(ptr), counter(new size_t(1)) {
-}
+SharedPtr<T>::SharedPtr(T* ptr) : ptr(ptr), counter(new size_t(1)) { }
 
 template <typename T>
 SharedPtr<T>::SharedPtr(const SharedPtr& rhs) noexcept: ptr(rhs.ptr), counter(rhs.counter) {
-    if (counter != nullptr) {
+    if (counter != nullptr && ptr != nullptr) {
         ++(*counter);
     }
 }
@@ -156,18 +155,5 @@ bool SharedPtr<T>::unique() const noexcept {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-// MakeShared :
-
-// template <typename T, typename... Args>
-// SharedPtr<T>* MakeShared(Args&&... args) {
-//     auto* cb = new typename SharedPtr<T>::template ControlBlockForMakeShared<T>{T(std::forward<Args>(args)...)};
-//     SharedPtr<T>* sp = new SharedPtr<T>(cb);
-
-//     return sp;
-// }
 
 }

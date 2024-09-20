@@ -1,6 +1,8 @@
 #include "../../include/SmartPtr/UniquePtr.hpp"
 #include "../../include/Exceptions/Exception.hpp"
 
+
+
 namespace tmn_smart_ptr {
 
 //                                      GENERAL REALIZATION :
@@ -176,10 +178,6 @@ tmn::Optional<T> UniquePtr<T[], std::default_delete<T[]>>::operator[](std::size_
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // MakeUnique :
 
 template <typename T, typename... Args>
@@ -195,5 +193,7 @@ UniquePtr<T> make_unique(std::size_t size) {
     T* ptr = new T[size];
     return UniquePtr<T[], std::default_delete<T[]>()>(ptr);
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 }

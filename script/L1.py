@@ -1,6 +1,8 @@
 import re
 import matplotlib.pyplot as plt
 
+
+
 def analyze_results(filename):
     data = {
         "shared_creation": [],
@@ -22,6 +24,7 @@ def analyze_results(filename):
                 data["uniqueptr_creation"].append(int(match_uniqueptr.group(1)))
 
     return data
+
 
 
 def plot_data(data):
@@ -49,12 +52,9 @@ def plot_data(data):
     plt.show()
 
 
-def main():
+
+if __name__ == "__main__":
     filename = "../build/Testing/Temporary/LastTest.log"
     
     data = analyze_results(filename)
     plot_data(data)
-
-
-if __name__ == "__main__":
-    main()

@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "../../include/SmartPtr/UniquePtr.hpp"
 #include <string>
+
+#include "../../include/SmartPtr/UniquePtr.hpp"
+
 
 
 // TEST Constructors & assignment for GENERAL REALIZATION :

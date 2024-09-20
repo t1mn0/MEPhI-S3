@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "../../include/SmartPtr/SharedPtr.hpp"
 #include <string>
+
+#include "../../include/SmartPtr/SharedPtr.hpp"
+
 
 
 // TEST Constructors & assignment :

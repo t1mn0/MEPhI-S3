@@ -4,6 +4,8 @@
 
 #include "../../include/Optional/Optional.hpp"
 
+
+
 namespace tmn_smart_ptr {
 
 //                                      GENERAL REALIZATION :
@@ -17,11 +19,7 @@ private:
 
 public:
 // Using's :
-    // Типы с большой буквы
     using Pointer = T*;
-
-    //                                           "concept has_pointer"
-    // using Pointer = typename std::conditional<has_pointer<Deleter>, std::remove_reference_t<Deleter>::Pointer, T*>;
 
 public:
 // Constructors & assignment & conversion & destructors :
@@ -93,16 +91,8 @@ public:
     tmn::Optional<T> operator[](std::size_t i) const;
 };
 
-
-    // Функции с маленькой буквы
-
-// MakeUnique :
-template <typename T, typename... Args>
-UniquePtr<T> make_unique(Args&&... args);
-
-template <typename T>
-UniquePtr<T> make_unique(std::size_t size);
-
 }
+
+
 
 #include "../../src/SmartPtr/UniquePtr.tpp"
