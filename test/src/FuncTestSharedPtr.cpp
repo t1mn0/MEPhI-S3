@@ -29,7 +29,6 @@ TEST(SharedPtrTest, ConstructorAndCopy) {
   ASSERT_EQ(ptr_1.use_count(), 5);
   ASSERT_EQ(ptr_3.use_count(), 5);
   ASSERT_EQ(ptr_5.use_count(), 5);
-  delete raw_ptr;
 }
 
 TEST(SharedPtrTest, CopyAssignment) {
@@ -39,7 +38,6 @@ TEST(SharedPtrTest, CopyAssignment) {
   ptr_2 = ptr_1;
   ASSERT_EQ(ptr_1.get(), ptr_2.get());
   ASSERT_EQ((*ptr_1).value(), (*ptr_2).value());
-  delete raw_ptr;
 }
 
 TEST(SharedPtrTest, MoveConstructor) {
@@ -48,7 +46,6 @@ TEST(SharedPtrTest, MoveConstructor) {
   tmn_smart_ptr::SharedPtr<int> ptr_2(std::move(ptr_1));
   ASSERT_EQ(ptr_1.get(), nullptr); 
   ASSERT_EQ(ptr_2.get(), raw_ptr);
-  delete raw_ptr;
 }
 
 TEST(SharedPtrTest, MoveAssignment) {
@@ -58,7 +55,6 @@ TEST(SharedPtrTest, MoveAssignment) {
   ptr_2 = std::move(ptr_1);
   ASSERT_EQ(ptr_1.get(), nullptr);
   ASSERT_EQ(ptr_2.get(), raw_ptr);
-  delete raw_ptr;
 }
 
 
@@ -79,8 +75,6 @@ TEST(SharedPtrTest, Reset) {
   ASSERT_EQ(ptr_3.use_count(), 2);
   ASSERT_EQ(ptr_1.get(), raw_ptr2);
   ASSERT_EQ(ptr_3.get(), raw_ptr1);
-  delete raw_ptr1;
-  delete raw_ptr2;
 }
 
 TEST(SharedPtrTest, Swap) {
@@ -95,8 +89,6 @@ TEST(SharedPtrTest, Swap) {
   ASSERT_EQ(ptr_1.use_count(), 2);
   ASSERT_EQ(ptr_2.use_count(), 1);
   ASSERT_EQ(ptr_3.use_count(), 2);
-  delete raw_ptr1;
-  delete raw_ptr2;
 }
 
 
@@ -107,7 +99,6 @@ TEST(SharedPtrTest, BoolOperatorTrue) {
   int* raw_ptr = new int(10); 
   tmn_smart_ptr::SharedPtr<int> ptr(raw_ptr);
   ASSERT_TRUE(static_cast<bool>(ptr));
-  delete raw_ptr;
 }
 
 TEST(SharedPtrTest, BoolOperatorFalse) {
@@ -120,7 +111,6 @@ TEST(SharedPtrTest, DereferenceOperator) {
   tmn_smart_ptr::SharedPtr<int> ptr(raw_ptr);
   ASSERT_EQ((*ptr).value(), 10);
   ASSERT_EQ((*ptr).value(), *(ptr.get()));
-  delete raw_ptr;
 }
 
 TEST(SharedPtrTest, UseCount) {
@@ -133,7 +123,6 @@ TEST(SharedPtrTest, UseCount) {
   ASSERT_EQ(ptr2.use_count(), 4);
   ASSERT_EQ(ptr3.use_count(), 4);
   ASSERT_EQ(ptr4.use_count(), 4);
-  delete raw_ptr;
 }
 
 TEST(SharedPtrTest, Unique) {
@@ -143,5 +132,4 @@ TEST(SharedPtrTest, Unique) {
   tmn_smart_ptr::SharedPtr<int> ptr2(ptr1);
   ASSERT_FALSE(ptr1.unique());
   ASSERT_FALSE(ptr2.unique());
-  delete raw_ptr;
 }

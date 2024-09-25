@@ -70,7 +70,6 @@ TEST(TestUniquePtrGeneral, Release) {
   int* released_ptr = ptr.release();
   ASSERT_EQ(ptr.get(), nullptr);
   ASSERT_EQ(released_ptr, raw_ptr);
-  delete released_ptr;
 }
 
 TEST(TestUniquePtrGeneral, Reset) {
@@ -147,8 +146,6 @@ TEST(TestUniquePtrSpecial, Release) {
   int* raw_ptr = ptr.release();
   ASSERT_EQ(ptr.get(), nullptr);
   ASSERT_NE(raw_ptr, nullptr);
-
-  delete[] raw_ptr; 
 }
 
 TEST(TestUniquePtrSpecial, Reset) {
