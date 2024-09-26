@@ -1,4 +1,4 @@
-#include "../../include/Sequence/DynamicArray.hpp"
+#include "../../include/Sequence/ArraySequence.hpp"
 #include "../../include/Exceptions/LogicException.hpp"
 
 namespace tmn_sequence{
@@ -8,50 +8,50 @@ namespace tmn_sequence{
 
 template <typename T, class Allocator>
 template <bool isConst>
-DynamicArray<T, Allocator>::common_iterator<isConst>& 
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator=(const common_iterator<isConst>& other){
+ArraySequence<T, Allocator>::common_iterator<isConst>& 
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator=(const common_iterator<isConst>& other){
     ptr = other.ptr;
     return *this;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-typename DynamicArray<T, Allocator>::common_iterator<isConst>::conditional_ref
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator*() const {
+typename ArraySequence<T, Allocator>::common_iterator<isConst>::conditional_ref
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator*() const {
     return *ptr;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-typename DynamicArray<T, Allocator>::common_iterator<isConst>::conditional_ptr
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator->() const {
+typename ArraySequence<T, Allocator>::common_iterator<isConst>::conditional_ptr
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator->() const {
     return ptr;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-bool DynamicArray<T, Allocator>::common_iterator<isConst>::operator==(const common_iterator<isConst>& other) const {
+bool ArraySequence<T, Allocator>::common_iterator<isConst>::operator==(const common_iterator<isConst>& other) const {
     return ptr == other.ptr;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-bool DynamicArray<T, Allocator>::common_iterator<isConst>::operator!=(const common_iterator<isConst>& other) const {
+bool ArraySequence<T, Allocator>::common_iterator<isConst>::operator!=(const common_iterator<isConst>& other) const {
     return ptr != other.ptr;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-DynamicArray<T, Allocator>::common_iterator<isConst>& 
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator++() {
+ArraySequence<T, Allocator>::common_iterator<isConst>& 
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator++() {
     ++ptr;
     return *this;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-DynamicArray<T, Allocator>::common_iterator<isConst> 
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator++(int) {
+ArraySequence<T, Allocator>::common_iterator<isConst> 
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator++(int) {
    common_iterator<isConst> tmp(*this);
    ++ptr;
    return tmp;
@@ -59,16 +59,16 @@ DynamicArray<T, Allocator>::common_iterator<isConst>::operator++(int) {
 
 template <typename T, class Allocator>
 template <bool isConst>
-DynamicArray<T, Allocator>::common_iterator<isConst>& 
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator--() {
+ArraySequence<T, Allocator>::common_iterator<isConst>& 
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator--() {
     --ptr;
     return *this;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-DynamicArray<T, Allocator>::common_iterator<isConst> 
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator--(int) {
+ArraySequence<T, Allocator>::common_iterator<isConst> 
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator--(int) {
    common_iterator<isConst> tmp(*this);
    --ptr;
    return tmp;
@@ -76,62 +76,62 @@ DynamicArray<T, Allocator>::common_iterator<isConst>::operator--(int) {
 
 template <typename T, class Allocator>
 template <bool isConst>
-DynamicArray<T, Allocator>::common_iterator<isConst> 
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator+(DynamicArray<T, Allocator>::common_iterator<isConst>::difference_type n) const {
+ArraySequence<T, Allocator>::common_iterator<isConst> 
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator+(ArraySequence<T, Allocator>::common_iterator<isConst>::difference_type n) const {
    return common_iterator<isConst>(ptr + n);
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-DynamicArray<T, Allocator>::common_iterator<isConst> 
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator-(DynamicArray<T, Allocator>::common_iterator<isConst>::difference_type n) const {
+ArraySequence<T, Allocator>::common_iterator<isConst> 
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator-(ArraySequence<T, Allocator>::common_iterator<isConst>::difference_type n) const {
    return common_iterator<isConst>(ptr - n);
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-typename DynamicArray<T, Allocator>::common_iterator<isConst>::difference_type
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator-(const DynamicArray<T, Allocator>::common_iterator<isConst>& other) const {
+typename ArraySequence<T, Allocator>::common_iterator<isConst>::difference_type
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator-(const ArraySequence<T, Allocator>::common_iterator<isConst>& other) const {
    return ptr - other.ptr;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-DynamicArray<T, Allocator>::common_iterator<isConst>& 
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator+=(DynamicArray<T, Allocator>::common_iterator<isConst>::difference_type n) {
+ArraySequence<T, Allocator>::common_iterator<isConst>& 
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator+=(ArraySequence<T, Allocator>::common_iterator<isConst>::difference_type n) {
     ptr += n;
     return *this;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-DynamicArray<T, Allocator>::common_iterator<isConst>& 
-DynamicArray<T, Allocator>::common_iterator<isConst>::operator-=(DynamicArray<T, Allocator>::common_iterator<isConst>::difference_type n) {
+ArraySequence<T, Allocator>::common_iterator<isConst>& 
+ArraySequence<T, Allocator>::common_iterator<isConst>::operator-=(ArraySequence<T, Allocator>::common_iterator<isConst>::difference_type n) {
     ptr -= n;
     return *this;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-bool DynamicArray<T, Allocator>::common_iterator<isConst>::operator<(const common_iterator<isConst>& other) const {
+bool ArraySequence<T, Allocator>::common_iterator<isConst>::operator<(const common_iterator<isConst>& other) const {
     return ptr < other.ptr;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-bool DynamicArray<T, Allocator>::common_iterator<isConst>::operator>(const common_iterator<isConst>& other) const {
+bool ArraySequence<T, Allocator>::common_iterator<isConst>::operator>(const common_iterator<isConst>& other) const {
     return ptr > other.ptr;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-bool DynamicArray<T, Allocator>::common_iterator<isConst>::operator<=(const common_iterator<isConst>& other) const {
+bool ArraySequence<T, Allocator>::common_iterator<isConst>::operator<=(const common_iterator<isConst>& other) const {
     return ptr <= other.ptr;
 }
 
 template <typename T, class Allocator>
 template <bool isConst>
-bool DynamicArray<T, Allocator>::common_iterator<isConst>::operator>=(const common_iterator<isConst>& other) const {
+bool ArraySequence<T, Allocator>::common_iterator<isConst>::operator>=(const common_iterator<isConst>& other) const {
     return ptr > other.ptr;
 }
 
@@ -139,13 +139,13 @@ bool DynamicArray<T, Allocator>::common_iterator<isConst>::operator>=(const comm
 // Constructors & assignment & conversion :
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>::DynamicArray() : _capacity(4) {
+ArraySequence<T, Allocator>::ArraySequence() : _capacity(4) {
     //array = reinterpret_cast<T*>(new int8_t[_capacity * sizeof(T)]);
     array = allocator_traits::allocate(_alloc, _capacity);
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>::DynamicArray(std::size_t _size) : _size(_size), _capacity(_size * 2) {
+ArraySequence<T, Allocator>::ArraySequence(std::size_t _size) : _size(_size), _capacity(_size * 2) {
     //array = reinterpret_cast<T*>(new int8_t[_capacity * sizeof(T)]);
     array = allocator_traits::allocate(_alloc, _capacity);
     std::size_t i = 0;
@@ -167,7 +167,7 @@ DynamicArray<T, Allocator>::DynamicArray(std::size_t _size) : _size(_size), _cap
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>::DynamicArray(std::size_t _size, const T& default_element) : _size(_size), _capacity(_size * 2) {
+ArraySequence<T, Allocator>::ArraySequence(std::size_t _size, const T& default_element) : _size(_size), _capacity(_size * 2) {
     //array = reinterpret_cast<T*>(new int8_t[_capacity * sizeof(T)]);
     array = allocator_traits::allocate(_alloc, _capacity);
     std::size_t i = 0;
@@ -189,7 +189,7 @@ DynamicArray<T, Allocator>::DynamicArray(std::size_t _size, const T& default_ele
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>::DynamicArray(const DynamicArray<T, Allocator>& other) : _size(other._size), _capacity(other._capacity){
+ArraySequence<T, Allocator>::ArraySequence(const ArraySequence<T, Allocator>& other) : _size(other._size), _capacity(other._capacity){
     // array = reinterpret_cast<T*>(new int8_t[_capacity * sizeof(T)]);
     array = allocator_traits::allocate(_alloc, _capacity);
     std::size_t i = 0;
@@ -211,7 +211,7 @@ DynamicArray<T, Allocator>::DynamicArray(const DynamicArray<T, Allocator>& other
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>::DynamicArray(DynamicArray<T, Allocator>&& other) noexcept : 
+ArraySequence<T, Allocator>::ArraySequence(ArraySequence<T, Allocator>&& other) noexcept : 
     array(other.array), _size(other.size()), _capacity(other.capacity()), _alloc(std::move(other._alloc)) {
         
     other.array = nullptr; 
@@ -220,7 +220,7 @@ DynamicArray<T, Allocator>::DynamicArray(DynamicArray<T, Allocator>&& other) noe
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>::DynamicArray(std::initializer_list<T> lst) : _size(lst.size()), _capacity(_size * 2){
+ArraySequence<T, Allocator>::ArraySequence(std::initializer_list<T> lst) : _size(lst.size()), _capacity(_size * 2){
     // array = reinterpret_cast<T*>(new int8_t[_capacity * sizeof(T)]);
     array = allocator_traits::allocate(_alloc, _capacity);
     std::size_t i = 0;
@@ -243,14 +243,14 @@ DynamicArray<T, Allocator>::DynamicArray(std::initializer_list<T> lst) : _size(l
 }
 
 template <typename T, class Allocator>
-void DynamicArray<T, Allocator>::swap(DynamicArray<T, Allocator>& other){
+void ArraySequence<T, Allocator>::swap(ArraySequence<T, Allocator>& other){
     std::swap(array, other.array);
     std::swap(_size, other._size);
     std::swap(_capacity, other._capacity);
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::operator=(const DynamicArray<T, Allocator>& other){
+ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::operator=(const ArraySequence<T, Allocator>& other){
     Allocator new_alloc = allocator_traits::propagate_on_container_copy_assignment::value ? other._alloc : _alloc;
 
     // T* new_array = reinterpret_cast<T*>(new int8_t[_capacity * sizeof(T)]);
@@ -285,7 +285,7 @@ DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::operator=(const DynamicA
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>::~DynamicArray(){
+ArraySequence<T, Allocator>::~ArraySequence(){
     for (std::size_t i = 0; i < _size; ++i) {
         // (array + i)->~T();
         allocator_traits::destroy(_alloc, array + i);
@@ -299,22 +299,22 @@ DynamicArray<T, Allocator>::~DynamicArray(){
 // Capacity & size :
 
 template <typename T, class Allocator>
-std::size_t DynamicArray<T, Allocator>::size() const noexcept {
+std::size_t ArraySequence<T, Allocator>::size() const noexcept {
     return _size;
 }
 
 template <typename T, class Allocator>
-std::size_t DynamicArray<T, Allocator>::capacity() const noexcept {
+std::size_t ArraySequence<T, Allocator>::capacity() const noexcept {
     return _capacity;
 }
 
 template <typename T, class Allocator>
-bool DynamicArray<T, Allocator>::empty() const noexcept{
+bool ArraySequence<T, Allocator>::empty() const noexcept{
     return _size == 0;
 }
 
 template <typename T, class Allocator>
-void DynamicArray<T, Allocator>::reserve(std::size_t new_capacity){
+void ArraySequence<T, Allocator>::reserve(std::size_t new_capacity){
     if (new_capacity <= _capacity){ return; }
 
     // T* new_array = reinterpret_cast<T*>(new int8_t[new_capacity * sizeof(T)]); 
@@ -349,7 +349,7 @@ void DynamicArray<T, Allocator>::reserve(std::size_t new_capacity){
 }
 
 template <typename T, class Allocator>
-void DynamicArray<T, Allocator>::resize(std::size_t new_size, const T& value){
+void ArraySequence<T, Allocator>::resize(std::size_t new_size, const T& value){
     if (new_size > _capacity){
         reserve(new_size);
     }
@@ -363,7 +363,7 @@ void DynamicArray<T, Allocator>::resize(std::size_t new_size, const T& value){
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::push_back(const T& value){
+ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::push_back(const T& value){
     if (_size == _capacity){
         reserve(_capacity > 0 ? 2 * _capacity : 4);
     }
@@ -375,7 +375,7 @@ DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::push_back(const T& value
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::push_back(T&& value){
+ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::push_back(T&& value){
     if (_size == _capacity){
         reserve(_capacity > 0 ? 2 * _capacity : 4);
     }
@@ -386,7 +386,7 @@ DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::push_back(T&& value){
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::pop_back(){
+ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::pop_back(){
     if (_size == 0) throw tmn_exception::LogicException("Attempt to delete from an empty dynamic array sequence");
 
     // (array + _size - 1)->~T();
@@ -397,7 +397,7 @@ DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::pop_back(){
 
 template <typename T, class Allocator>
 template <typename... Args>
-void DynamicArray<T, Allocator>::emplace_back(Args... args) {
+void ArraySequence<T, Allocator>::emplace_back(Args... args) {
     if (_size == _capacity){
         reserve(_capacity > 0 ? 2 * _capacity : 4);
     }
@@ -407,7 +407,7 @@ void DynamicArray<T, Allocator>::emplace_back(Args... args) {
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::clear() {
+ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::clear() {
     for (std::size_t i = 0; i < _size; ++i) {
         // (array + i)->~T(); 
         allocator_traits::destroy(_alloc, array + i);
@@ -421,27 +421,27 @@ DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::clear() {
 
 
 template <typename T, class Allocator>
-const T& DynamicArray<T, Allocator>::front() const {
+const T& ArraySequence<T, Allocator>::front() const {
     return get(0);
 }
 
 template <typename T, class Allocator>
-T& DynamicArray<T, Allocator>::front() {
+T& ArraySequence<T, Allocator>::front() {
     return get(0);
 }
 
 template <typename T, class Allocator>
-const T& DynamicArray<T, Allocator>::back() const {
+const T& ArraySequence<T, Allocator>::back() const {
     return get(_size - 1);
 }
 
 template <typename T, class Allocator>
-T& DynamicArray<T, Allocator>::back() {
+T& ArraySequence<T, Allocator>::back() {
     return get(_size - 1);
 }
 
 template <typename T, class Allocator>
-DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::set(std::size_t index, const T& item) {
+ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::set(std::size_t index, const T& item) {
     if (index >= _size) {
         throw tmn_exception::LogicException("Accessing an element by out of range index in dynamic array sequence");
     }
@@ -450,7 +450,7 @@ DynamicArray<T, Allocator>& DynamicArray<T, Allocator>::set(std::size_t index, c
 }
 
 template <typename T, class Allocator>
-T& DynamicArray<T, Allocator>::get(std::size_t index) {
+T& ArraySequence<T, Allocator>::get(std::size_t index) {
     if (index >= _size) {
         throw tmn_exception::LogicException("Accessing an element by out of range index in dynamic array sequence");
     }
@@ -459,7 +459,7 @@ T& DynamicArray<T, Allocator>::get(std::size_t index) {
 }
 
 template <typename T, class Allocator>
-const T& DynamicArray<T, Allocator>::get(std::size_t index) const {
+const T& ArraySequence<T, Allocator>::get(std::size_t index) const {
     if (index >= _size) {
         throw tmn_exception::LogicException("Accessing an element by out of range index in dynamic array sequence");
     }
@@ -468,22 +468,22 @@ const T& DynamicArray<T, Allocator>::get(std::size_t index) const {
 }
 
 template <typename T, class Allocator>
-T& DynamicArray<T, Allocator>::operator[](std::size_t index) noexcept{
+T& ArraySequence<T, Allocator>::operator[](std::size_t index) noexcept{
     return array[index];
 }
 
 template <typename T, class Allocator>
-const T& DynamicArray<T, Allocator>::operator[](std::size_t index) const noexcept{
+const T& ArraySequence<T, Allocator>::operator[](std::size_t index) const noexcept{
     return array[index];
 }
 
 template <typename T, class Allocator>
-const T* DynamicArray<T, Allocator>::data() const noexcept{
+const T* ArraySequence<T, Allocator>::data() const noexcept{
     return array;
 }
 
 template <typename T, class Allocator>
-T* DynamicArray<T, Allocator>::data() noexcept{
+T* ArraySequence<T, Allocator>::data() noexcept{
     return array;
 }
 
@@ -491,49 +491,49 @@ T* DynamicArray<T, Allocator>::data() noexcept{
 // Iterator methods :
 
 template <typename T, class Allocator>
-typename DynamicArray<T, Allocator>::iterator DynamicArray<T, Allocator>::begin() noexcept {
+typename ArraySequence<T, Allocator>::iterator ArraySequence<T, Allocator>::begin() noexcept {
     return iterator(array);
 }
 
 template <typename T, class Allocator>
-typename DynamicArray<T, Allocator>::const_iterator DynamicArray<T, Allocator>::begin() const noexcept {
+typename ArraySequence<T, Allocator>::const_iterator ArraySequence<T, Allocator>::begin() const noexcept {
     return const_iterator(array);
 }
 
 template <typename T, class Allocator>
-typename DynamicArray<T, Allocator>::const_iterator DynamicArray<T, Allocator>::cbegin() const noexcept {
+typename ArraySequence<T, Allocator>::const_iterator ArraySequence<T, Allocator>::cbegin() const noexcept {
     return const_iterator(array);
 }
 
 template <typename T, class Allocator>
-typename DynamicArray<T, Allocator>::iterator DynamicArray<T, Allocator>::end() noexcept {
+typename ArraySequence<T, Allocator>::iterator ArraySequence<T, Allocator>::end() noexcept {
     return iterator(array + _size);
 }
 
 template <typename T, class Allocator>
-typename DynamicArray<T, Allocator>::const_iterator DynamicArray<T, Allocator>::end() const noexcept {
+typename ArraySequence<T, Allocator>::const_iterator ArraySequence<T, Allocator>::end() const noexcept {
     return const_iterator(array + _size);
 }
 
 template <typename T, class Allocator>
-typename DynamicArray<T, Allocator>::const_iterator DynamicArray<T, Allocator>::cend() const noexcept {
+typename ArraySequence<T, Allocator>::const_iterator ArraySequence<T, Allocator>::cend() const noexcept {
     return const_iterator(array + _size);
 }
 
 template <typename T, class Allocator>
-typename tmn_iterator::reverse_iterator<typename DynamicArray<T, Allocator>::iterator> DynamicArray<T, Allocator>::rbegin() noexcept {
+typename tmn_iterator::reverse_iterator<typename ArraySequence<T, Allocator>::iterator> ArraySequence<T, Allocator>::rbegin() noexcept {
     iterator iter(array + _size);
     return tmn_iterator::reverse_iterator<iterator>(iter);
 }
 
 template <typename T, class Allocator>
-typename tmn_iterator::reverse_iterator<typename DynamicArray<T, Allocator>::iterator> DynamicArray<T, Allocator>::rend() noexcept {
+typename tmn_iterator::reverse_iterator<typename ArraySequence<T, Allocator>::iterator> ArraySequence<T, Allocator>::rend() noexcept {
     iterator iter(array);
     return tmn_iterator::reverse_iterator<iterator>(iter);
 }
 
 template <typename T, class Allocator>
-typename DynamicArray<T, Allocator>::iterator DynamicArray<T, Allocator>::insert(iterator pos, const T& value) {
+typename ArraySequence<T, Allocator>::iterator ArraySequence<T, Allocator>::insert(iterator pos, const T& value) {
     if (_size == _capacity) {
         reserve(_capacity * 2);
     }
@@ -549,7 +549,7 @@ typename DynamicArray<T, Allocator>::iterator DynamicArray<T, Allocator>::insert
 }
 
 template <typename T, class Allocator>
-typename DynamicArray<T, Allocator>::iterator DynamicArray<T, Allocator>::insert(iterator pos, size_type count, const T& value) {
+typename ArraySequence<T, Allocator>::iterator ArraySequence<T, Allocator>::insert(iterator pos, size_type count, const T& value) {
     if (_size == _capacity) {
         reserve(_capacity * 2);
     }
@@ -567,7 +567,7 @@ typename DynamicArray<T, Allocator>::iterator DynamicArray<T, Allocator>::insert
 }
 
 template <typename T, class Allocator>
-typename DynamicArray<T, Allocator>::iterator DynamicArray<T, Allocator>::erase(iterator pos) {
+typename ArraySequence<T, Allocator>::iterator ArraySequence<T, Allocator>::erase(iterator pos) {
     std::size_t index = pos - begin();
     for (std::size_t i = index; i < _size - 1; ++i) {
         // new (array + i) T(*(array + i + 1));

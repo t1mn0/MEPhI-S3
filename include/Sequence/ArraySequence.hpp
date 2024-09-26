@@ -12,7 +12,7 @@
 namespace tmn_sequence {
 
 template <typename T, class Allocator = std::allocator<T>>
-class DynamicArray {
+class ArraySequence {
 private:
     T* array = nullptr;
     std::size_t _size = 0;
@@ -77,17 +77,17 @@ public:
     using allocator_traits = std::allocator_traits<Allocator>;
 
     // Constructors & assignment & conversion :
-    DynamicArray();
-    explicit DynamicArray(std::size_t _size);
-    explicit DynamicArray(std::size_t _size, const T& default_element);
-    DynamicArray(const DynamicArray<T, Allocator>& other);
-    DynamicArray(DynamicArray<T, Allocator>&& other) noexcept;
-    DynamicArray(std::initializer_list<T> lst);
+    ArraySequence();
+    explicit ArraySequence(std::size_t _size);
+    explicit ArraySequence(std::size_t _size, const T& default_element);
+    ArraySequence(const ArraySequence<T, Allocator>& other);
+    ArraySequence(ArraySequence<T, Allocator>&& other) noexcept;
+    ArraySequence(std::initializer_list<T> lst);
 
-    void swap(DynamicArray<T, Allocator>& other);
-    DynamicArray<T, Allocator>& operator=(const DynamicArray<T, Allocator>& other);
+    void swap(ArraySequence<T, Allocator>& other);
+    ArraySequence<T, Allocator>& operator=(const ArraySequence<T, Allocator>& other);
 
-    ~DynamicArray();
+    ~ArraySequence();
 
     // Capacity & size :
     std::size_t size() const noexcept;
@@ -96,11 +96,11 @@ public:
 
     void reserve(std::size_t new_capacity);
     void resize(std::size_t new_size, const T& value = T());
-    DynamicArray<T, Allocator>& clear();
+    ArraySequence<T, Allocator>& clear();
 
-    DynamicArray<T, Allocator>& push_back(const T& value);
-    DynamicArray<T, Allocator>& push_back(T&& value);
-    DynamicArray<T, Allocator>& pop_back();
+    ArraySequence<T, Allocator>& push_back(const T& value);
+    ArraySequence<T, Allocator>& push_back(T&& value);
+    ArraySequence<T, Allocator>& pop_back();
 
     template <typename... Args>
     void emplace_back(Args... args);
@@ -110,7 +110,7 @@ public:
     T& front();
     const T& back() const;
     T& back();
-    DynamicArray<T, Allocator>& set(std::size_t index, const T& item);
+    ArraySequence<T, Allocator>& set(std::size_t index, const T& item);
     T& get(std::size_t index);
     const T& get(std::size_t index) const;
     T& operator[](std::size_t index) noexcept;
@@ -136,4 +136,4 @@ public:
 
 }
 
-#include "../../src/Sequence/DynamicArray.tpp"
+#include "../../src/Sequence/ArraySequence.tpp"

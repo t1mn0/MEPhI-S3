@@ -12,7 +12,7 @@
 namespace tmn_sequence{
 
 template <typename T, class Allocator = std::allocator<T>>
-class List{
+class ListSequence{
 private:
     // Support structures :
     struct Node {
@@ -32,7 +32,7 @@ private:
     struct common_iterator{
     public:
         template <typename U, class Allocator2> 
-        friend class List;
+        friend class ListSequence;
         
         using conditional_layer_ptr = tmn::conditional_t<isConst, const Node*, Node*>;
         using conditional_ptr = tmn::conditional_t<isConst, const T*, T*>;
@@ -86,35 +86,35 @@ public:
     using allocator_traits = std::allocator_traits<Allocator>;
 
     // Constructors & assignment & conversion :
-    List() : dummy_node(new Node(T())) {}
-    explicit List(std::size_t _size);
-    explicit List(std::size_t _size, const T& default_element);
-    List(const List<T, Allocator>& other);
-    List(std::initializer_list<T> lst);
+    ListSequence() : dummy_node(new Node(T())) {}
+    explicit ListSequence(std::size_t _size);
+    explicit ListSequence(std::size_t _size, const T& default_element);
+    ListSequence(const ListSequence<T, Allocator>& other);
+    ListSequence(std::initializer_list<T> lst);
 
-    void swap(List<T, Allocator>& other);
-    List<T, Allocator>& operator=(const List<T, Allocator>& other);
+    void swap(ListSequence<T, Allocator>& other);
+    ListSequence<T, Allocator>& operator=(const ListSequence<T, Allocator>& other);
 
-    ~List();
+    ~ListSequence();
 
     // Capacity & size :
     std::size_t size() const noexcept;
     bool empty() const noexcept;
 
     void resize(std::size_t new_size, const T& value = T());
-    List<T, Allocator>& clear();
+    ListSequence<T, Allocator>& clear();
 
-    List<T, Allocator>& push_front(const T& value);
-    List<T, Allocator>& push_back(const T& value);
-    List<T, Allocator>& pop_front();
-    List<T, Allocator>& pop_back();
+    ListSequence<T, Allocator>& push_front(const T& value);
+    ListSequence<T, Allocator>& push_back(const T& value);
+    ListSequence<T, Allocator>& pop_front();
+    ListSequence<T, Allocator>& pop_back();
 
     // Element access methods :
     const T& front() const;
     T& front();
     const T& back() const;
     T& back();
-    List<T, Allocator>& set(std::size_t index, const T& item);
+    ListSequence<T, Allocator>& set(std::size_t index, const T& item);
     T& get(std::size_t index);
     const T& get(std::size_t index) const;
     T& operator[](std::size_t index);
@@ -135,9 +135,9 @@ public:
     iterator erase(iterator pos);
 
     // Other modifiers :
-    void merge(List<T, Allocator>& other);
+    void merge(ListSequence<T, Allocator>& other);
 };
 
 }
 
-#include "../../src/Sequence/List.tpp"
+#include "../../src/Sequence/ListSequence.tpp"
