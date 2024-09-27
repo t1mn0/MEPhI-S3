@@ -2,33 +2,45 @@
 
 #include <cstdint>
 #include <memory>
+#include <concepts>
 
 #include "../Iterator/Iterator.hpp"
 #include "../Pair/Pair.hpp"
+#include "../Optional/Optional.hpp"
 #include "../tmn_strategy.hpp"
 #include "../tmn.hpp"
 
 
 
+template <typename T>
+concept EqualityComparable = requires(T a, T b) {
+  { a == b } -> std::convertible_to<bool>;
+  { a != b } -> std::convertible_to<bool>;
+};
+
+
+
 namespace tmn_associative {
 
-template <class Key, class Value, 
-    class Allocator = std::allocator<tmn::Pair<const Key, Value>>,
-    class CollisionStrategy = tmn_strategy::SeparateChaining>
+
+
+template <class Key, class Value, class CollisionStrategy = tmn_strategy::SeparateChaining<Key, Value>>
+requires EqualityComparable<Key>
+
 class HashTable {
 private:
     // Support structures :
+    // TODO : проработать копирование и создание
     struct Node {
-        Key key;
-        Value value;
+        tmn::Pair<const Key, Value> pair;
 
         Node* next = nullptr;
         Node* prev = nullptr;
 
+        std::size_t index = 0;
         bool isBucket = false;
 
-        Node(const Key& key, const T& value) : key(key), value(value){}
-        Node(const Key& key, const T& value, Node* next, Node* prev) : key(key), value(value), next(next), prev(prev) {}
+        Node(const tmn::Pair<const Key, Value>& other) : pair(other) {}
     };
 
     template <bool isConst>
@@ -38,11 +50,11 @@ private:
         using conditional_ptr = tmn::conditional_t<isConst, const tmn::Pair<const Key, Value>*, tmn::Pair<const Key, Value>*>;
         using conditional_ref = tmn::conditional_t<isConst, const tmn::Pair<const Key, Value>&, tmn::Pair<const Key, Value>&>;
         using iterator_category	= tmn_iterator::forward_iterator_tag;
-        using value_type = Node;
-        using pointer = Node*;
-        using const_pointer = const Node*;
-        using reference = Node&;
-        using const_reference = const Node&;
+        using value_type = tmn::Pair<const Key, Value>;
+        using pointer = tmn::Pair<const Key, Value>*;
+        using const_pointer = const tmn::Pair<const Key, Value>*;
+        using reference = tmn::Pair<const Key, Value>&;
+        using const_reference = const tmn::Pair<const Key, Value>&;
     
     private:
         conditional_layer_ptr ptr;
@@ -72,84 +84,98 @@ private:
 private:
     // Fields :
     Node** _storage = nullptr;
-    std::size_t _storage_size = 0;
     std::size_t _size = 0;
-    std::size_t _buffer_size = 4096;
+    std::size_t _buffer_size = 256;
     float _max_load_factor = 0.25;
-    Allocator _alloc;
+
+    std::allocator<tmn::Pair<const Key, Value>> _alloc_pair;
+    std::allocator<Node> _alloc_node;
 
 public:
     // Using's :
     using key_type = Key;
     using mapped_type = Value;
     using value_type = tmn::Pair<const Key, Value>;
-    using reference = value_type&;
-    using const_reference = const value_type&;
-    using size_type = std::size_t;
     using iterator = common_iterator<false>;
     using const_iterator = common_iterator<true>;
-    using allocator_traits = std::allocator_traits<Allocator>;
+    using allocator_traits_pair = std::allocator_traits<std::allocator<tmn::Pair<const Key, Value>>;
+    using allocator_traits_node = std::allocator_traits<std::allocator<Node>>;
 
     // Constructors & assignment & conversion :
     HashTable();
-    explicit HashTable(size_type bucket_count);
-    HashTable(const HashTable<Key, Value, Allocator, CollisionStrategy>& other);
-    HashTable(HashTable<Key, Value, Allocator, CollisionStrategy>&& other);
+    explicit HashTable(std::size_t node_count);
 
-    void swap(HashTable<Key, Value, Allocator, CollisionStrategy>& other);
-    auto operator=(const HashTable<Key, Value, Allocator, CollisionStrategy>& other)
-        -> HashTable<Key, Value, Allocator, CollisionStrategy>&;
+    template <typename OtherCollisionStrategy>
+    HashTable(const HashTable<Key, Value, OtherCollisionStrategy>& other);
+
+    // template <typename OtherCollisionStrategy>
+    // HashTable(HashTable<Key, Value, OtherCollisionStrategy>&& other);
+
+    // HashTable(std::initializer_list<tmn::Pair<Key, Value>> lst);
+
+    // void swap(HashTable<Key, Value, CollisionStrategy>& other);
+    // auto operator=(const HashTable<Key, Value, CollisionStrategy>& other)
+    //     -> HashTable<Key, Value, CollisionStrategy>&;
 
     ~HashTable();
 
-
-    // Capacity & size :
+    // Capacity & size & get fields:
     std::size_t size() const noexcept;
+    std::size_t buffer_size() const noexcept;
     bool empty() const noexcept;
+    float avg_load_factor() const;
+    std::size_t max_load_factor() const;
 
     // Modifiers :
-    HashTable<Key, Value, Allocator, CollisionStrategy>& insert(const value_type& value);
-    HashTable<Key, Value, Allocator, CollisionStrategy>& insert(value_type&& value);
+    HashTable<Key, Value, CollisionStrategy>& insert(const value_type& value);
+    //HashTable<Key, Value, CollisionStrategy>& insert(value_type&& value);
 
-    template<class... Args>
-    HashTable<Key, Value, Allocator, CollisionStrategy>& emplace(Args&&... args);
+    //template<class... Args>
+    //HashTable<Key, Value, CollisionStrategy>& emplace(Args&&... args);
 
-    HashTable<Key, Value, Allocator, CollisionStrategy>& erase(const Key& key);
+    HashTable<Key, Value, CollisionStrategy>& erase(const Key& key);
     
-    template<class K>
-    HashTable<Key, Value, Allocator, CollisionStrategy>& erase(K&& x);
+    //template<class K>
+    //HashTable<Key, Value, CollisionStrategy>& erase(K&& x);
 
-    HashTable<Key, Value, Allocator, CollisionStrategy>& clear() noexcept;
+    HashTable<Key, Value, CollisionStrategy>& clear() noexcept;
 
     // Element access methods :
-    T& get(const Key& key);
-    const T& get(const Key& key) const;
+    Value& get(const Key& key);
+    //const Value& get(const Key& key) const;
 
-    T& operator[](const Key& key);
-    T& operator[](Key&& key);
+    // tmn::Optional<Value> operator[](const Key& key) const noexcept;
+    // tmn::Optional<Value>& operator[](Key&& key) noexcept;
 
-    size_type count(const Key& key) const;
+    //std::size_t count(const Key& key) const;
 
     bool contains(const Key& key) const;
 
+    //tmn::Optional<tmn::Pair<Key*, std::size_t>*> keys() const;
+    //tmn::Optional<tmn::Pair<Value*, std::size_t>*> value() const;
+
     // Iterator methods :
-    iterator begin() noexcept;
-    const_iterator begin() const noexcept;
-    const_iterator cbegin() const noexcept;  
-    iterator end() noexcept;
-    const_iterator end() const noexcept;
-    const_iterator cend() const noexcept;
+    // iterator begin() noexcept;
+    // const_iterator begin() const noexcept;
+    // const_iterator cbegin() const noexcept;  
+    // iterator end() noexcept;
+    // const_iterator end() const noexcept;
+    // const_iterator cend() const noexcept;
 
     // Hash policy :
-    float avg_load_factor() const;
-    size_type max_load_factor() const;
-    void rehash(size_type count);
-	void reserve(size_type count);
+    // void rehash(size_type count);
+	// void reserve(size_type count);
 
     // Buckets :
-    size_type bucket_count() const;
-    size_type bucket_size(size_type n) const;
-    size_type bucket(const Key& key) const;
+    // size_type bucket_count() const;
+    // size_type bucket_size(size_type n) const;
+    // size_type bucket(const Key& key) const;
 };
 
+
+
 }
+
+
+
+#include "../../src/Associative/HashTable.tpp"
