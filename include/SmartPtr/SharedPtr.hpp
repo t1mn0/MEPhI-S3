@@ -33,7 +33,7 @@ public:
     void swap(SharedPtr<T>& rhs) noexcept;
 
 // Observers :
-    T* get() const noexcept;
+    const T* get() const noexcept;
     explicit operator bool() const noexcept;
     tmn::Optional<T> operator*() const;
     T* operator->() const noexcept;

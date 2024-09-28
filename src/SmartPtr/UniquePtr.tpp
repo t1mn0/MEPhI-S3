@@ -64,9 +64,7 @@ void UniquePtr<T, Deleter>::swap(UniquePtr<T, Deleter>& rhs) noexcept {
 // Observers :
 
 template <typename T, typename Deleter>
-auto UniquePtr<T, Deleter>::get() const noexcept 
-    -> UniquePtr<T, Deleter>::Pointer 
-{
+const UniquePtr<T, Deleter>::Pointer  UniquePtr<T, Deleter>::get() const noexcept {
     return ptr;
 }
 
@@ -158,7 +156,7 @@ void UniquePtr<T[], std::default_delete<T[]>>::swap(UniquePtr<T[], std::default_
 // Observers :
 
 template <typename T>
-T* UniquePtr<T[], std::default_delete<T[]>>::get() const noexcept {
+const T* UniquePtr<T[], std::default_delete<T[]>>::get() const noexcept {
     return ptr;
 }
 

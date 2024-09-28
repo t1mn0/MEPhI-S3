@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../../include/SmartPtr/SharedPtr.hpp"
+#include "../../../include/SmartPtr/SharedPtr.hpp"
 
 
 

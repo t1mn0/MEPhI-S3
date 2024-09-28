@@ -114,7 +114,7 @@ void SharedPtr<T>::swap(SharedPtr<T>& rhs) noexcept {
 // Observers :
 
 template <typename T>
-T* SharedPtr<T>::get() const noexcept {
+const T* SharedPtr<T>::get() const noexcept {
     return ptr;
 }
 

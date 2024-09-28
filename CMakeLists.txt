@@ -49,10 +49,10 @@ if(GTEST_FOUND)
     
 
     enable_testing()
-    add_executable(func_testing_uniqueptr test/src/FuncTestUniquePtr.cpp)
-    add_executable(func_testing_sharedptr test/src/FuncTestSharedPtr.cpp)
+    add_executable(func_testing_uniqueptr test/src/SmartPtr/FuncTestUniquePtr.cpp)
+    add_executable(func_testing_sharedptr test/src/SmartPtr/FuncTestSharedPtr.cpp)
 
-    add_executable(load_testing_uniqueptr test/src/LoadTestUniquePtr.cpp)
+    add_executable(load_testing_uniqueptr test/src/SmartPtr/LoadTestUniquePtr.cpp)
 
     target_link_libraries(func_testing_uniqueptr GTest::gtest GTest::gtest_main exceptions)
     target_link_libraries(func_testing_sharedptr GTest::gtest GTest::gtest_main exceptions)

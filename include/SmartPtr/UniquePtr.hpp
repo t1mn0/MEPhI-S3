@@ -43,7 +43,7 @@ public:
     void swap(UniquePtr<T, Deleter>& other) noexcept;
 
 // Observers :
-    Pointer get() const noexcept;
+    const Pointer get() const noexcept;
     explicit operator bool() const noexcept;
     tmn::Optional<T> operator*() const;
     Pointer operator->() const noexcept;
@@ -86,7 +86,7 @@ public:
     void swap(UniquePtr<T[], std::default_delete<T[]>>& other) noexcept;
 
 // Observers :
-    T* get() const noexcept;
+    const T* get() const noexcept;
     explicit operator bool() const noexcept;
     tmn::Optional<T> operator[](std::size_t i) const;
 };

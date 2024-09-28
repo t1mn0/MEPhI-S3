@@ -24,23 +24,23 @@ namespace tmn_associative {
 
 
 
-template <class Key, class Value, class CollisionStrategy = tmn_strategy::SeparateChaining<Key, Value>>
+template <class Key, class Value, 
+    class CollisionStrategy = tmn_strategy::OpenAddressing<typename HashTable<Key, Value>::Node> >
 requires EqualityComparable<Key>
 
 class HashTable {
 private:
     // Support structures :
-    // TODO : проработать копирование и создание
     struct Node {
         tmn::Pair<const Key, Value> pair;
 
-        Node* next = nullptr;
-        Node* prev = nullptr;
+        Node* right = nullptr;
+        Node* down = nullptr;
 
-        std::size_t index = 0;
-        bool isBucket = false;
-
-        Node(const tmn::Pair<const Key, Value>& other) : pair(other) {}
+        Node(const tmn::Pair<const Key, Value>& other_pair);
+        Node(const Node& other);
+        Node& operator=(const Node& rhs);
+        void swap(Node& other);
     };
 
     template <bool isConst>
@@ -49,6 +49,7 @@ private:
         using conditional_layer_ptr = tmn::conditional_t<isConst, const Node*, Node*>;
         using conditional_ptr = tmn::conditional_t<isConst, const tmn::Pair<const Key, Value>*, tmn::Pair<const Key, Value>*>;
         using conditional_ref = tmn::conditional_t<isConst, const tmn::Pair<const Key, Value>&, tmn::Pair<const Key, Value>&>;
+        
         using iterator_category	= tmn_iterator::forward_iterator_tag;
         using value_type = tmn::Pair<const Key, Value>;
         using pointer = tmn::Pair<const Key, Value>*;
@@ -74,10 +75,6 @@ private:
 
         common_iterator<isConst>& operator++();
         common_iterator<isConst> operator++(int);
-        common_iterator<isConst>& operator--();
-        common_iterator<isConst> operator--(int);
-        common_iterator<isConst>& operator+=(std::size_t n);
-        common_iterator<isConst>& operator-=(std::size_t n);
     };
 
 
@@ -86,10 +83,12 @@ private:
     Node** _storage = nullptr;
     std::size_t _size = 0;
     std::size_t _buffer_size = 256;
-    float _max_load_factor = 0.25;
+    float _max_load_factor = 0.5;
 
-    std::allocator<tmn::Pair<const Key, Value>> _alloc_pair;
     std::allocator<Node> _alloc_node;
+    CollisionStrategy _collision_strategy;
+
+    Node* _head = nullptr;
 
 public:
     // Using's :
@@ -98,8 +97,8 @@ public:
     using value_type = tmn::Pair<const Key, Value>;
     using iterator = common_iterator<false>;
     using const_iterator = common_iterator<true>;
-    using allocator_traits_pair = std::allocator_traits<std::allocator<tmn::Pair<const Key, Value>>;
-    using allocator_traits_node = std::allocator_traits<std::allocator<Node>>;
+    using allocator_traits = std::allocator_traits<std::allocator<Node>>;
+    using collision_strategy_traits = tmn_strategy::collision_strategy_traits<CollisionStrategy, Node>;
 
     // Constructors & assignment & conversion :
     HashTable();
@@ -123,11 +122,11 @@ public:
     std::size_t size() const noexcept;
     std::size_t buffer_size() const noexcept;
     bool empty() const noexcept;
-    float avg_load_factor() const;
-    std::size_t max_load_factor() const;
+    float load_factor() const;
+    float max_load_factor() const;
 
     // Modifiers :
-    HashTable<Key, Value, CollisionStrategy>& insert(const value_type& value);
+    HashTable<Key, Value, CollisionStrategy>& insert(const tmn::Pair<const Key, Value>& value);
     //HashTable<Key, Value, CollisionStrategy>& insert(value_type&& value);
 
     //template<class... Args>
@@ -155,12 +154,12 @@ public:
     //tmn::Optional<tmn::Pair<Value*, std::size_t>*> value() const;
 
     // Iterator methods :
-    // iterator begin() noexcept;
-    // const_iterator begin() const noexcept;
-    // const_iterator cbegin() const noexcept;  
-    // iterator end() noexcept;
-    // const_iterator end() const noexcept;
-    // const_iterator cend() const noexcept;
+    iterator begin() noexcept;
+    const_iterator begin() const noexcept;
+    const_iterator cbegin() const noexcept;  
+    iterator end() noexcept;
+    const_iterator end() const noexcept;
+    const_iterator cend() const noexcept;
 
     // Hash policy :
     // void rehash(size_type count);
