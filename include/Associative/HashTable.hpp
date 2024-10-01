@@ -2,12 +2,13 @@
 
 #include <cstdint>
 #include <memory>
+#include <initializer_list>
 #include <concepts>
 
 #include "../Iterator/Iterator.hpp"
 #include "../Pair/Pair.hpp"
 #include "../Optional/Optional.hpp"
-#include "../tmn_strategy.hpp"
+#include "Hash.hpp"
 #include "../tmn.hpp"
 
 
@@ -19,28 +20,26 @@ concept EqualityComparable = requires(T a, T b) {
 };
 
 
+// TODO : закольцевать двусвязный список (?)
+// TODO after insert (check cppref): If after the operation the new number of elements is greater than old max_load_factor() * bucket_count() a rehashing takes place.
+
 
 namespace tmn_associative {
 
-
-
-template <class Key, class Value, 
-    class CollisionStrategy = tmn_strategy::OpenAddressing<typename HashTable<Key, Value>::Node> >
-requires EqualityComparable<Key>
-
+template <class Key, class Value>
 class HashTable {
 private:
-    // Support structures :
+    // Support structures and methods:
     struct Node {
         tmn::Pair<const Key, Value> pair;
 
-        Node* right = nullptr;
-        Node* down = nullptr;
+        Node* next = nullptr;
+        Node* prev = nullptr;
+        
+        std::size_t cache = 0;
 
-        Node(const tmn::Pair<const Key, Value>& other_pair);
-        Node(const Node& other);
-        Node& operator=(const Node& rhs);
-        void swap(Node& other);
+        Node(const tmn::Pair<const Key, Value>& other_pair, std::size_t cache) noexcept;
+        Node(Node&&) noexcept;
     };
 
     template <bool isConst>
@@ -77,6 +76,8 @@ private:
         common_iterator<isConst> operator++(int);
     };
 
+    void erase_node(Node* to_remove);
+
 
 private:
     // Fields :
@@ -86,7 +87,6 @@ private:
     float _max_load_factor = 0.5;
 
     std::allocator<Node> _alloc_node;
-    CollisionStrategy _collision_strategy;
 
     Node* _head = nullptr;
 
@@ -97,24 +97,20 @@ public:
     using value_type = tmn::Pair<const Key, Value>;
     using iterator = common_iterator<false>;
     using const_iterator = common_iterator<true>;
-    using allocator_traits = std::allocator_traits<std::allocator<Node>>;
-    using collision_strategy_traits = tmn_strategy::collision_strategy_traits<CollisionStrategy, Node>;
+    using allocator_traits_node = std::allocator_traits<std::allocator<Node>>;
 
     // Constructors & assignment & conversion :
-    HashTable();
-    explicit HashTable(std::size_t node_count);
+    HashTable() noexcept;
+    HashTable(const HashTable<Key, Value>& other);
+    HashTable(HashTable<Key, Value>&& other);
+    HashTable(std::initializer_list<tmn::Pair<const Key, Value>> lst);
 
-    template <typename OtherCollisionStrategy>
-    HashTable(const HashTable<Key, Value, OtherCollisionStrategy>& other);
+    void swap(HashTable<Key, Value>& other);
+    HashTable& operator=(const HashTable<Key, Value>& other); 
+    // operator=(const HashTable<Key, Value>&) have `No exception guarantee`.
+    // It is solved by copy-pasting insert for new_storage (new allocated memory block)
 
-    // template <typename OtherCollisionStrategy>
-    // HashTable(HashTable<Key, Value, OtherCollisionStrategy>&& other);
-
-    // HashTable(std::initializer_list<tmn::Pair<Key, Value>> lst);
-
-    // void swap(HashTable<Key, Value, CollisionStrategy>& other);
-    // auto operator=(const HashTable<Key, Value, CollisionStrategy>& other)
-    //     -> HashTable<Key, Value, CollisionStrategy>&;
+    HashTable& operator=(HashTable&& other) noexcept;
 
     ~HashTable();
 
@@ -126,32 +122,25 @@ public:
     float max_load_factor() const;
 
     // Modifiers :
-    HashTable<Key, Value, CollisionStrategy>& insert(const tmn::Pair<const Key, Value>& value);
-    //HashTable<Key, Value, CollisionStrategy>& insert(value_type&& value);
+    HashTable& insert(const tmn::Pair<const Key, Value>& value);
+    HashTable& insert(tmn::Pair<const Key, Value>&& value);
 
-    //template<class... Args>
-    //HashTable<Key, Value, CollisionStrategy>& emplace(Args&&... args);
+    bool erase(const Key& key);
+    bool erase(Key&& key);
 
-    HashTable<Key, Value, CollisionStrategy>& erase(const Key& key);
-    
-    //template<class K>
-    //HashTable<Key, Value, CollisionStrategy>& erase(K&& x);
-
-    HashTable<Key, Value, CollisionStrategy>& clear() noexcept;
+    HashTable& clear() noexcept;
 
     // Element access methods :
     Value& get(const Key& key);
-    //const Value& get(const Key& key) const;
+    const Value& get(const Key& key) const;
 
-    // tmn::Optional<Value> operator[](const Key& key) const noexcept;
-    // tmn::Optional<Value>& operator[](Key&& key) noexcept;
-
-    //std::size_t count(const Key& key) const;
+    tmn::Optional<Value> operator[](const Key& key) const noexcept;
+    tmn::Optional<Value> operator[](Key&& key) const noexcept;
 
     bool contains(const Key& key) const;
 
-    //tmn::Optional<tmn::Pair<Key*, std::size_t>*> keys() const;
-    //tmn::Optional<tmn::Pair<Value*, std::size_t>*> value() const;
+    tmn::Pair<Key*, std::size_t> keys() const;
+    tmn::Pair<Value*, std::size_t> values() const;
 
     // Iterator methods :
     iterator begin() noexcept;
@@ -162,13 +151,11 @@ public:
     const_iterator cend() const noexcept;
 
     // Hash policy :
-    // void rehash(size_type count);
-	// void reserve(size_type count);
+    void rehash(std::size_t new_buffer_size);
+	void reserve(std::size_t new_buffer_size);
 
     // Buckets :
-    // size_type bucket_count() const;
-    // size_type bucket_size(size_type n) const;
-    // size_type bucket(const Key& key) const;
+    std::size_t bucket_size(std::size_t index) const;
 };
 
 
