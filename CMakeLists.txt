@@ -41,9 +41,12 @@ if(GTEST_FOUND)
 
     enable_testing()
     add_executable(func_test_hashtable test/src/HashTable/FuncTestHashTable.cpp)
+    add_executable(func_test_hashset test/src/HashSet/FuncTestHashSet.cpp)
 
     target_link_libraries(func_test_hashtable GTest::gtest GTest::gtest_main exceptions)
+    target_link_libraries(func_test_hashset GTest::gtest GTest::gtest_main exceptions)
 
     add_test(NAME func_test_hashtable COMMAND func_test_hashtable)
+    add_test(NAME func_test_hashset COMMAND func_test_hashset)
 
 endif()

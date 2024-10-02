@@ -3,56 +3,45 @@
 #include <cstdint>
 #include <memory>
 #include <initializer_list>
-#include <concepts>
 
 #include "../Iterator/Iterator.hpp"
-#include "../Pair/Pair.hpp"
 #include "../Optional/Optional.hpp"
 #include "../Sequence/ArraySequence.hpp"
 #include "Hash.hpp"
 #include "../tmn.hpp"
 
-
-// ? ? ? 
-template <typename T>
-concept EqualityComparable = requires(T a, T b) {
-  { a == b } -> std::convertible_to<bool>;
-  { a != b } -> std::convertible_to<bool>;
-};
-
-
+// concept ?
 
 namespace tmn_associative {
 
-template <class Key, class Value>
-class HashTable {
+template <class Key>
+class HashSet {
 private:
     // Support structures and methods:
     struct Node {
-        tmn::Pair<const Key, Value> pair;
+        Key value;
 
         Node* next = nullptr;
         Node* prev = nullptr;
         
         std::size_t cache = 0;
 
-        Node(const tmn::Pair<const Key, Value>& other_pair, std::size_t cache) noexcept;
-        Node(Node&&) noexcept;
+        Node(const Key& other_value, std::size_t cache) noexcept;
     };
 
     template <bool isConst>
     struct common_iterator {
     public:
         using conditional_layer_ptr = tmn::conditional_t<isConst, const Node*, Node*>;
-        using conditional_ptr = tmn::conditional_t<isConst, const tmn::Pair<const Key, Value>*, tmn::Pair<const Key, Value>*>;
-        using conditional_ref = tmn::conditional_t<isConst, const tmn::Pair<const Key, Value>&, tmn::Pair<const Key, Value>&>;
+        using conditional_ptr = tmn::conditional_t<isConst, const Key*, Key*>;
+        using conditional_ref = tmn::conditional_t<isConst, const Key&, Key&>;
         
         using iterator_category	= tmn_iterator::forward_iterator_tag;
-        using value_type = tmn::Pair<const Key, Value>;
-        using pointer = tmn::Pair<const Key, Value>*;
-        using const_pointer = const tmn::Pair<const Key, Value>*;
-        using reference = tmn::Pair<const Key, Value>&;
-        using const_reference = const tmn::Pair<const Key, Value>&;
+        using value_type = Key;
+        using pointer = Key*;
+        using const_pointer = const Key*;
+        using reference = Key&;
+        using const_reference = const Key&;
     
     private:
         conditional_layer_ptr ptr;
@@ -81,7 +70,7 @@ private:
     // Fields :
     Node** _storage = nullptr;
     std::size_t _size = 0;
-    std::size_t _buffer_size = 256;
+    std::size_t _buffer_size = 32;
     float _max_load_factor = 0.5;
 
     std::allocator<Node> _alloc_node;
@@ -90,27 +79,23 @@ private:
 
 public:
     // Using's :
-    using key_type = Key;
-    using mapped_type = Value;
-    using value_type = tmn::Pair<const Key, Value>;
+    using value_type = Key;
     using iterator = common_iterator<false>;
     using const_iterator = common_iterator<true>;
     using allocator_traits_node = std::allocator_traits<std::allocator<Node>>;
 
     // Constructors & assignment & conversion :
-    HashTable() noexcept;
-    HashTable(const HashTable<Key, Value>& other);
-    HashTable(HashTable<Key, Value>&& other);
-    HashTable(std::initializer_list<tmn::Pair<const Key, Value>> lst);
+    HashSet() noexcept;
+    HashSet(const HashSet<Key>& other);
+    HashSet(HashSet<Key>&& other);
+    HashSet(std::initializer_list<Key> lst);
 
-    void swap(HashTable<Key, Value>& other);
-    HashTable& operator=(const HashTable<Key, Value>& other); 
-    // operator=(const HashTable<Key, Value>&) have `No exception guarantee`.
-    // It is solved by copy-pasting insert for new_storage (new allocated memory block)
+    void swap(HashSet<Key>& other);
+    HashSet& operator=(const HashSet<Key>& other);
 
-    HashTable& operator=(HashTable&& other) noexcept;
+    HashSet& operator=(HashSet<Key>&& other) noexcept;
 
-    ~HashTable();
+    ~HashSet();
 
     // Capacity & size & get fields:
     std::size_t size() const noexcept;
@@ -120,25 +105,18 @@ public:
     float max_load_factor() const;
 
     // Modifiers :
-    HashTable& insert(const tmn::Pair<const Key, Value>& value);
-    HashTable& insert(tmn::Pair<const Key, Value>&& value);
+    HashSet& insert(const Key& value);
+    HashSet& insert(Key&& value);
 
     bool erase(const Key& key);
     bool erase(Key&& key);
 
-    HashTable& clear() noexcept;
+    HashSet& clear() noexcept;
 
     // Element access methods :
-    tmn::Optional<Value> get(const Key& key) const noexcept;
-    tmn::Optional<Value> get(Key&& key) const noexcept;
+    bool contains(const Key& key) const noexcept;
 
-    const Value& operator[](const Key& key) const;
-    Value& operator[](const Key& key);
-
-    bool contains(const Key& key) const;
-
-    tmn_sequence::ArraySequence<Key> keys() const;
-    tmn_sequence::ArraySequence<Value> values() const;
+    tmn_sequence::ArraySequence<Key> to_sequence() const;
 
     // Iterator methods :
     iterator begin() noexcept;
@@ -151,9 +129,6 @@ public:
     // Hash policy :
     void rehash(std::size_t new_buffer_size);
 	void reserve(std::size_t new_buffer_size);
-
-    // Buckets :
-    std::size_t bucket_size(std::size_t index) const;
 };
 
 
@@ -162,4 +137,4 @@ public:
 
 
 
-#include "../../src/Associative/HashTable.tpp"
+#include "../../src/Associative/HashSet.tpp"

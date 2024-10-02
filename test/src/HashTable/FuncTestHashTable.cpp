@@ -314,22 +314,6 @@ TEST(HashTableTest, Values) {
     std::cout << std::endl << std::endl;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 TEST(HashTableTest, Reserve) {
     tmn_associative::HashTable<char, int> htable;
     for (std::size_t i = 0; i < 10; ++i){

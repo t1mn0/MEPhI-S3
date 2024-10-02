@@ -136,7 +136,7 @@ HashTable<Key, Value>& HashTable<Key, Value>::operator=(const HashTable<Key, Val
     delete[] reinterpret_cast<int8_t*>(_storage);
 
     _storage = reinterpret_cast<Node**>(new int8_t[other._buffer_size * sizeof(Node*)]);
-    std::fill(_storage, _storage + _buffer_size, nullptr);
+    std::fill(_storage, _storage + other._buffer_size, nullptr);
 
     try{
         for (const auto& pair: other){
@@ -486,7 +486,6 @@ bool HashTable<Key, Value>::contains(const Key& key) const {
         while (current && current->cache % _buffer_size == hash_index){
             if (current->pair.first == key){
                 return true;
-                break;
             }
             current = current->next;
         }
