@@ -2,7 +2,7 @@
 
 #include <cctype>
 
-#include "../../../include/Associative/HashSet.hpp"
+#include "../../include/Associative/HashSet.hpp"
 
 
 

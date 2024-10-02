@@ -2,7 +2,7 @@
 
 #include <cctype>
 
-#include "../../../include/Associative/HashTable.hpp"
+#include "../../include/Associative/HashTable.hpp"
 
 
 
