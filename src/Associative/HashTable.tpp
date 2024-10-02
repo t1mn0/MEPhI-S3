@@ -102,11 +102,11 @@ HashTable<Key, Value>::HashTable(const HashTable<Key, Value>& other) : _buffer_s
 
 template <class Key, class Value>
 HashTable<Key, Value>::HashTable(HashTable<Key, Value>&& other) : 
+    _storage(other._storage),
     _size(other._size), 
     _buffer_size(other._buffer_size),
-    _storage(other.storage),
-    _head(other._head),
-    _alloc_node(other._alloc_node) 
+    _alloc_node(other._alloc_node),
+    _head(other._head)
 {
     other._size = 0;
     other._buffer_size = 0;
@@ -125,7 +125,7 @@ template <class Key, class Value>
 void HashTable<Key, Value>::swap(HashTable<Key, Value>& other) {
     std::swap(_size, other._size); 
     std::swap(_buffer_size, other._buffer_size);
-    std::swap(_storage, other.storage);
+    std::swap(_storage, other._storage);
     std::swap(_head, other._head);
     std::swap(_alloc_node, other._alloc_node);
 }
@@ -162,7 +162,7 @@ HashTable<Key, Value>& HashTable<Key, Value>::operator=(HashTable<Key, Value>&& 
 
     _size = other._size;
     _buffer_size = other._buffer_size;
-    _storage = other.storage;
+    _storage = other._storage;
     _head = other._head;
     _alloc_node = other._alloc_node;
 
@@ -338,6 +338,7 @@ bool HashTable<Key, Value>::erase(const Key& key){
     if (_storage[hash_index]){
         if (_storage[hash_index]->pair.first == key){
             erase_node(_storage[hash_index]);
+            _storage[hash_index] = nullptr;
             return true;
         }
         
@@ -361,6 +362,7 @@ bool HashTable<Key, Value>::erase(Key&& key){
     if (_storage[hash_index]){
         if (_storage[hash_index]->pair.first == key){
             erase_node(_storage[hash_index]);
+            _storage[hash_index] = nullptr;
             return true;
         }
         
@@ -389,49 +391,7 @@ HashTable<Key, Value>& HashTable<Key, Value>::clear() noexcept {
 // Element access methods :
 
 template <class Key, class Value>
-Value& HashTable<Key, Value>::get(const Key& key){
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
-
-    if (_storage[hash_index]){
-        if (_storage[hash_index]->pair.first == key){
-            return _storage[hash_index]->pair.second;
-        }
-        Node* current = _storage[hash_index]->next;
-        while (current && current->cache % _buffer_size == hash_index){
-            if (current->pair.first == key){
-                return _storage[hash_index]->pair.second;
-                break;
-            }
-            current = current->next;
-        }
-    }
-
-    throw tmn_exception::LogicException("Element with stated key in the table is missing [HashTable<Key, Value>::get]");
-}
-
-template <class Key, class Value>
-const Value& HashTable<Key, Value>::get(const Key& key) const {
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
-
-    if (_storage[hash_index]){
-        if (_storage[hash_index]->pair.first == key){
-            return _storage[hash_index]->pair.second;
-        }
-        Node* current = _storage[hash_index]->next;
-        while (current && current->cache % _buffer_size == hash_index){
-            if (current->pair.first == key){
-                return _storage[hash_index]->pair.second;
-                break;
-            }
-            current = current->next;
-        }
-    }
-
-    throw tmn_exception::LogicException("Element with stated key in the table is missing [HashTable<Key, Value>::get]");
-}
-
-template <class Key, class Value>
-tmn::Optional<Value> HashTable<Key, Value>::operator[](const Key &key) const noexcept {
+tmn::Optional<Value> HashTable<Key, Value>::get(const Key& key) const noexcept {
     std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
@@ -452,7 +412,7 @@ tmn::Optional<Value> HashTable<Key, Value>::operator[](const Key &key) const noe
 }
 
 template <class Key, class Value>
-tmn::Optional<Value> HashTable<Key, Value>::operator[](Key&& key) const noexcept {
+tmn::Optional<Value> HashTable<Key, Value>::get(Key&& key) const noexcept {
     std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
@@ -470,6 +430,48 @@ tmn::Optional<Value> HashTable<Key, Value>::operator[](Key&& key) const noexcept
     }
 
     return tmn::Optional<Value>();
+}
+
+template <class Key, class Value>
+const Value& HashTable<Key, Value>::operator[](const Key& key) const {
+    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+
+    if (_storage[hash_index]){
+        if (_storage[hash_index]->pair.first == key){
+            return _storage[hash_index]->pair.second;
+        }
+        Node* current = _storage[hash_index]->next;
+        while (current && current->cache % _buffer_size == hash_index){
+            if (current->pair.first == key){
+                return _storage[hash_index]->pair.second;
+                break;
+            }
+            current = current->next;
+        }
+    }
+
+    throw tmn_exception::LogicException("Element with stated key in the table is missing [HashTable<Key, Value>::get]");
+}
+
+template <class Key, class Value>
+Value& HashTable<Key, Value>::operator[](const Key& key) {
+    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+
+    if (_storage[hash_index]){
+        if (_storage[hash_index]->pair.first == key){
+            return _storage[hash_index]->pair.second;
+        }
+        Node* current = _storage[hash_index]->next;
+        while (current && current->cache % _buffer_size == hash_index){
+            if (current->pair.first == key){
+                return _storage[hash_index]->pair.second;
+                break;
+            }
+            current = current->next;
+        }
+    }
+
+    throw tmn_exception::LogicException("Element with stated key in the table is missing [HashTable<Key, Value>::get]");
 }
 
 template <class Key, class Value>
@@ -494,41 +496,29 @@ bool HashTable<Key, Value>::contains(const Key& key) const {
 }
 
 template <class Key, class Value>
-tmn::Pair<Key*, std::size_t> HashTable<Key, Value>::keys() const {
-    if (_size == 0) {
-        return {nullptr, 0};
-    }
+tmn_sequence::ArraySequence<Key> HashTable<Key, Value>::keys() const {
+    tmn_sequence::ArraySequence<Key> keys;
 
-    Key* keys_array = new Key[_size];
-
-    size_t i = 0;
     Node* current = _head;
     while (current) {
-        new (keys_array + i) Key(*current->pair.first);
+        keys.push_back(current->pair.first);
         current = current->next;
-        i++;
     }
 
-    return {keys_array, _size};
+    return keys;
 }
 
 template <class Key, class Value>
-tmn::Pair<Value*, std::size_t> HashTable<Key, Value>::values() const {
-    if (_size == 0) {
-        return {nullptr, 0};
-    }
+tmn_sequence::ArraySequence<Value> HashTable<Key, Value>::values() const {
+    tmn_sequence::ArraySequence<Value> values;
 
-    Value* values_array = new Value[_size];
-
-    size_t i = 0;
     Node* current = _head;
     while (current) {
-        new (values_array + i) Value(*current->pair.second);
+        values.push_back(current->pair.second);
         current = current->next;
-        i++;
     }
 
-    return {values_array, _size};
+    return values;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -572,37 +562,14 @@ void HashTable<Key, Value>::rehash(std::size_t new_buffer_size) {
     if (new_buffer_size <= _buffer_size){ return; }
 
     Node** new_storage = reinterpret_cast<Node**>(new int8_t[new_buffer_size * sizeof(Node*)]);
-    std::fill(_storage, _storage + _buffer_size, nullptr);
+    std::fill(new_storage, new_storage + new_buffer_size, nullptr);
 
     Node* current = _head;
     try{
         while (current){
-            if (new_storage[current->cache % new_buffer_size]){
-                Node* current_in_bucket = new_storage[current->cache % new_buffer_size];
-                // while (current_in_bucket && current_in_bucket->cache % new_buffer_size == current->cache % new_buffer_size){
-                //     if (current->pair.first == pair.first){
-                //         current->pair.second = pair.second;
-                //         break;
-                //     }
-                //     current_in_bucket = current_in_bucket->next;
-                // }
-        // TODO :
-        //         new_node->prev = _storage[hash_index];
-        //         new_node->next = _storage[hash_index]->next;
-        //         if(_storage[hash_index]->next){
-        //             _storage[hash_index]->next->prev = new_node;
-        //         }
-        //         _storage[hash_index]->next = new_node;
+            if (!new_storage[current->cache % new_buffer_size]){
+                new_storage[current->cache % new_buffer_size] = current;
             }
-        //     else{
-        //         _storage[hash_index] = new_node;
-        //         new_node->next = _head;
-        //         if(_head){
-        //             _head->prev = new_node;
-        //         }
-
-        //         _head = new_node;
-        //     }
 
             current = current->next;
         }

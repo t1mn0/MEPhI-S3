@@ -9,4 +9,6 @@ RuntimeException::RuntimeException(const Exception& other) noexcept: what_arg(ot
 RuntimeException::RuntimeException(const std::string& what_arg) noexcept: what_arg(what_arg) {}
 RuntimeException::RuntimeException(const char* what_arg) noexcept: what_arg(what_arg) {}
 
+std::string RuntimeException::what() const noexcept { return what_arg; }
+
 }

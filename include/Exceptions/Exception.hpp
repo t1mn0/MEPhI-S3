@@ -16,7 +16,7 @@ public:
     explicit Exception(const char* what_arg) noexcept;
     virtual ~Exception();
 
-    virtual std::string what() const noexcept;
+    std::string what() const noexcept;
 };
 
 }

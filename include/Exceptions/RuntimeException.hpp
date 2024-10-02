@@ -14,6 +14,8 @@ public:
     explicit RuntimeException(const Exception& other) noexcept;
     explicit RuntimeException(const std::string& what_arg) noexcept;
     explicit RuntimeException(const char* what_arg) noexcept;
+
+    std::string what() const noexcept;
 };
 
 }

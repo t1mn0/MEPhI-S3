@@ -40,6 +40,15 @@ TEST(SharedPtrTest, CopyAssignment) {
   ASSERT_EQ((*ptr_1).value(), (*ptr_2).value());
 }
 
+TEST(SharedPtrTest, CopyAssignment) {
+  int* raw_ptr = new int(10);
+  tmn_smart_ptr::SharedPtr<int> ptr_1(raw_ptr);
+  tmn_smart_ptr::SharedPtr<int> ptr_2;
+  ptr_2 = ptr_1;
+  ASSERT_EQ(ptr_1.get(), ptr_2.get());
+  ASSERT_EQ((*ptr_1).value(), (*ptr_2).value());
+}
+
 TEST(SharedPtrTest, MoveConstructor) {
   int* raw_ptr = new int(10);
   tmn_smart_ptr::SharedPtr<int> ptr_1(raw_ptr);

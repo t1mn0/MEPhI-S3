@@ -14,6 +14,8 @@ public:
     explicit IOException(const Exception& other) noexcept;
     explicit IOException(const std::string& what_arg) noexcept;
     explicit IOException(const char* what_arg) noexcept;
+
+    std::string what() const noexcept;
 };
 
 }

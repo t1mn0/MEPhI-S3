@@ -8,6 +8,7 @@
 #include "../Iterator/Iterator.hpp"
 #include "../Pair/Pair.hpp"
 #include "../Optional/Optional.hpp"
+#include "../Sequence/ArraySequence.hpp"
 #include "Hash.hpp"
 #include "../tmn.hpp"
 
@@ -21,8 +22,6 @@ concept EqualityComparable = requires(T a, T b) {
 
 
 // TODO : закольцевать двусвязный список (?)
-// TODO after insert (check cppref): If after the operation the new number of elements is greater than old max_load_factor() * bucket_count() a rehashing takes place.
-
 
 namespace tmn_associative {
 
@@ -131,16 +130,16 @@ public:
     HashTable& clear() noexcept;
 
     // Element access methods :
-    Value& get(const Key& key);
-    const Value& get(const Key& key) const;
+    tmn::Optional<Value> get(const Key& key) const noexcept;
+    tmn::Optional<Value> get(Key&& key) const noexcept;
 
-    tmn::Optional<Value> operator[](const Key& key) const noexcept;
-    tmn::Optional<Value> operator[](Key&& key) const noexcept;
+    const Value& operator[](const Key& key) const;
+    Value& operator[](const Key& key);
 
     bool contains(const Key& key) const;
 
-    tmn::Pair<Key*, std::size_t> keys() const;
-    tmn::Pair<Value*, std::size_t> values() const;
+    tmn_sequence::ArraySequence<Key> keys() const;
+    tmn_sequence::ArraySequence<Value> values() const;
 
     // Iterator methods :
     iterator begin() noexcept;

@@ -14,6 +14,8 @@ public:
     explicit LogicException(const Exception& other) noexcept;
     explicit LogicException(const std::string& what_arg) noexcept;
     explicit LogicException(const char* what_arg) noexcept;
+
+    std::string what() const noexcept;
 };
 
 }
