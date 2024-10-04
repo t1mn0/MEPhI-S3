@@ -31,7 +31,9 @@
 ### Решение
 1. Реализация структуры данных `HashTable` с обработкой коллизий стратегией "Открытых цепочек". Поддержка итераторов основных типов — `iterator` и `const iterator`. 
 > Анализ эффективности проводился на основе реализации `HashTable<Key, Value>`, `std::unordered_map<Key, Value>`. Графики представлены ниже: 
+>
 > ![DependencyGraph](img/L3%20DependencyGraph-1.png)
 2. Реализация структуры данных `HashSet` с обработкой коллизий стратегией "Открытых цепочек". Поддержка итераторов основных типов — `iterator` и `const iterator`. 
 > Анализ эффективности проводился на основе реализации `HashSet<Key>`, `std::unordered_set<Key>`. Графики представлены ниже: 
+>
 > ![DependencyGraph](img/L3%20DependencyGraph-2.png)

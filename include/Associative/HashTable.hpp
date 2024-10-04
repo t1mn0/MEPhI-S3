@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <memory>
 #include <initializer_list>
-#include <concepts>
 
 #include "../Iterator/Iterator.hpp"
 #include "../Pair/Pair.hpp"
@@ -11,16 +10,6 @@
 #include "../Sequence/ArraySequence.hpp"
 #include "Hash.hpp"
 #include "../tmn.hpp"
-
-
-// ? ? ? 
-template <typename T>
-concept EqualityComparable = requires(T a, T b) {
-  { a == b } -> std::convertible_to<bool>;
-  { a != b } -> std::convertible_to<bool>;
-};
-
-
 
 namespace tmn_associative {
 
@@ -120,8 +109,8 @@ public:
     float max_load_factor() const;
 
     // Modifiers :
-    HashTable& insert(const tmn::Pair<const Key, Value>& value);
-    HashTable& insert(tmn::Pair<const Key, Value>&& value);
+    bool insert(const tmn::Pair<const Key, Value>& value);
+    bool insert(tmn::Pair<const Key, Value>&& value);
 
     bool erase(const Key& key);
     bool erase(Key&& key);
@@ -156,10 +145,6 @@ public:
     std::size_t bucket_size(std::size_t index) const;
 };
 
-
-
 }
-
-
 
 #include "../../src/Associative/HashTable.tpp"

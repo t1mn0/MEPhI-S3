@@ -2,8 +2,6 @@
 #include <algorithm>
 
 #include "../../include/Associative/HashSet.hpp"
-#include "../../include/Exceptions/AllocException.hpp"
-#include "../../include/Exceptions/LogicException.hpp"
 
 
 
@@ -17,52 +15,36 @@ HashSet<Key>::Node::Node(const Key& value, std::size_t cache) noexcept : value(v
 // Iterator implementation :
 
 template <class Key>
-template <bool isConst>
-HashSet<Key>::common_iterator<isConst>& 
-HashSet<Key>::common_iterator<isConst>::operator=(const common_iterator<isConst>& other){
+HashSet<Key>::const_iterator& 
+HashSet<Key>::const_iterator::operator=(const const_iterator& other){
     ptr = other.ptr;
     return *this;
 }
 
 template <class Key>
-template <bool isConst>
-typename HashSet<Key>::common_iterator<isConst>::conditional_ref
-HashSet<Key>::common_iterator<isConst>::operator*() const {
+const Key& HashSet<Key>::const_iterator::operator*() const {
     return ptr->value;
 }
 
 template <class Key>
-template <bool isConst>
-typename HashSet<Key>::common_iterator<isConst>::conditional_ptr
-HashSet<Key>::common_iterator<isConst>::operator->() const {
-    return &(ptr->value);
-}
-
-template <class Key>
-template <bool isConst>
-bool HashSet<Key>::common_iterator<isConst>::operator==(const common_iterator<isConst>& other) const {
+bool HashSet<Key>::const_iterator::operator==(const const_iterator& other) const {
     return ptr == other.ptr;
 }
 
 template <class Key>
-template <bool isConst>
-bool HashSet<Key>::common_iterator<isConst>::operator!=(const common_iterator<isConst>& other) const {
+bool HashSet<Key>::const_iterator::operator!=(const const_iterator& other) const {
     return ptr != other.ptr;
 }
 
 template <class Key>
-template <bool isConst>
-HashSet<Key>::common_iterator<isConst>& 
-HashSet<Key>::common_iterator<isConst>::operator++() {
+HashSet<Key>::const_iterator& HashSet<Key>::const_iterator::operator++() {
     ptr = ptr->next;
     return *this;
 }
 
 template <class Key>
-template <bool isConst>
-HashSet<Key>::common_iterator<isConst> 
-HashSet<Key>::common_iterator<isConst>::operator++(int) {
-   common_iterator<isConst> tmp(*this);
+HashSet<Key>::const_iterator HashSet<Key>::const_iterator::operator++(int) {
+   const_iterator tmp(*this);
    ptr = ptr->next;
    return tmp;
 }
@@ -422,32 +404,13 @@ tmn_sequence::ArraySequence<Key> HashSet<Key>::to_sequence() const {
 // Iterator methods :
 
 template <class Key>
-typename HashSet<Key>::iterator HashSet<Key>::begin() noexcept {
-    return iterator(_head);
-}
-
-template <class Key>
 typename HashSet<Key>::const_iterator HashSet<Key>::begin() const noexcept {
     return const_iterator(_head);
 }
 
-template <class Key>
-typename HashSet<Key>::const_iterator HashSet<Key>::cbegin() const noexcept {
-    return const_iterator(_head);
-}
-
-template <class Key>
-typename HashSet<Key>::iterator HashSet<Key>::end() noexcept {
-    return iterator(nullptr);
-}
 
 template <class Key>
 typename HashSet<Key>::const_iterator HashSet<Key>::end() const noexcept {
-    return const_iterator(nullptr);
-}
-
-template <class Key>
-typename HashSet<Key>::const_iterator HashSet<Key>::cend() const noexcept {
     return const_iterator(nullptr);
 }
 

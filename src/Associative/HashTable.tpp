@@ -2,8 +2,6 @@
 #include <algorithm>
 
 #include "../../include/Associative/HashTable.hpp"
-#include "../../include/Exceptions/AllocException.hpp"
-#include "../../include/Exceptions/LogicException.hpp"
 
 
 
@@ -212,7 +210,7 @@ float HashTable<Key, Value>::max_load_factor() const {
 // Modifiers :
 
 template <class Key, class Value>
-HashTable<Key, Value>& HashTable<Key, Value>::insert(const tmn::Pair<const Key, Value>& pair){
+bool HashTable<Key, Value>::insert(const tmn::Pair<const Key, Value>& pair){
     if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
     }
@@ -229,7 +227,7 @@ HashTable<Key, Value>& HashTable<Key, Value>::insert(const tmn::Pair<const Key, 
         while (current && current->cache % _buffer_size == hash_index){
             if (current->pair.first == pair.first){
                 current->pair.second = pair.second;
-                return *this;
+                return false;
             }
             current = current->next;
         }
@@ -257,11 +255,11 @@ HashTable<Key, Value>& HashTable<Key, Value>::insert(const tmn::Pair<const Key, 
         rehash(_buffer_size * 2);
     }
     
-    return *this;
+    return true;
 }
 
 template <class Key, class Value>
-HashTable<Key, Value>& HashTable<Key, Value>::insert(tmn::Pair<const Key, Value>&& pair) {
+bool HashTable<Key, Value>::insert(tmn::Pair<const Key, Value>&& pair) {
     if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
     }
@@ -278,7 +276,7 @@ HashTable<Key, Value>& HashTable<Key, Value>::insert(tmn::Pair<const Key, Value>
         while (current && current->cache % _buffer_size == hash_index){
             if (current->pair.first == pair.first){
                 current->pair.second = pair.second;
-                return *this;
+                return false;
             }
             current = current->next;
         }
@@ -306,7 +304,7 @@ HashTable<Key, Value>& HashTable<Key, Value>::insert(tmn::Pair<const Key, Value>
         rehash(_buffer_size * 2);
     }
     
-    return *this;
+    return true;
 }
 
 template <class Key, class Value>
@@ -450,7 +448,7 @@ const Value& HashTable<Key, Value>::operator[](const Key& key) const {
         }
     }
 
-    throw tmn_exception::LogicException("Element with stated key in the table is missing [HashTable<Key, Value>::get]");
+    throw tmn_exception::LogicException("Element with stated key in the table is missing [const HashTable<Key, Value>::get]");
 }
 
 template <class Key, class Value>
@@ -471,7 +469,8 @@ Value& HashTable<Key, Value>::operator[](const Key& key) {
         }
     }
 
-    throw tmn_exception::LogicException("Element with stated key in the table is missing [HashTable<Key, Value>::get]");
+    insert({key, Value()});
+    return this->operator[](key);
 }
 
 template <class Key, class Value>
