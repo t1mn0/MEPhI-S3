@@ -32,10 +32,19 @@ TEST(SharedPtrTest, ConstructorAndCopy) {
 }
 
 TEST(SharedPtrTest, CopyAssignment) {
-  int* raw_ptr = new int(10);
-  tmn_smart_ptr::SharedPtr<int> ptr_1(raw_ptr);
-  tmn_smart_ptr::SharedPtr<int> ptr_2;
+  int* raw_ptr1 = new int(10);
+  int* raw_ptr2 = new int(22);
+  tmn_smart_ptr::SharedPtr<int> ptr_1(raw_ptr1);
+  tmn_smart_ptr::SharedPtr<int> ptr_2(raw_ptr2);
+  std::cout << std::endl;
+  std::cout << "USE COUNT1 : " << ptr_1.use_count() << std::endl;
+  std::cout << std::endl;
+  std::cout << "USE COUNT2 : " << ptr_2.use_count() << std::endl;
   ptr_2 = ptr_1;
+  std::cout << std::endl;
+  std::cout << "USE COUNT1 : " << ptr_1.use_count() << std::endl;
+  std::cout << std::endl;
+  std::cout << "USE COUNT2 : " << ptr_2.use_count() << std::endl;
   ASSERT_EQ(ptr_1.get(), ptr_2.get());
   ASSERT_EQ((*ptr_1).value(), (*ptr_2).value());
 }
@@ -49,12 +58,13 @@ TEST(SharedPtrTest, MoveConstructor) {
 }
 
 TEST(SharedPtrTest, MoveAssignment) {
-  int* raw_ptr = new int(10);
-  tmn_smart_ptr::SharedPtr<int> ptr_1(raw_ptr);
-  tmn_smart_ptr::SharedPtr<int> ptr_2;
+    int* raw_ptr1 = new int(10);
+    int* raw_ptr2 = new int(22);
+    tmn_smart_ptr::SharedPtr<int> ptr_1(raw_ptr1);
+    tmn_smart_ptr::SharedPtr<int> ptr_2(raw_ptr2);
   ptr_2 = std::move(ptr_1);
   ASSERT_EQ(ptr_1.get(), nullptr);
-  ASSERT_EQ(ptr_2.get(), raw_ptr);
+  ASSERT_EQ(ptr_2.get(), raw_ptr1);
 }
 
 

@@ -7,7 +7,7 @@
 
 namespace tmn_smart_ptr {
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Constructors & assignment & conversion & destructors :
 
 template <typename T>
@@ -68,14 +68,14 @@ SharedPtr<T>::~SharedPtr() {
     reset();
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Modifiers :
 
 template <typename T>
 void SharedPtr<T>::reset(T* rhs) {
     if (ptr) {
         --(*counter);
-        if (counter == 0) {
+        if (*counter == 0) {
             delete ptr;
             delete counter;
         }
@@ -91,16 +91,10 @@ void SharedPtr<T>::reset(T* rhs) {
     if (ptr && !counter){
         ptr = nullptr;
     }
-    
+
     if (rhs) {
         ptr = rhs;
-        counter = new size_t(0);
-        if(counter){
-            ++(*counter);
-        }
-        else{
-            throw tmn_exception::Exception("Bad Control Block");
-        }
+        counter = new size_t(1);
     }
 }
 
@@ -110,7 +104,7 @@ void SharedPtr<T>::swap(SharedPtr<T>& rhs) noexcept {
     std::swap(this->counter, rhs.counter);
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Observers :
 
 template <typename T>
@@ -132,7 +126,7 @@ tmn::Optional<T> SharedPtr<T>::operator*() const {
         return tmn::Optional<T>();
     }
 }
-    
+
 template <typename T>
 T* SharedPtr<T>::operator->() const noexcept {
     return ptr;
@@ -154,6 +148,6 @@ bool SharedPtr<T>::unique() const noexcept {
     return false;
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
