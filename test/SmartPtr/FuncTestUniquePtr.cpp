@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../../../include/SmartPtr/UniquePtr.hpp"
+#include "../../include/SmartPtr/UniquePtr.hpp"
 
 
 
@@ -34,14 +34,14 @@ TEST(TestUniquePtrGeneral, MoveConstructorWithInt) {
   tmn_smart_ptr::UniquePtr<int> ptr_1(new int(10));
   tmn_smart_ptr::UniquePtr<int> ptr_2(std::move(ptr_1));
   ASSERT_EQ(ptr_1.get(), nullptr);
-  ASSERT_EQ((*ptr_2).value(), 10); 
+  ASSERT_EQ((*ptr_2).value(), 10);
 }
 
 TEST(TestUniquePtrGeneral, MoveConstructorWithString) {
   tmn_smart_ptr::UniquePtr<std::string> ptr_1(new std::string("helloworld"));
   tmn_smart_ptr::UniquePtr<std::string> ptr_2(std::move(ptr_1));
   ASSERT_EQ(ptr_1.get(), nullptr);
-  ASSERT_EQ((*ptr_2).value(), "helloworld"); 
+  ASSERT_EQ((*ptr_2).value(), "helloworld");
 }
 
 TEST(TestUniquePtrGeneral, MoveAssignmentWithInt) {
@@ -75,7 +75,7 @@ TEST(TestUniquePtrGeneral, Release) {
 TEST(TestUniquePtrGeneral, Reset) {
   tmn_smart_ptr::UniquePtr<int> ptr(new int(42));
   ptr.reset(new int(10));
-  ASSERT_EQ((*ptr).value(), 10); 
+  ASSERT_EQ((*ptr).value(), 10);
 }
 
 TEST(TestUniquePtrGeneral, Swap) {
@@ -189,7 +189,7 @@ TEST(TestUniquePtrSpecial, BoolOperator_False) {
 TEST(TestUniquePtrSpecial, OperatorBracket) {
   int* raw_ptr = new int[5];
   for (int i = 5; i < 10; ++i) { raw_ptr[i-5] = i; }
-  
+
   tmn_smart_ptr::UniquePtr<int[]> ptr(raw_ptr);
 
   ASSERT_EQ(ptr[0].value(), 5);

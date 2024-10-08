@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "../../include/Associative/HashSet.hpp"
+#include "../../include/Exceptions/LogicException.hpp"
 
 
 

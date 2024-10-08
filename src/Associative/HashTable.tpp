@@ -2,21 +2,17 @@
 #include <algorithm>
 
 #include "../../include/Associative/HashTable.hpp"
+#include "../../include/Exceptions/LogicException.hpp"
 
 
 
 namespace tmn_associative {
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Node implementation :
-template <class Key, class Value>
-HashTable<Key, Value>::Node::Node(const tmn::Pair<const Key, Value>& other_pair, std::size_t cache) noexcept : pair(other_pair), cache(cache) { }
 
 template <class Key, class Value>
-HashTable<Key, Value>::Node::Node(Node&& other) noexcept : pair(std::move(other.pair)), cache(std::move(other.cache)), next(other.next), prev(other.prev) {
-    other.next = nullptr;
-    other.prev = nullptr;
-    other.cache = 0;
-}
+HashTable<Key, Value>::Node::Node(const tmn::Pair<const Key, Value>& other_pair, std::size_t cache) noexcept : pair(other_pair), cache(cache) { }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Iterator implementation :
@@ -448,7 +444,7 @@ const Value& HashTable<Key, Value>::operator[](const Key& key) const {
         }
     }
 
-    throw tmn_exception::LogicException("Element with stated key in the table is missing [const HashTable<Key, Value>::get]");
+    throw tmn_exception::LogicException("Element with stated key in the table is missing [const HashTable<Key, Value>::operator[]]");
 }
 
 template <class Key, class Value>

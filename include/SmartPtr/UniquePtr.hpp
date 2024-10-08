@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "../../include/Optional/Optional.hpp"
+#include "../Optional/Optional.hpp"
 
 
 
@@ -34,7 +34,7 @@ public:
 
     template <typename U, typename E>
     UniquePtr& operator=(UniquePtr<U, E>&& rhs) noexcept;
-    
+
     ~UniquePtr();
 
 // Modifiers :
@@ -54,7 +54,7 @@ public:
 //                                      SPECIALIZATION TEMPLATE :
 
 template <typename T>
-class UniquePtr<T[], std::default_delete<T[]>> { 
+class UniquePtr<T[], std::default_delete<T[]>> {
 private:
 // Fields :
     T* ptr;
@@ -74,7 +74,7 @@ public:
 
     template <typename U, typename E>
     UniquePtr& operator=(UniquePtr<U, E>&& rhs) noexcept;
-    
+
     ~UniquePtr();
 
 // Modifiers :
@@ -82,7 +82,7 @@ public:
 
     template <typename U>
     void reset(U p) noexcept;
-    
+
     void swap(UniquePtr<T[], std::default_delete<T[]>>& other) noexcept;
 
 // Observers :

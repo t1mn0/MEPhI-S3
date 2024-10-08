@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../../../include/SmartPtr/SharedPtr.hpp"
+#include "../../include/SmartPtr/SharedPtr.hpp"
 
 
 
@@ -40,20 +40,11 @@ TEST(SharedPtrTest, CopyAssignment) {
   ASSERT_EQ((*ptr_1).value(), (*ptr_2).value());
 }
 
-TEST(SharedPtrTest, CopyAssignment) {
-  int* raw_ptr = new int(10);
-  tmn_smart_ptr::SharedPtr<int> ptr_1(raw_ptr);
-  tmn_smart_ptr::SharedPtr<int> ptr_2;
-  ptr_2 = ptr_1;
-  ASSERT_EQ(ptr_1.get(), ptr_2.get());
-  ASSERT_EQ((*ptr_1).value(), (*ptr_2).value());
-}
-
 TEST(SharedPtrTest, MoveConstructor) {
   int* raw_ptr = new int(10);
   tmn_smart_ptr::SharedPtr<int> ptr_1(raw_ptr);
   tmn_smart_ptr::SharedPtr<int> ptr_2(std::move(ptr_1));
-  ASSERT_EQ(ptr_1.get(), nullptr); 
+  ASSERT_EQ(ptr_1.get(), nullptr);
   ASSERT_EQ(ptr_2.get(), raw_ptr);
 }
 
@@ -105,7 +96,7 @@ TEST(SharedPtrTest, Swap) {
 // TEST Observers :
 
 TEST(SharedPtrTest, BoolOperatorTrue) {
-  int* raw_ptr = new int(10); 
+  int* raw_ptr = new int(10);
   tmn_smart_ptr::SharedPtr<int> ptr(raw_ptr);
   ASSERT_TRUE(static_cast<bool>(ptr));
 }

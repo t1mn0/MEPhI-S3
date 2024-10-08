@@ -6,8 +6,6 @@
 
 
 
-// TEST Constructors & assignment :
-
 TEST(HashTableTest, DefaultConstructor) {
     tmn_associative::HashTable<char, int> htable;
     ASSERT_EQ(htable.size(), 0);
@@ -159,8 +157,8 @@ TEST(HashTableTest, Insert624) {
     }
     ASSERT_EQ(htable.size(), 624);
     ASSERT_EQ(htable.buffer_size(), 2048);
-    std::cout << "\nCURRENT BUFFER SIZE: " << htable.buffer_size() << "\n";
-    std::cout << "\nCURRENT LOAD FACTOR: " << htable.load_factor() << "\n\n";
+    // std::cout << "\nCURRENT BUFFER SIZE: " << htable.buffer_size() << "\n";
+    // std::cout << "\nCURRENT LOAD FACTOR: " << htable.load_factor() << "\n\n";
 }
 
 TEST(HashTableTest, InsertRvalue) {

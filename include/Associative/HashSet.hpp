@@ -10,6 +10,8 @@
 #include "Hash.hpp"
 #include "../tmn.hpp"
 
+
+
 namespace tmn_associative {
 
 template <class Key>
@@ -21,7 +23,7 @@ private:
 
         Node* next = nullptr;
         Node* prev = nullptr;
-        
+
         std::size_t cache = 0;
 
         Node(const Key& other_value, std::size_t cache) noexcept;
@@ -30,12 +32,12 @@ private:
     struct const_iterator {
     public:
         using layer_ptr = const Node*;
-        
+
         using iterator_category	= tmn_iterator::forward_iterator_tag;
         using value_type = const Key;
         using const_pointer = const Key*;
         using const_reference = const Key&;
-    
+
     private:
         layer_ptr ptr;
 

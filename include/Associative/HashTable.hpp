@@ -11,6 +11,8 @@
 #include "Hash.hpp"
 #include "../tmn.hpp"
 
+
+
 namespace tmn_associative {
 
 template <class Key, class Value>
@@ -26,7 +28,6 @@ private:
         std::size_t cache = 0;
 
         Node(const tmn::Pair<const Key, Value>& other_pair, std::size_t cache) noexcept;
-        Node(Node&&) noexcept;
     };
 
     template <bool isConst>
