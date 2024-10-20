@@ -199,34 +199,24 @@ HashSet<Key>& HashSet<Key>::insert(const Key& value){
     allocator_traits_node::construct(_alloc_node, new_node, value, hash_index);
     
     hash_index %= _buffer_size;
+    std::size_t i = hash_index;
 
-    if (_storage[hash_index]){
-        Node* current = _storage[hash_index];
-        while (current && current->cache % _buffer_size == hash_index){
-            if (current->value == value){
-                allocator_traits_node::destroy(_alloc_node, new_node);
-                allocator_traits_node::deallocate(_alloc_node, new_node, 1);
-                return *this;
-            }
-            current = current->next;
+    while (_storage[i] && i < _buffer_size){
+        if (_storage[i]->value == value){
+            allocator_traits_node::destroy(_alloc_node, new_node);
+            allocator_traits_node::deallocate(_alloc_node, new_node, 1);
+            return *this;
         }
-
-        new_node->prev = _storage[hash_index];
-        new_node->next = _storage[hash_index]->next;
-        if(_storage[hash_index]->next){
-            _storage[hash_index]->next->prev = new_node;
-        }
-        _storage[hash_index]->next = new_node;
+        ++i;
     }
-    else{
-        _storage[hash_index] = new_node;
-        new_node->next = _head;
-        if(_head){
-            _head->prev = new_node;
-        }
-
-        _head = new_node;
+    
+    _storage[i] = new_node;
+    new_node->next = _head;
+    if(_head){
+        _head->prev = new_node;
     }
+
+    _head = new_node;
 
     ++_size;
 
@@ -250,33 +240,25 @@ HashSet<Key>& HashSet<Key>::insert(Key&& value) {
     
     hash_index %= _buffer_size;
 
-    if (_storage[hash_index]){
-        Node* current = _storage[hash_index];
-        while (current && current->cache % _buffer_size == hash_index){
-            if (current->value == value){
-                allocator_traits_node::destroy(_alloc_node, new_node);
-                allocator_traits_node::deallocate(_alloc_node, new_node, 1);
-                return *this;
-            }
-            current = current->next;
-        }
+    std::size_t i = hash_index;
 
-        new_node->prev = _storage[hash_index];
-        new_node->next = _storage[hash_index]->next;
-        if(_storage[hash_index]->next){
-            _storage[hash_index]->next->prev = new_node;
+    while (_storage[i] && i < _buffer_size){
+        if (_storage[i]->value == value){
+            allocator_traits_node::destroy(_alloc_node, new_node);
+            allocator_traits_node::deallocate(_alloc_node, new_node, 1);
+            return *this;
         }
-        _storage[hash_index]->next = new_node;
+        ++i;
     }
-    else{
-        _storage[hash_index] = new_node;
-        new_node->next = _head;
-        if(_head){
-            _head->prev = new_node;
-        }
+    
+    _storage[i] = new_node;
+    new_node->next = _head;
+    if(_head){
+        _head->prev = new_node;
+    }
 
-        _head = new_node;
-    }
+    _head = new_node;
+        
 
     ++_size;
 
@@ -320,13 +302,13 @@ bool HashSet<Key>::erase(const Key& key){
             return true;
         }
         
-        Node* current = _storage[hash_index]->next;
-        while (current && current->cache % _buffer_size == hash_index){
-            if (current->value == key){
-                erase_node(current);
-                break;
+        std::size_t i = hash_index;
+        while(_storage[i]){
+            ++i;
+            if (_storage[i]->value == key){
+                erase_node(_storage[i]);
+                return true;
             }
-            current = current->next;
         }
     }
 
@@ -343,14 +325,14 @@ bool HashSet<Key>::erase(Key&& key){
             _storage[hash_index] = nullptr;
             return true;
         }
-        
-        Node* current = _storage[hash_index]->next;
-        while (current && current->cache % _buffer_size == hash_index){
-            if (current->value == key){
-                erase_node(current);
-                break;
+
+        std::size_t i = hash_index;
+        while(_storage[i]){
+            ++i;
+            if (_storage[i]->value == key){
+                erase_node(_storage[i]);
+                return true;
             }
-            current = current->next;
         }
     }
 
@@ -362,6 +344,7 @@ HashSet<Key>& HashSet<Key>::clear() noexcept {
     while (_size > 0) {
         erase_node(_head);
     }
+    _head = nullptr;
     return *this;
 }
 
@@ -370,18 +353,20 @@ HashSet<Key>& HashSet<Key>::clear() noexcept {
 
 template <class Key>
 bool HashSet<Key>::contains(const Key& key) const noexcept {
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+    std::size_t hash = tmn_hash::Hash(key);
 
-    if (_storage[hash_index]){
-        if (_storage[hash_index]->value == key){
+    if (_storage[hash % _buffer_size]){
+        if (_storage[hash % _buffer_size]->value == key){
             return true;
         }
-        Node* current = _storage[hash_index]->next;
-        while (current && current->cache % _buffer_size == hash_index){
-            if (current->value == key){
-                return true;
+        else{
+            std::size_t i = hash % _buffer_size;
+            while(_storage[i]){
+                ++i;
+                if (_storage[hash % _buffer_size]->value == key){
+                    return true;
+                }
             }
-            current = current->next;
         }
     }
     
@@ -430,6 +415,13 @@ void HashSet<Key>::rehash(std::size_t new_buffer_size) {
         while (current){
             if (!new_storage[current->cache % new_buffer_size]){
                 new_storage[current->cache % new_buffer_size] = current;
+            }
+            else{
+                int i = current->cache % new_buffer_size + 1;
+                while (new_storage[i] && i < new_buffer_size){
+                    ++i;
+                }
+                new_storage[i] = current;
             }
 
             current = current->next;

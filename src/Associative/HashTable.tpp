@@ -340,7 +340,7 @@ bool HashTable<Key, Value>::erase(const Key& key){
         while (current && current->cache % _buffer_size == hash_index){
             if (current->pair.first == key){
                 erase_node(current);
-                break;
+                return true;
             }
             current = current->next;
         }
