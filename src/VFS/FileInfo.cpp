@@ -1,0 +1,34 @@
+#include "../../include/VFS/FileInfo.hpp"
+#include "../../include/VFS/Utils.hpp"
+
+namespace tmn_vfs {
+
+// Constructors :
+FileInfo::FileInfo(bool is_dir, const std::string& physical_path, const std::string& virtual_path, const std::string& creator_name) :
+    is_dir(is_dir), physical_path(physical_path), virtual_path(virtual_path), 
+    creator_name(creator_name), creation_time(GetTimeNow()), modification_time(GetTimeNow()) { }
+
+// Getters & setters :
+bool FileInfo::IsDirectory() const { return is_dir; }
+const std::string& FileInfo::GetVirtualPath() const { return virtual_path; }
+const std::size_t FileInfo::GetSize() const { return size; }
+const std::string& FileInfo::GetCreatorName() const { return creator_name; }
+const std::string& FileInfo::GetCreationTime() const { return creation_time; }
+const std::string& FileInfo::GetModificationTime() const { return modification_time; }
+void FileInfo::SetModificationTime(const std::string& time) { modification_time = time; }
+
+// Modifiers :
+void FileInfo::AddInnerFile(const std::string& inner_filename) {
+    inner_files.insert(inner_filename);
+}
+
+void FileInfo::AddGroup(const std::string& groupname, Permissions permissions) {
+    permissions_table[groupname] = permissions;
+}
+
+bool FileInfo::CanAccess(const std::string& groupname, Permissions permission) const {
+    auto it = permissions_table.find(groupname);
+    return (it != permissions_table.end()) && (static_cast<unsigned char>(it->second) & static_cast<unsigned char>(permission));
+}
+
+}
