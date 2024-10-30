@@ -2,13 +2,21 @@
 
 #include "../../include/VFS/Group.hpp"
 
-TEST(GroupTest, BaseGroup) {
-  std::string groupname1 = "Linux users";
-  std::string password_hash = "TempleOS";
-  tmn_vfs::Group* group1 = new tmn_vfs::Group(groupname1, password_hash);
-  
-  std::cout << "CREATION-TIME group1 : " << group1->GetCreationTime() << ";" << std::endl;
-  ASSERT_EQ(group1->GetGroupName(), "Linux users");
+
+TEST(GroupTest, TestGroupCreationAndGetters) {
+  tmn_vfs::Group* group1 = new tmn_vfs::Group("group1", "hash1");
+  tmn_vfs::Group* group2 = new tmn_vfs::Group("group2", "hash2");
+  tmn_vfs::Group* group3 = new tmn_vfs::Group("group3", "hash3");
+
+  ASSERT_EQ(group1->GetGroupName(), "group1");
+  ASSERT_EQ(group2->GetGroupName(), "group2");
+  ASSERT_EQ(group3->GetGroupName(), "group3");
+
+  ASSERT_EQ(group1->GetPasswordHash(), "hash1");
+  ASSERT_EQ(group2->GetPasswordHash(), "hash2");
+  ASSERT_EQ(group3->GetPasswordHash(), "hash3");
 
   delete group1;
+  delete group2;
+  delete group3;
 }

@@ -9,38 +9,37 @@
 
 namespace tmn_hash {
 
-
 template <typename T>
 unsigned int Hash(const T& value) {
   return std::hash<T>{}(value);
 }
 
 template<>
-unsigned int Hash<char>(const char& c) {
+unsigned int inline Hash<char>(const char& c) {
     return static_cast<unsigned int>(c);
 }
 
 template<>
-unsigned int Hash<short>(const short& value) {
+unsigned int inline Hash<short>(const short& value) {
     return static_cast<unsigned int>(value);
 }
 
 template<>
-unsigned int Hash<int>(const int& value) {
+unsigned int inline Hash<int>(const int& value) {
     uint32_t temp = static_cast<uint32_t>(value);
     temp = (temp ^ (temp >> 16));
     return static_cast<unsigned int>(temp);
 }
 
 template<>
-unsigned int Hash<unsigned int>(const unsigned int &value) {
+unsigned int inline Hash<unsigned int>(const unsigned int &value) {
     unsigned int temp = value;
     temp = (temp ^ (temp >> 16));
     return static_cast<unsigned int>(temp);
 }
 
 template<>
-unsigned int Hash<long int>(const long int &value) {
+unsigned int inline Hash<long int>(const long int &value) {
     uint64_t temp = static_cast<uint64_t>(value);
     temp = (temp ^ (temp >> 32));
     temp = (temp ^ (temp >> 16));
@@ -48,7 +47,7 @@ unsigned int Hash<long int>(const long int &value) {
 }
 
 template<>
-unsigned int Hash<unsigned long int>(const unsigned long int &value) {
+unsigned int inline Hash<unsigned long int>(const unsigned long int &value) {
     unsigned long int temp = value;
     temp = (temp ^ (temp >> 32));
     temp = (temp ^ (temp >> 16));
@@ -56,7 +55,7 @@ unsigned int Hash<unsigned long int>(const unsigned long int &value) {
 }
 
 template<>
-unsigned int Hash<float>(const float& value) {
+unsigned int inline Hash<float>(const float& value) {
     uint32_t temp;
     std::memcpy(&temp, &value, sizeof(float));
     temp = (temp ^ (temp >> 16));
@@ -64,7 +63,7 @@ unsigned int Hash<float>(const float& value) {
 }
 
 template<>
-unsigned int Hash<double>(const double& value) {
+unsigned int inline Hash<double>(const double& value) {
     uint64_t temp;
     std::memcpy(&temp, &value, sizeof(double));
     temp = (temp ^ (temp >> 32));

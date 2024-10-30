@@ -1,5 +1,6 @@
 #include "../../include/VFS/Group.hpp"
 #include "../../include/VFS/Utils.hpp"
+#include "Group.hpp"
 
 namespace tmn_vfs {
 
@@ -11,6 +12,10 @@ const std::string& Group::GetCreationTime() const { return creation_time; }
 
 bool Group::IsMember(const std::string& username) const {
     return members.contains(username);
+}
+
+ const std::string& Group::GetPasswordHash() const {        
+    return password_hash;
 }
 
 };

@@ -4,6 +4,8 @@
 #include <unordered_set>
 #include <memory>
 
+#include "../Associative/HashSet.hpp"
+
 namespace tmn_vfs{
 
 class VirtualFileSystem;
@@ -12,14 +14,14 @@ enum class UserStatus { SUPER, LOCAL, GUEST };
 
 class User {
 private:
-    const std::string username;
-    const std::string fullname;
-    const std::string creation_time;
-    const std::string password_hash;
+    std::string username;
+    std::string fullname;
+    std::string creation_time;
+    std::string password_hash;
     
-    const UserStatus status = UserStatus::GUEST;
+    UserStatus status = UserStatus::GUEST;
 
-    std::unordered_set<std::string> groups;
+    tmn_associative::HashSet<std::string> groups;
     
 public:
     User() = default;

@@ -5,6 +5,9 @@
 #include <string>
 #include <iostream>
 
+#include "../../include/Pair/Pair.hpp"
+#include "../../include/VFS/Utils.hpp"
+
 namespace tmn_vfs{
 
 uint16_t FILE_COUNT = 12;
@@ -33,7 +36,7 @@ const std::string tmn_vfs::VirtualFileSystem::AddUser(const User& user) {
         return "ERROR";
     }
     else{
-        users_table.emplace(user.GetUserName(), user);
+        users_table.insert(tmn::Pair<const std::string, User>(user.GetUserName(), user));
         return user.GetUserName();
     }
 }
@@ -68,7 +71,7 @@ const std::string VirtualFileSystem::AddGroup(const Group& group){
         return "ERROR";
     }
     else{
-        groups_table.insert({group.GetGroupName(), group});
+        groups_table.insert(tmn::Pair<const std::string, Group>(group.GetGroupName(), group));
         return group.GetGroupName();
     }
 }
@@ -110,6 +113,10 @@ bool VirtualFileSystem::IsGroupInSystem(const std::string& groupname) {
 }
 
 void VirtualFileSystem::RemoveGroup(const std::string& groupname){
+    if(groupname == "default"){
+        std::cerr << "Unable to delete the default group;" << std::endl;
+    }
+
     if(!groups_table.contains(groupname)){
         std::cerr << "Error: Group not found: " << groupname << std::endl;
         return;
@@ -122,8 +129,8 @@ void VirtualFileSystem::RemoveGroup(const std::string& groupname){
 }
 
 void VirtualFileSystem::CreateFile(const FileInfo& file_info){
-    index_table.insert({file_info.GetVirtualPath(), file_info});
-    index_table[current_directory].size += 1;
+    index_table.insert(tmn::Pair<const std::string, FileInfo>(file_info.GetVirtualPath(), file_info));
+    index_table[GetParentPath(file_info.GetVirtualPath())].inner_files.insert(file_info.GetVirtualPath());
 }
 
 void VirtualFileSystem::MoveFile(const std::string& path_from, const std::string& path_to){
@@ -136,7 +143,7 @@ void VirtualFileSystem::MoveFile(const std::string& path_from, const std::string
         return;
     }
 
-    index_table.insert({path_to, index_table[path_from]});
+    index_table.insert(tmn::Pair<const std::string, FileInfo>(path_to, index_table[path_from]));
     index_table.erase(path_from);
 }
 
@@ -176,7 +183,7 @@ void VirtualFileSystem::Shutdown(){
 }
 
 VirtualFileSystem::~VirtualFileSystem(){
-    Group* default_group = &(groups_table.at("default"));
+    Group* default_group = &(groups_table["default"]);
     groups_table.erase("default");
     delete default_group;
     Shutdown();

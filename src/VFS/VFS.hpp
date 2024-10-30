@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "../../include/Associative/HashTable.hpp"
+
 #include "../../include/VFS/User.hpp"
 #include "../../include/VFS/Group.hpp"
 #include "../../include/VFS/FileInfo.hpp"
@@ -19,9 +21,9 @@ private:
     std::string active_user;
     std::string current_directory;
     uint32_t active_super; 
-    std::unordered_map<std::string, FileInfo> index_table;
-    std::unordered_map<std::string, User> users_table;
-    std::unordered_map<std::string, Group> groups_table;
+    tmn_associative::HashTable<std::string, FileInfo> index_table;
+    tmn_associative::HashTable<std::string, User> users_table;
+    tmn_associative::HashTable<std::string, Group> groups_table;
 
 public:
     //VirtualFileSystem(const VirtualFileSystem&) = delete; 

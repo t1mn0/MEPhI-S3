@@ -4,6 +4,10 @@
 #include <unordered_set>
 #include <filesystem>
 #include <string>
+#include <iostream>
+
+#include "../Associative/HashSet.hpp"
+#include "../Associative/HashTable.hpp"
 
 namespace tmn_vfs {
 
@@ -16,23 +20,23 @@ enum class Permissions : unsigned char {
   DELETE = 8
 };
 
+Permissions operator|(Permissions a, Permissions b);
+
 class FileInfo {
 private:
   bool is_dir;
   std::string physical_path; 
   std::string virtual_path;
-  std::size_t size = 0;
-  const std::string creator_name;
+  std::string creator_name;
   std::string creation_time;
   std::string modification_time;
 
-  std::unordered_set<std::string> inner_files;
-  std::unordered_map<std::string, Permissions> permissions_table; // GroupName: Permissions
+  tmn_associative::HashSet<std::string> inner_files;
+  tmn_associative::HashTable<std::string, Permissions> permissions_table; // GroupName: Permissions
 
 public:
   FileInfo() = default; 
   FileInfo(bool is_dir, const std::string& physical_path, const std::string& virtual_path, const std::string& creator_name);
-  //~FileInfo();
 
   // Getters & setters :
   bool IsDirectory() const;
@@ -48,7 +52,7 @@ public:
   void AddGroup(const std::string& groupname, Permissions permissions);
 
   // Checkers :
-  bool CanAccess(const std::string& username, Permissions permission) const;
+  bool CanAccess(const std::string& groupname, Permissions permission) const;
 
   friend class VirtualFileSystem;
 };
