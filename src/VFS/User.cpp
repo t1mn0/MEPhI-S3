@@ -19,4 +19,4 @@ bool User::IsInGroup(const std::string& groupname) const{
     return groups.contains(groupname);
 }
 
-};
+}

@@ -1,10 +1,7 @@
 #pragma once
 
-#include <unordered_map>
-#include <unordered_set>
-#include <filesystem>
 #include <string>
-#include <iostream>
+#include <iostream> // std::cerr (remove later)
 
 #include "../Associative/HashSet.hpp"
 #include "../Associative/HashTable.hpp"
@@ -57,4 +54,4 @@ public:
   friend class VirtualFileSystem;
 };
 
-};
+}

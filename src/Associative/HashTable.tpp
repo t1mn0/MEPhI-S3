@@ -96,7 +96,7 @@ HashTable<Key, Value>::HashTable(const HashTable<Key, Value>& other) : _buffer_s
 
 template <class Key, class Value>
 HashTable<Key, Value>::HashTable(HashTable<Key, Value>&& other) : 
-    _storage(other._storage),
+    _storage(std::move(other._storage)),
     _size(other._size), 
     _buffer_size(other._buffer_size),
     _alloc_node(other._alloc_node),
@@ -156,7 +156,7 @@ HashTable<Key, Value>& HashTable<Key, Value>::operator=(HashTable<Key, Value>&& 
 
     _size = other._size;
     _buffer_size = other._buffer_size;
-    _storage = other._storage;
+    _storage = std::move(other._storage);
     _head = other._head;
     _alloc_node = other._alloc_node;
 
@@ -207,8 +207,11 @@ float HashTable<Key, Value>::max_load_factor() const {
 
 template <class Key, class Value>
 bool HashTable<Key, Value>::insert(const tmn::Pair<const Key, Value>& pair){
-    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
+    if (static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
+    }
+    else if (_buffer_size == 0){
+        rehash(_buffer_size + 1);
     }
 
     std::size_t hash_index = tmn_hash::Hash(pair.first);
@@ -256,8 +259,11 @@ bool HashTable<Key, Value>::insert(const tmn::Pair<const Key, Value>& pair){
 
 template <class Key, class Value>
 bool HashTable<Key, Value>::insert(tmn::Pair<const Key, Value>&& pair) {
-    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
+    if (static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
+    }
+    else if (_buffer_size == 0){
+        rehash(_buffer_size + 1);
     }
 
     std::size_t hash_index = tmn_hash::Hash(pair.first);
@@ -296,7 +302,7 @@ bool HashTable<Key, Value>::insert(tmn::Pair<const Key, Value>&& pair) {
 
     ++_size;
 
-    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
+    if (static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
     }
     

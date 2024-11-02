@@ -37,10 +37,10 @@ bool FileInfo::CanAccess(const std::string& groupname, Permissions permission) c
         unsigned char user_permissions = static_cast<unsigned char>(optional_user.value());
         unsigned char requested_permissions = static_cast<unsigned char>(permission);
         return (user_permissions & requested_permissions) == requested_permissions;
-    } else {
-        std::cerr << "Group with groupname = " << groupname << " is not found" << std::endl;
-        return false;
-    }
+    } 
+    
+    std::cerr << "Group with groupname = " << groupname << " is not found" << std::endl;
+    return false;
 }
 
 

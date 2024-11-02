@@ -162,7 +162,7 @@ TEST(HashSetTest, Insert512) {
         hset.insert(static_cast<float>(i) / 100);
     }
     ASSERT_EQ(hset.size(), 512);
-    hset.insert(static_cast<float>(-1));
+    hset.insert(-1.0);
     ASSERT_EQ(hset.size(), 513);
     ASSERT_EQ(hset.buffer_size(), 2048);
 }

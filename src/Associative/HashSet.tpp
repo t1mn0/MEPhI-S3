@@ -75,7 +75,7 @@ HashSet<Key>::HashSet(const HashSet<Key>& other) : _buffer_size(other._buffer_si
 
 template <class Key>
 HashSet<Key>::HashSet(HashSet<Key>&& other) : 
-    _storage(other._storage),
+    _storage(std::move(other._storage)),
     _size(other._size), 
     _buffer_size(other._buffer_size),
     _alloc_node(other._alloc_node),
@@ -135,7 +135,7 @@ HashSet<Key>& HashSet<Key>::operator=(HashSet<Key>&& other) noexcept {
 
     _size = other._size;
     _buffer_size = other._buffer_size;
-    _storage = other._storage;
+    _storage = std::move(other._storage);
     _head = other._head;
     _alloc_node = other._alloc_node;
 
@@ -186,8 +186,11 @@ float HashSet<Key>::max_load_factor() const {
 
 template <class Key>
 HashSet<Key>& HashSet<Key>::insert(const Key& value){
-    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
+    if (static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
+    }
+    else if (_buffer_size == 0){
+        rehash(_buffer_size + 1);
     }
 
     std::size_t hash_index = tmn_hash::Hash(value);
@@ -198,7 +201,7 @@ HashSet<Key>& HashSet<Key>::insert(const Key& value){
     hash_index %= _buffer_size;
     std::size_t i = hash_index;
 
-    while (_storage[i] && i < _buffer_size){
+    while (i < _buffer_size && _storage[i]){
         if (_storage[i]->value == value){
             allocator_traits_node::destroy(_alloc_node, new_node);
             allocator_traits_node::deallocate(_alloc_node, new_node, 1);
@@ -217,7 +220,7 @@ HashSet<Key>& HashSet<Key>::insert(const Key& value){
 
     ++_size;
 
-    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
+    if (static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
     }
     
@@ -226,8 +229,11 @@ HashSet<Key>& HashSet<Key>::insert(const Key& value){
 
 template <class Key>
 HashSet<Key>& HashSet<Key>::insert(Key&& value) {
-    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
+    if ((static_cast<float>(_size) / _buffer_size) > _max_load_factor){
         rehash(_buffer_size * 2);
+    }
+    else if (_buffer_size == 0){
+        rehash(_buffer_size + 1);
     }
 
     std::size_t hash_index = tmn_hash::Hash(value);
@@ -239,7 +245,7 @@ HashSet<Key>& HashSet<Key>::insert(Key&& value) {
 
     std::size_t i = hash_index;
 
-    while (_storage[i] && i < _buffer_size){
+    while (i < _buffer_size - 1 && _storage[i] != nullptr){
         if (_storage[i]->value == value){
             allocator_traits_node::destroy(_alloc_node, new_node);
             allocator_traits_node::deallocate(_alloc_node, new_node, 1);
@@ -259,7 +265,7 @@ HashSet<Key>& HashSet<Key>::insert(Key&& value) {
 
     ++_size;
 
-    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
+    if (static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
     }
     
@@ -304,6 +310,7 @@ bool HashSet<Key>::erase(const Key& key){
             ++i;
             if (_storage[i]->value == key){
                 erase_node(_storage[i]);
+                _storage[hash_index] = nullptr;
                 return true;
             }
         }

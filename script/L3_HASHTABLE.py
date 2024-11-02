@@ -48,7 +48,7 @@ def plot_results(test_hashtable_data, test_unorderedtable_data):
     max_y = max(max(hashtable_y), max(unorderedtable_y))
     ax.set_ylim(0, 800000)
     
-    ax.set_xlabel('Номер замера')
+    ax.set_xlabel('Номер замера (замер = создание + занесение в структуру данных 1000 записей)')
     ax.set_ylabel('Время (наносекунды)')
     ax.set_title('Время выполнения вставки r-value пар')
     ax.legend()

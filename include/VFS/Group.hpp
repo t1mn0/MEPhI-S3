@@ -1,8 +1,6 @@
 #pragma once
 
 #include <string>
-#include <unordered_set>
-#include <memory>
 
 #include "../Associative/HashSet.hpp"
 
@@ -31,4 +29,4 @@ public:
     friend class VirtualFileSystem;
 };
 
-};
+}
