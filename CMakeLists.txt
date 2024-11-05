@@ -23,6 +23,7 @@ add_library(VFS SHARED
 include_directories(include include/VFS include/Exceptions)
 
 find_package(ftxui 5 REQUIRED)
+# gui/L3/Authorization.cpp
 add_executable(ftxui-starter gui/L3/main.cpp)
 target_link_libraries(ftxui-starter
   PRIVATE ftxui::screen
