@@ -22,7 +22,7 @@ Permissions operator|(Permissions a, Permissions b);
 class FileInfo {
 private:
   bool is_dir;
-  std::string physical_path; 
+  std::string linked_sector; 
   std::string virtual_path;
   std::string creator_name;
   std::string creation_time;
@@ -33,7 +33,7 @@ private:
 
 public:
   FileInfo() = default; 
-  FileInfo(bool is_dir, const std::string& physical_path, const std::string& virtual_path, const std::string& creator_name);
+  FileInfo(bool is_dir, const std::string& linked_sector, const std::string& virtual_path, const std::string& creator_name);
 
   // Getters & setters :
   bool IsDirectory() const;

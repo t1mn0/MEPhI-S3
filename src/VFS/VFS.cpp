@@ -48,6 +48,10 @@ bool VirtualFileSystem::IsGroupInSystem(const std::string& groupname) const {
     return groups_table.contains(groupname);
 }
 
+bool VirtualFileSystem::IsFileInSystem(const std::string& filename) const {
+    return index_table.contains(filename);
+}
+
 bool tmn_vfs::VirtualFileSystem::IsMember(const std::string& groupname, const std::string& username) const{
     if (groups_table.contains(groupname)){
         return groups_table[groupname].members.contains(username);
@@ -100,6 +104,25 @@ void VirtualFileSystem::RemoveUser(const std::string& username){
         groups_table[groupname].members.erase(username);
     }   
     users_table.erase(username);
+}
+
+tmn::Optional<User> VirtualFileSystem::GetUserInfo(const std::string& username) const {
+    if (users_table.contains(username)){
+        return tmn::Optional<User>(users_table[username]);
+    }
+    return tmn::Optional<User>();
+}
+
+tmn_sequence::ArraySequence<std::string> tmn_vfs::VirtualFileSystem::GetAllUsers() const {
+    return users_table.keys();
+}
+
+tmn_associative::HashSet<std::string> tmn_vfs::VirtualFileSystem::GetAllUserGroups(const std::string& username) const{
+    tmn_associative::HashSet<std::string> set;
+    if (users_table.contains(username)){
+        set = users_table[username].groups;
+    }
+    return set;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -176,8 +199,23 @@ void VirtualFileSystem::RemoveGroup(const std::string& groupname){
     groups_table.erase(groupname);
 }
 
+tmn::Optional<Group> VirtualFileSystem::GetGroupInfo(const std::string& groupname) const {
+    if (users_table.contains(groupname)){
+        return tmn::Optional<Group>(groups_table[groupname]);
+    }
+    return tmn::Optional<Group>();
+}
+
+tmn_sequence::ArraySequence<std::string> tmn_vfs::VirtualFileSystem::GetAllGroups() const {
+    return groups_table.keys();
+}
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Actions with files :
+
+tmn_associative::HashSet<std::string> VirtualFileSystem::CurrentDirContent() {
+    return index_table[current_directory].inner_files;
+}
 
 void VirtualFileSystem::AddFile(const FileInfo& file_info){
     index_table.insert(tmn::Pair<const std::string, FileInfo>(file_info.virtual_path, file_info));
@@ -247,7 +285,7 @@ VirtualFileSystem VirtualFileSystem::Init(const User& user) {
 
     vfs.active_user = user.username;
 
-    Group default_group("default", "0");
+    Group default_group("default", "super", "0");
     default_group.members.insert(user.username);
     vfs.AddGroup(default_group);
 

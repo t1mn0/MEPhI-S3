@@ -11,6 +11,7 @@ class VirtualFileSystem;
 class Group {
 private:
     std::string groupname;
+    std::string creater_name;
     std::string password_hash;
     std::string creation_time;
     
@@ -18,9 +19,10 @@ private:
 
 public:
     Group() = default; 
-    Group(const std::string& groupname, const std::string& password_hash) noexcept;
+    Group(const std::string& groupname, const std::string& creater_name, const std::string& password_hash) noexcept;
 
     const std::string& GetGroupName() const;
+    const std::string& GetCreaterName() const;
     const std::string& GetCreationTime() const;
     const std::string& GetPasswordHash() const;
     

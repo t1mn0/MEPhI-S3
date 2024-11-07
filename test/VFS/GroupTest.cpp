@@ -4,9 +4,9 @@
 
 
 TEST(GroupTest, TestGroupCreationAndGetters) {
-  tmn_vfs::Group* group1 = new tmn_vfs::Group("group1", "hash1");
-  tmn_vfs::Group* group2 = new tmn_vfs::Group("group2", "hash2");
-  tmn_vfs::Group* group3 = new tmn_vfs::Group("group3", "hash3");
+  tmn_vfs::Group* group1 = new tmn_vfs::Group("group1", "creater1", "hash1");
+  tmn_vfs::Group* group2 = new tmn_vfs::Group("group2", "creater2", "hash2");
+  tmn_vfs::Group* group3 = new tmn_vfs::Group("group3", "creater3","hash3");
 
   ASSERT_EQ(group1->GetGroupName(), "group1");
   ASSERT_EQ(group2->GetGroupName(), "group2");

@@ -3,11 +3,15 @@
 
 namespace tmn_vfs {
 
-Group::Group(const std::string& groupname, const std::string& password_hash) noexcept : 
-    groupname(groupname), password_hash(password_hash), creation_time(GetTimeNow()) {}
+Group::Group(const std::string& groupname, const std::string& creater_name, const std::string& password_hash) noexcept : 
+    groupname(groupname), creater_name(creater_name), password_hash(password_hash), creation_time(GetTimeNow()) {}
 
 const std::string& Group::GetGroupName() const { 
     return groupname; 
+}
+
+const std::string& Group::GetCreaterName() const { 
+    return creater_name; 
 }
 
 const std::string& Group::GetPasswordHash() const {        

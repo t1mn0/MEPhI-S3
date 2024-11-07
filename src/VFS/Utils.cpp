@@ -30,4 +30,14 @@ std::string GetParentPath(const std::string& path) {
   return path.substr(0, last_slash_position);
 }
 
+std::string CutFileName(const std::string& path) {
+  size_t last_slash_position = path.rfind('/');
+
+  if (last_slash_position == std::string::npos) {
+    return path;
+  }
+
+  return path.substr(last_slash_position + 1);
+}
+
 }

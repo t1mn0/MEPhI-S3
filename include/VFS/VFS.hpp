@@ -3,6 +3,7 @@
 #include <string>
 
 #include "../../include/Associative/HashTable.hpp"
+#include "../../include/Sequence/ArraySequence.hpp"
 
 #include "../../include/VFS/User.hpp"
 #include "../../include/VFS/Group.hpp"
@@ -10,16 +11,16 @@
 
 namespace tmn_vfs {
 
-uint16_t FILE_COUNT = 12;
-std::string MOUNT_DIR = "../../examples";
-std::string VFS_DIR = "VFS";
+inline constexpr uint16_t FILE_COUNT = 12;
+inline std::string MOUNT_DIR("../../examples");
+inline std::string VFS_DIR("VFS");
 
 class VirtualFileSystem {
 private:
     VirtualFileSystem() = default;
     static void MountVFS();
 
-public:
+private:
     // Fields :
     std::string active_user;
     std::string current_directory = "files";
@@ -29,10 +30,6 @@ public:
     tmn_associative::HashTable<std::string, Group> groups_table;
 
 public:
-    //VirtualFileSystem(const VirtualFileSystem&) = delete; 
-    //VirtualFileSystem(VirtualFileSystem&&) = delete; 
-    //void operator=(const VirtualFileSystem&) = delete;
-    //void operator=(VirtualFileSystem&&) = delete;
     ~VirtualFileSystem();
     
     // Checkers :
@@ -43,6 +40,7 @@ public:
     std::size_t CountMembers(const std::string& groupname) const;
     bool IsUserInSystem(const std::string& username) const;
     bool IsGroupInSystem(const std::string& groupname) const;
+    bool IsFileInSystem(const std::string& filename) const;
     bool IsMember(const std::string& groupname, const std::string& username) const;
     bool IsGoodPath(const std::string& path) const;
 
@@ -52,16 +50,22 @@ public:
 
     // Users policy & actions :
     void AddUser(const User& user);
+    tmn::Optional<User> GetUserInfo(const std::string& username) const;
+    tmn_sequence::ArraySequence<std::string> GetAllUsers() const;
+    tmn_associative::HashSet<std::string> GetAllUserGroups(const std::string& username) const;
     void Authorization(const std::string& username, const std::string& password_hash); // * DONE
     void RemoveUser(const std::string& username);
 
     // Groups policy & actions :
     void AddGroup(const Group& group);
     void AddToGroup(const std::string& username, const std::string& groupname, const std::string& password_hash);
+    tmn::Optional<Group> GetGroupInfo(const std::string& groupname) const;
+    tmn_sequence::ArraySequence<std::string> GetAllGroups() const;
     void RemoveFromGroup(const std::string& username, const std::string& groupname, const std::string& password_hash);
     void RemoveGroup(const std::string& groupname);
 
     // Actions with files :
+    tmn_associative::HashSet<std::string> CurrentDirContent();
     void AddFile(const FileInfo& file_info);
     // TODO : void MoveFile(const std::string& path_from, const std::string& path_to);
     // TODO : void RemoveFile(const std::string& filename, bool is_recursive);

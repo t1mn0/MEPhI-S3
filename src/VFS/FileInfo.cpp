@@ -9,8 +9,8 @@ Permissions operator|(Permissions a, Permissions b) {
 }
 
 // Constructors :
-FileInfo::FileInfo(bool is_dir, const std::string& physical_path, const std::string& virtual_path, const std::string& creator_name) :
-    is_dir(is_dir), physical_path(physical_path), virtual_path(virtual_path), 
+FileInfo::FileInfo(bool is_dir, const std::string& linked_sector, const std::string& virtual_path, const std::string& creator_name) :
+    is_dir(is_dir), linked_sector(linked_sector), virtual_path(virtual_path), 
     creator_name(creator_name), creation_time(GetTimeNow()), modification_time(GetTimeNow()) { }
 
 // Getters & setters :

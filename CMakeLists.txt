@@ -18,20 +18,29 @@ add_library(VFS SHARED
     src/VFS/User.cpp
     src/VFS/Utils.cpp
     src/VFS/VFS.cpp
+    src/VFS/VFSController.cpp
 )
 
 include_directories(include include/VFS include/Exceptions)
 
 find_package(ftxui 5 REQUIRED)
 # gui/L3/Authorization.cpp
-add_executable(ftxui-starter gui/L3/main.cpp)
-target_link_libraries(ftxui-starter
+# gui/L3/main.cpp
+add_executable(gui 
+        gui/L3/main.cpp
+        gui/L3/MainScreen.cpp
+        gui/L3/AuthorizationScreen.cpp
+        gui/L3/NewUserScreen.cpp
+        gui/L3/NewGroupScreen.cpp
+        gui/L3/NewFileScreen.cpp)
+
+target_link_libraries(gui
   PRIVATE ftxui::screen
   PRIVATE ftxui::dom
   PRIVATE ftxui::component
+  VFS
+  Exceptions    
 )
-
-
 
 find_package(GTest REQUIRED)
 if(GTEST_FOUND)

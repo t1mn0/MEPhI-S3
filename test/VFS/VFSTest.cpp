@@ -119,9 +119,9 @@ TEST(VirtualFileSystemTest, AddGroup) {
 
     auto vfs = tmn_vfs::VirtualFileSystem::Init(creater);
 
-    tmn_vfs::Group groupA("Developers", "11110101");
-    tmn_vfs::Group groupB("Dev-#1234", "1111100000");
-    tmn_vfs::Group groupC("Developers", "dh823");
+    tmn_vfs::Group groupA("Developers", "timofey", "11110101");
+    tmn_vfs::Group groupB("Dev-#1234", "timofey", "1111100000");
+    tmn_vfs::Group groupC("Developers", "timofey", "dh823");
 
     vfs.AddGroup(groupA);
     vfs.AddGroup(groupB);
@@ -149,8 +149,8 @@ TEST(VirtualFileSystemTest, AddToGroup) {
     vfs.AddUser(user2);
     vfs.AddUser(user3);
 
-    tmn_vfs::Group groupA("Developers", "11110101");
-    tmn_vfs::Group groupB("Dev-#1234", "1111100000");
+    tmn_vfs::Group groupA("Developers", "timofey", "11110101");
+    tmn_vfs::Group groupB("Dev-#1234", "timofey", "1111100000");
 
     vfs.AddGroup(groupA);
     vfs.AddGroup(groupB);
@@ -178,7 +178,7 @@ TEST(VirtualFileSystemTest, RemoveFromGroup) {
     vfs.AddUser(user3);
     vfs.AddUser(user4);
 
-    tmn_vfs::Group groupA("Developers", "11110101");
+    tmn_vfs::Group groupA("Developers", "timofey", "11110101");
 
     vfs.AddGroup(groupA);
 
@@ -203,9 +203,9 @@ TEST(VirtualFileSystemTest, RemoveGroup) {
 
     auto vfs = tmn_vfs::VirtualFileSystem::Init(creater);
 
-    tmn_vfs::Group groupA("Developers", "11110101");
-    tmn_vfs::Group groupB("Dev-#1234", "1111100000");
-    tmn_vfs::Group groupC("Developers", "dh823");
+    tmn_vfs::Group groupA("Developers", "timofey", "11110101");
+    tmn_vfs::Group groupB("Dev-#1234", "timofey", "1111100000");
+    tmn_vfs::Group groupC("Developers", "timofey", "dh823");
 
     vfs.AddGroup(groupA);
     vfs.AddGroup(groupB);
