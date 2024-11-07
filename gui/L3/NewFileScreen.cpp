@@ -47,11 +47,20 @@ tmn::Optional<tmn_vfs::FileInfo> NewFileScreen(tmn_vfs::VirtualFileSystem& vfs) 
     std::string button_label_create_file = "Create a new file";
     std::string button_label_quit = "Quit";
     
+    bool button_is_pressed = false;
+    
     Component input_filename = Input(&filename, "filename");
 
     auto button_create_file = Button(&button_label_create_file, [&] {
-        tmn_vfs::VFSController::IsValidFileName(filename)? screen.Exit() : tmn_vfs::VFSController::WrongCreatingFile(creating_file_error);});
-
+        if (tmn_vfs::VFSController::IsValidFileName(filename)) {
+            screen.Exit();
+            button_is_pressed = true;
+        } 
+        else {
+            tmn_vfs::VFSController::WrongCreatingFile(creating_file_error);
+        }
+    });
+    
     auto button_quit = Button(&button_label_quit, [&] { screen.Exit() ;});
 
     auto component = Container::Vertical({
@@ -99,11 +108,15 @@ tmn::Optional<tmn_vfs::FileInfo> NewFileScreen(tmn_vfs::VirtualFileSystem& vfs) 
 
     screen.Loop(renderer);
 
-    if( !tmn_vfs::VFSController::IsValidFileName(filename) || vfs.IsFileInSystem(vfs.PWD() + filename)){
-        return tmn::Optional<tmn_vfs::FileInfo>();
+    if(button_is_pressed){
+        if( !tmn_vfs::VFSController::IsValidFileName(filename) || vfs.IsFileInSystem(vfs.PWD() + filename)){
+            return tmn::Optional<tmn_vfs::FileInfo>();
+        }
+
+        tmn_vfs::FileInfo fi = tmn_vfs::FileInfo(toggle_filetype_selected, tmn_vfs::VFSController::GetFreeSector(), vfs.PWD() + "/" + filename, vfs.WhoUser());
+
+        return tmn::Optional<tmn_vfs::FileInfo>(fi);
     }
 
-    tmn_vfs::FileInfo fi = tmn_vfs::FileInfo(toggle_filetype_selected, tmn_vfs::VFSController::GetFreeSector(), vfs.PWD() + "/" + filename, vfs.WhoUser());
-
-    return tmn::Optional<tmn_vfs::FileInfo>(fi);
+    return tmn::Optional<tmn_vfs::FileInfo>();
 }

@@ -23,6 +23,8 @@ tmn::Optional<tmn_vfs::User> NewUserScreen(tmn_vfs::VirtualFileSystem& vfs) {
 
     std::string button_label_create_user = "Create a new user and log in";
     std::string button_label_quit = "Quit";
+    
+    bool button_is_pressed = false;
 
     std::vector<std::string> toggle_roles = {
         "LOCAL",
@@ -41,10 +43,17 @@ tmn::Optional<tmn_vfs::User> NewUserScreen(tmn_vfs::VirtualFileSystem& vfs) {
     Component toggle_role = Toggle(&toggle_roles, &toggle_selected_role);
 
     auto button_create_user = Button(&button_label_create_user, [&] {
-        tmn_vfs::VFSController::IsValidUsername(username) && 
-        tmn_vfs::VFSController::IsValidFullname(fullname) && 
-        !vfs.IsUserInSystem(username) && 
-        password != "" ? screen.Exit() : tmn_vfs::VFSController::WrongAuthorization(creating_user_error);});
+        if(tmn_vfs::VFSController::IsValidUsername(username) && 
+            tmn_vfs::VFSController::IsValidFullname(fullname) && 
+            !vfs.IsUserInSystem(username) && password != ""){
+            
+            screen.Exit();
+            button_is_pressed = true;
+        }    
+        else{
+            tmn_vfs::VFSController::WrongAuthorization(creating_user_error);
+        }
+    });
 
     auto button_quit = Button(&button_label_quit, [&] { screen.Exit() ;});
 
@@ -94,19 +103,23 @@ tmn::Optional<tmn_vfs::User> NewUserScreen(tmn_vfs::VirtualFileSystem& vfs) {
 
     screen.Loop(renderer);
 
-    if( !tmn_vfs::VFSController::IsValidUsername(username) || 
-        !tmn_vfs::VFSController::IsValidFullname(fullname) || 
-        password == ""){
-            return tmn::Optional<tmn_vfs::User>();
+    if(button_is_pressed){
+        if( !tmn_vfs::VFSController::IsValidUsername(username) || 
+            !tmn_vfs::VFSController::IsValidFullname(fullname) || 
+            password == ""){
+                return tmn::Optional<tmn_vfs::User>();
+            }
+
+        tmn_vfs::User user;
+        if (toggle_selected_role == 0){
+            user = tmn_vfs::User(username, fullname, std::to_string(std::hash<std::string>{}(password)), tmn_vfs::UserStatus::LOCAL);
+        }
+        else{
+            user = tmn_vfs::User(username, fullname, std::to_string(std::hash<std::string>{}(password)), tmn_vfs::UserStatus::GUEST);
         }
 
-    tmn_vfs::User user;
-    if (toggle_selected_role == 0){
-        user = tmn_vfs::User(username, fullname, std::to_string(std::hash<std::string>{}(password)), tmn_vfs::UserStatus::LOCAL);
+        return tmn::Optional<tmn_vfs::User>(user);
     }
-    else{
-        user = tmn_vfs::User(username, fullname, std::to_string(std::hash<std::string>{}(password)), tmn_vfs::UserStatus::GUEST);
-    }
-
-    return tmn::Optional<tmn_vfs::User>(user);
+    
+    return tmn::Optional<tmn_vfs::User>();
 }

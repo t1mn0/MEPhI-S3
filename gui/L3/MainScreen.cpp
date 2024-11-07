@@ -118,30 +118,6 @@ void MainScreen(tmn_vfs::VirtualFileSystem& vfs) {
     });
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    // BUTTONS ADD_TO_GROUP AND REMOVE_FROM_GROUP
-
-    // tmn::Optional<tmn_vfs::User> optional_new_user;
-
-    // std::string button_label_create_user = "(+) New User";
-
-    // auto button_create_user = Button(&button_label_create_user, [&]{
-    //     auto optional_new_user = NewUserScreen(vfs);
-    //     if (optional_new_user.has_value()){
-    //         vfs.AddUser(optional_new_user.value());
-    //     }
-    // });
-
-    // std::string button_label_create_group = "(+) New Group";
-
-    // auto button_create_group = Button(&button_label_create_group, [&]{
-    //     auto optional_new_group = NewGroupScreen(vfs);
-    //     if (optional_new_group.has_value()){
-    //         vfs.AddGroup(optional_new_group.value());
-    //         dd_helper_groups.push_back(optional_new_group.value().GetGroupName());
-    //     }
-    // });
-
-     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     // CURRENT_DIR DROPDOWN
 
     tmn_associative::HashSet<std::string> current_dir = vfs.CurrentDirContent();

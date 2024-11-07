@@ -22,6 +22,8 @@ tmn::Optional<tmn_vfs::Group> NewGroupScreen(tmn_vfs::VirtualFileSystem& vfs) {
 
     std::string button_label_create_group = "Create a new group";
     std::string button_label_quit = "Quit";
+
+    bool button_is_pressed = false;
     
     Component input_groupname = Input(&groupname, "groupname");
 
@@ -30,9 +32,15 @@ tmn::Optional<tmn_vfs::Group> NewGroupScreen(tmn_vfs::VirtualFileSystem& vfs) {
     Component input_password = Input(&password, "password", password_option);
 
     auto button_create_group = Button(&button_label_create_group, [&] {
-        tmn_vfs::VFSController::IsValidUsername(groupname) && 
-        !vfs.IsGroupInSystem(groupname) && 
-        password != "" ? screen.Exit() : tmn_vfs::VFSController::WrongAuthorization(creating_group_error);});
+        if(tmn_vfs::VFSController::IsValidUsername(groupname) && 
+            !vfs.IsGroupInSystem(groupname) && password != ""){
+            screen.Exit();
+            button_is_pressed = true;
+        }    
+        else{
+            tmn_vfs::VFSController::WrongAuthorization(creating_group_error);
+        };
+    });
 
     auto button_quit = Button(&button_label_quit, [&] { screen.Exit() ;});
 
@@ -75,12 +83,16 @@ tmn::Optional<tmn_vfs::Group> NewGroupScreen(tmn_vfs::VirtualFileSystem& vfs) {
 
     screen.Loop(renderer);
 
-    if( !tmn_vfs::VFSController::IsValidUsername(groupname) || password == ""){
-            return tmn::Optional<tmn_vfs::Group>();
-        }
+    if (button_is_pressed){
+        if( !tmn_vfs::VFSController::IsValidUsername(groupname) || password == ""){
+                return tmn::Optional<tmn_vfs::Group>();
+            }
 
-    tmn_vfs::Group group;
-    group = tmn_vfs::Group(groupname, vfs.WhoUser(), std::to_string(std::hash<std::string>{}(password)));
+        tmn_vfs::Group group;
+        group = tmn_vfs::Group(groupname, vfs.WhoUser(), std::to_string(std::hash<std::string>{}(password)));
 
-    return tmn::Optional<tmn_vfs::Group>(group);
+        return tmn::Optional<tmn_vfs::Group>(group);
+    }
+    
+    return tmn::Optional<tmn_vfs::Group>();
 }
