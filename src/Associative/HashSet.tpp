@@ -13,8 +13,7 @@ HashSet<Key>::Node::Node(const Key& value, std::size_t cache) noexcept : value(v
 // Iterator implementation :
 
 template <class Key>
-HashSet<Key>::const_iterator& 
-HashSet<Key>::const_iterator::operator=(const const_iterator& other){
+typename HashSet<Key>::const_iterator& HashSet<Key>::const_iterator::operator=(const const_iterator& other){
     ptr = other.ptr;
     return *this;
 }
@@ -35,14 +34,14 @@ bool HashSet<Key>::const_iterator::operator!=(const const_iterator& other) const
 }
 
 template <class Key>
-HashSet<Key>::const_iterator& HashSet<Key>::const_iterator::operator++() {
+typename HashSet<Key>::const_iterator& HashSet<Key>::const_iterator::operator++() {
     ptr = ptr->next;
     return *this;
 }
 
 template <class Key>
-HashSet<Key>::const_iterator HashSet<Key>::const_iterator::operator++(int) {
-   const_iterator tmp(*this);
+typename HashSet<Key>::const_iterator HashSet<Key>::const_iterator::operator++(int) {
+   typename HashSet<Key>::const_iterator tmp(*this);
    ptr = ptr->next;
    return tmp;
 }

@@ -4,6 +4,8 @@ project(SEMESTER-3 VERSION 1.2 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Libs :
+
 add_library(Exceptions SHARED
     src/Exceptions/Exception.cpp
     src/Exceptions/AllocException.cpp
@@ -13,34 +15,55 @@ add_library(Exceptions SHARED
 )
 
 add_library(VFS SHARED
-    src/VFS/FileInfo.cpp
+    src/VFS/FileDescriptor.cpp
     src/VFS/Group.cpp
     src/VFS/User.cpp
     src/VFS/Utils.cpp
     src/VFS/VFS.cpp
-    src/VFS/VFSController.cpp
 )
+
+add_library(SFMLplot SHARED
+    script/SFML-plot/area.cpp
+    script/SFML-plot/axis.cpp
+    script/SFML-plot/curve.cpp
+    script/SFML-plot/grid.cpp
+    script/SFML-plot/line.cpp
+    script/SFML-plot/plot.cpp
+)
+
+target_link_libraries(SFMLplot sfml-window sfml-system sfml-graphics)
 
 include_directories(include include/VFS include/Exceptions)
 
-find_package(ftxui 5 REQUIRED)
+# SFML for Graphs :
+
+set(SFML_STATIC_LIBRARIES FALSE)
+
+find_package(SFML COMPONENTS window graphics system)
+
+add_executable(graphs script/L3_Graphs.cpp)
+target_link_libraries(graphs sfml-graphics SFMLplot)
+
+# ftxui for UI :
+
+#find_package(ftxui 5 REQUIRED)
 # gui/L3/Authorization.cpp
 # gui/L3/main.cpp
-add_executable(gui 
-        gui/L3/main.cpp
-        gui/L3/MainScreen.cpp
-        gui/L3/AuthorizationScreen.cpp
-        gui/L3/NewUserScreen.cpp
-        gui/L3/NewGroupScreen.cpp
-        gui/L3/NewFileScreen.cpp)
+#add_executable(gui 
+#        gui/L3/main.cpp
+#        gui/L3/MainScreen.cpp
+#        gui/L3/AuthorizationScreen.cpp
+#        gui/L3/NewUserScreen.cpp
+#        gui/L3/NewGroupScreen.cpp
+#        gui/L3/NewFileScreen.cpp)
 
-target_link_libraries(gui
-  PRIVATE ftxui::screen
-  PRIVATE ftxui::dom
-  PRIVATE ftxui::component
-  VFS
-  Exceptions    
-)
+#target_link_libraries(gui
+#  PRIVATE ftxui::screen
+#  PRIVATE ftxui::dom
+#  PRIVATE ftxui::component
+#  VFS
+#  Exceptions    
+#)
 
 find_package(GTest REQUIRED)
 if(GTEST_FOUND)
@@ -52,9 +75,9 @@ if(GTEST_FOUND)
     add_executable(load_test_hashset test/HashSet/LoadTestHashSet.cpp)
     add_executable(func_test_user test/VFS/UserTest.cpp)
     add_executable(func_test_group test/VFS/GroupTest.cpp)
-    add_executable(func_test_fileinfo test/VFS/FileInfoTest.cpp)
-    add_executable(load_test_indextable test/VFS/LoadTestIndexTable.cpp)
-    add_executable(func_test_vfs test/VFS/VFSTest.cpp)
+    add_executable(func_test_filedescriptor test/VFS/FileDescriptorTest.cpp)
+    add_executable(load_test_indextable test/VFS/IndexTableTest.cpp)
+    #add_executable(func_test_vfs test/VFS/VFSTest.cpp)
 
     target_link_libraries(func_test_hashtable GTest::gtest GTest::gtest_main Exceptions)
     target_link_libraries(func_test_hashset GTest::gtest GTest::gtest_main Exceptions)
@@ -62,9 +85,9 @@ if(GTEST_FOUND)
     target_link_libraries(load_test_hashset GTest::gtest GTest::gtest_main Exceptions)
     target_link_libraries(func_test_user GTest::gtest GTest::gtest_main VFS Exceptions)
     target_link_libraries(func_test_group GTest::gtest GTest::gtest_main VFS Exceptions)
-    target_link_libraries(func_test_fileinfo GTest::gtest GTest::gtest_main VFS Exceptions)
+    target_link_libraries(func_test_filedescriptor GTest::gtest GTest::gtest_main VFS Exceptions)
     target_link_libraries(load_test_indextable GTest::gtest GTest::gtest_main VFS Exceptions)
-    target_link_libraries(func_test_vfs GTest::gtest GTest::gtest_main VFS Exceptions)
+    #target_link_libraries(func_test_vfs GTest::gtest GTest::gtest_main VFS Exceptions)
 
     add_test(NAME func_test_hashtable COMMAND func_test_hashtable)
     add_test(NAME func_test_hashset COMMAND func_test_hashset)
@@ -72,8 +95,8 @@ if(GTEST_FOUND)
     add_test(NAME load_test_hashset COMMAND load_test_hashset)
     add_test(NAME func_test_user COMMAND func_test_user)
     add_test(NAME func_test_group COMMAND func_test_group)
-    add_test(NAME func_test_fileinfo COMMAND func_test_fileinfo)
+    add_test(NAME func_test_filedescriptor COMMAND func_test_filedescriptor)
     add_test(NAME load_test_indextable COMMAND load_test_indextable)
-    add_test(NAME func_test_vfs COMMAND func_test_vfs)
+    #add_test(NAME func_test_vfs COMMAND func_test_vfs)
 
 endif()

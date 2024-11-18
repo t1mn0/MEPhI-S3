@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <nlohmann/json.hpp>
 
 #include "../Associative/HashSet.hpp"
 
@@ -8,7 +9,7 @@ namespace tmn_vfs{
 
 class VirtualFileSystem;
 
-enum class UserStatus { SUPER, LOCAL, GUEST };
+enum class UserStatus { SUPER, LOCAL, SYSTEM };
 
 class User {
 private:
@@ -17,7 +18,7 @@ private:
     std::string creation_time;
     std::string password_hash;
     
-    UserStatus status = UserStatus::GUEST;
+    UserStatus status = UserStatus::LOCAL;
 
     tmn_associative::HashSet<std::string> groups;
     
@@ -25,13 +26,12 @@ public:
     User() = default;
     User(const std::string& username, const std::string& fullname, const std::string& password_hash, UserStatus status) noexcept;
 
-    const std::string& GetUserName() const;
-    const std::string& GetFullName() const;
-    const std::string& GetCreationTime() const;
-    const std::string& GetPasswordHash() const;
-    const UserStatus GetStatus() const;
+    const std::string& UserName() const;
+    const std::string& FullName() const;
+    const std::string& CreationTime() const;
+    const UserStatus Status() const;
 
-    bool IsInGroup(const std::string& groupname) const;
+    nlohmann::json to_json() const noexcept;
 
     friend class VirtualFileSystem;
 };

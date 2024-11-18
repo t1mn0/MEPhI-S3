@@ -2,12 +2,14 @@
 
 #include <chrono>
 #include <unordered_map>
+#include <fstream>
+#include <filesystem>
 
 #include "../../include/Associative/HashTable.hpp"
 
 
 
-TEST(LoadTestHashTable, HashTableInsert100000){
+TEST(LoadTestHashTable, HashTableInsert100000) {
     const int key_block = 100000;
     const int block_count = 1000;
 
@@ -16,23 +18,35 @@ TEST(LoadTestHashTable, HashTableInsert100000){
 
     tmn_associative::HashTable<int, float> htable;
 
-    for (int i = 0; i < key_block; ++i){
+    // For now, the path is absolute - it's all temporary
+    const std::string filename = "/home/timno/Documents/MEPhI-S3/test/_test_results/load_test_hashtable.txt";
+
+    if (std::filesystem::exists(filename)) {
+        std::filesystem::remove(filename);
+    }
+
+    std::ofstream output_file(filename); 
+    if (!output_file.is_open()) {
+        FAIL() << "Could not open output file";
+    }
+
+    for (int i = 0; i < key_block; ++i) {
         auto start = std::chrono::high_resolution_clock::now();
         htable.insert({i, static_cast<float>(i) / (i * i * i)});
         auto end = std::chrono::high_resolution_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
         start_point += elapsed.count();
 
-        if ((i + 1) % block_count == 0){
+        if ((i + 1) % block_count == 0) {
             timers[(i + 1) / block_count] = start_point;
             start_point = 0;
+            output_file << (i + 1) / block_count << ") " << timers[(i + 1) / block_count] 
+                       << " nanoseconds (time of r-value insert " << block_count
+                       << " pairs) [TEST_HASHTABLE]" << std::endl;
         }
     }
 
-    std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
-    for (int i = 0; i < key_block / block_count; ++i){
-        std::cout << i + 1 << ") " << timers[i] << " nanoseconds (time of r-value insert " <<  block_count << " pairs) [TEST_HASHTABLE]" << std::endl;
-    }
+    output_file.close();
 }
 
 TEST(LoadUnorderedMap, UnorderedMapInsert100000){
@@ -44,6 +58,18 @@ TEST(LoadUnorderedMap, UnorderedMapInsert100000){
 
     std::unordered_map<int, float> umap;
 
+    // For now, the path is absolute - it's all temporary
+    const std::string filename = "/home/timno/Documents/MEPhI-S3/test/_test_results/load_test_unorderedmap.txt";
+
+    if (std::filesystem::exists(filename)) {
+        std::filesystem::remove(filename);
+    }
+
+    std::ofstream output_file(filename); 
+    if (!output_file.is_open()) {
+        FAIL() << "Could not open output file";
+    }
+
     for (int i = 0; i < key_block; ++i){
         auto start = std::chrono::high_resolution_clock::now();
         umap.insert({i, static_cast<float>(i) / (i * i * i)});
@@ -51,14 +77,12 @@ TEST(LoadUnorderedMap, UnorderedMapInsert100000){
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
         start_point += elapsed.count();
 
-        if ((i + 1) % block_count == 0){
+        if ((i + 1) % block_count == 0) {
             timers[(i + 1) / block_count] = start_point;
             start_point = 0;
+            output_file << (i + 1) / block_count << ") " << timers[(i + 1) / block_count] 
+                       << " nanoseconds (time of r-value insert " << block_count
+                       << " pairs) [TEST_UNORDEREDMAP]" << std::endl;
         }
-    }
-
-    std::cout << "- - - - - - - - - - - - - - - - - - - - " << std::endl;
-    for (int i = 0; i < key_block / block_count; ++i){
-        std::cout << i + 1 << ") " << timers[i] << " nanoseconds (time of r-value insert " <<  block_count << " pairs) [TEST_UNORDEREDMAP]" << std::endl;
     }
 }
