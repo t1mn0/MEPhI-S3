@@ -4,99 +4,39 @@ project(SEMESTER-3 VERSION 1.2 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Libs :
+# --- Include Directories & Libs ---
+set(INCLUDE_DIRS include include/VFS include/Exceptions)
 
-add_library(Exceptions SHARED
-    src/Exceptions/Exception.cpp
-    src/Exceptions/AllocException.cpp
-    src/Exceptions/IOException.cpp
-    src/Exceptions/LogicException.cpp
-    src/Exceptions/RuntimeException.cpp
-)
+add_subdirectory(include/Exceptions)
+add_subdirectory(script/PLOT_SFML)	
+add_subdirectory(include/VFS)	
 
-add_library(VFS SHARED
-    src/VFS/FileDescriptor.cpp
-    src/VFS/Group.cpp
-    src/VFS/User.cpp
-    src/VFS/Utils.cpp
-    src/VFS/VFS.cpp
-)
+target_include_directories(Exceptions INTERFACE ${INCLUDE_DIRS})
+target_include_directories(PLOT INTERFACE ${INCLUDE_DIRS})
+target_include_directories(VFS INTERFACE ${INCLUDE_DIRS})
 
-add_library(SFMLplot SHARED
-    script/SFML-plot/area.cpp
-    script/SFML-plot/axis.cpp
-    script/SFML-plot/curve.cpp
-    script/SFML-plot/grid.cpp
-    script/SFML-plot/line.cpp
-    script/SFML-plot/plot.cpp
-)
-
-target_link_libraries(SFMLplot sfml-window sfml-system sfml-graphics)
-
-include_directories(include include/VFS include/Exceptions)
-
-# SFML for Graphs :
-
+# --- Graphs (SFML) ---
 set(SFML_STATIC_LIBRARIES FALSE)
+find_package(SFML COMPONENTS window graphics system REQUIRED)
+if(NOT SFML_FOUND)
+    message(FATAL_ERROR "SFML not found. Please install the required dependencies for this project to work")
+    return()
+endif()
 
-find_package(SFML COMPONENTS window graphics system)
+add_executable(graphs script/Graph.cpp script/L3.cpp)
+target_link_libraries(graphs PLOT sfml-window sfml-system sfml-graphics)
 
-add_executable(graphs script/L3_Graphs.cpp)
-target_link_libraries(graphs sfml-graphics SFMLplot)
-
-# ftxui for UI :
-
-#find_package(ftxui 5 REQUIRED)
-# gui/L3/Authorization.cpp
-# gui/L3/main.cpp
-#add_executable(gui 
-#        gui/L3/main.cpp
-#        gui/L3/MainScreen.cpp
-#        gui/L3/AuthorizationScreen.cpp
-#        gui/L3/NewUserScreen.cpp
-#        gui/L3/NewGroupScreen.cpp
-#        gui/L3/NewFileScreen.cpp)
-
-#target_link_libraries(gui
-#  PRIVATE ftxui::screen
-#  PRIVATE ftxui::dom
-#  PRIVATE ftxui::component
-#  VFS
-#  Exceptions    
-#)
-
+# --- Tests (GTest) ---
 find_package(GTest REQUIRED)
-if(GTEST_FOUND)
-    enable_testing()
+if(NOT GTEST_FOUND)
+    message(FATAL_ERROR "GTest not found. Please install the required dependencies for this project to work")
+    return()
+else()
+    option(BUILD_TESTS "Build tests" ON)
 
-    add_executable(func_test_hashtable test/HashTable/FuncTestHashTable.cpp)
-    add_executable(func_test_hashset test/HashSet/FuncTestHashSet.cpp)
-    add_executable(load_test_hashtable test/HashTable/LoadTestHashTable.cpp)
-    add_executable(load_test_hashset test/HashSet/LoadTestHashSet.cpp)
-    add_executable(func_test_user test/VFS/UserTest.cpp)
-    add_executable(func_test_group test/VFS/GroupTest.cpp)
-    add_executable(func_test_filedescriptor test/VFS/FileDescriptorTest.cpp)
-    add_executable(load_test_indextable test/VFS/IndexTableTest.cpp)
-    #add_executable(func_test_vfs test/VFS/VFSTest.cpp)
-
-    target_link_libraries(func_test_hashtable GTest::gtest GTest::gtest_main Exceptions)
-    target_link_libraries(func_test_hashset GTest::gtest GTest::gtest_main Exceptions)
-    target_link_libraries(load_test_hashtable GTest::gtest GTest::gtest_main Exceptions)
-    target_link_libraries(load_test_hashset GTest::gtest GTest::gtest_main Exceptions)
-    target_link_libraries(func_test_user GTest::gtest GTest::gtest_main VFS Exceptions)
-    target_link_libraries(func_test_group GTest::gtest GTest::gtest_main VFS Exceptions)
-    target_link_libraries(func_test_filedescriptor GTest::gtest GTest::gtest_main VFS Exceptions)
-    target_link_libraries(load_test_indextable GTest::gtest GTest::gtest_main VFS Exceptions)
-    #target_link_libraries(func_test_vfs GTest::gtest GTest::gtest_main VFS Exceptions)
-
-    add_test(NAME func_test_hashtable COMMAND func_test_hashtable)
-    add_test(NAME func_test_hashset COMMAND func_test_hashset)
-    add_test(NAME load_test_hashtable COMMAND load_test_hashtable)
-    add_test(NAME load_test_hashset COMMAND load_test_hashset)
-    add_test(NAME func_test_user COMMAND func_test_user)
-    add_test(NAME func_test_group COMMAND func_test_group)
-    add_test(NAME func_test_filedescriptor COMMAND func_test_filedescriptor)
-    add_test(NAME load_test_indextable COMMAND load_test_indextable)
-    #add_test(NAME func_test_vfs COMMAND func_test_vfs)
-
+    if(BUILD_TESTS)
+        enable_testing()
+        add_subdirectory(test/Hash)
+        add_subdirectory(test/VFS)
+    endif()
 endif()

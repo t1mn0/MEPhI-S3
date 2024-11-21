@@ -62,7 +62,7 @@ private:
     uint8_t active_super = 0; // user-authorization gives 5 applications of the active user's capabilities
     std::string current_directory = "FS";
     tmn_associative::HashTable<Path, FileDescriptor> index_table;
-    tmn_associative::HashTable<std::string, tmn_sequence::ArraySequence<Path>> possible_paths; // ? ? ?
+    tmn_associative::HashTable<std::string, tmn_associative::HashSet<std::string>> possible_paths; // ? ? ?
     tmn_associative::HashTable<std::string, User> users_table;
     tmn_associative::HashTable<std::string, Group> groups_table;
 
