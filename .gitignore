@@ -18,7 +18,7 @@ build/
 CMakeFiles/
 CMakeCache.txt
 examples/
-_test_results/
+test/_test_results/
 *.o
 *.a
 *.so
