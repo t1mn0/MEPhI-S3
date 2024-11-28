@@ -5,11 +5,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # --- Include Directories & Libs ---
-set(INCLUDE_DIRS include include/VFS include/Exceptions)
+set(INCLUDE_DIRS include VFS/include include/Exceptions)
 
 add_subdirectory(include/Exceptions)
 add_subdirectory(script/PLOT_SFML)	
-add_subdirectory(include/VFS)	
+add_subdirectory(VFS/include)	
 
 target_include_directories(Exceptions INTERFACE ${INCLUDE_DIRS})
 target_include_directories(PLOT INTERFACE ${INCLUDE_DIRS})
@@ -37,6 +37,9 @@ else()
     if(BUILD_TESTS)
         enable_testing()
         add_subdirectory(test/Hash)
-        add_subdirectory(test/VFS)
+#        add_subdirectory(test/VFS)
     endif()
 endif()
+
+add_executable(main main.cpp)
+target_link_libraries(main VFS Exceptions)

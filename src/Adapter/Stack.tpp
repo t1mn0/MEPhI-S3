@@ -39,6 +39,12 @@ Stack<T, Container>& Stack<T, Container>::push(const T& item) {
 }
 
 template <typename T, class Container>
+Stack<T, Container>& Stack<T, Container>::push(T&& item){
+    container.push_back(item);
+    return *this;
+}
+
+template <typename T, class Container>
 T Stack<T, Container>::pop() {
     T res = container.back();
     container.pop_back();
@@ -55,12 +61,12 @@ Stack<T, Container>& Stack<T, Container>::clear() {
 // Element access methods :
 
 template <typename T, class Container>
-const T& Stack<T, Container>::top() const {
+const T Stack<T, Container>::top() const {
     return container.back();
 }
 
 template <typename T, class Container>
-T& Stack<T, Container>::top() {
+T Stack<T, Container>::top() {
     return container.back();
 }
 

@@ -85,7 +85,7 @@ void Plot::prepare() {
         curve.prepare(rangex, rangey);
     }
 
-    //xaxis_.prepare(rangex);
+    xaxis_.prepare(rangex);
     yaxis_.prepare(rangey);
 }
 

@@ -11,6 +11,7 @@ set(UNIT_TESTS
   functional_test_user
   functional_test_group
   functional_test_fd
+  test_vfs
 )
 
 

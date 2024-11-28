@@ -444,7 +444,6 @@ const Value& HashTable<Key, Value>::operator[](const Key& key) const {
         while (current && current->cache % _buffer_size == hash_index){
             if (current->pair.first == key){
                 return _storage[hash_index]->pair.second;
-                break;
             }
             current = current->next;
         }

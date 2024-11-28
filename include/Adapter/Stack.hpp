@@ -35,12 +35,13 @@ public:
 	bool empty() const noexcept;
 
 	Stack<T, Container>& push(const T& item);
+    Stack<T, Container>& push(T&& item);
 	T pop();
 	Stack<T, Container>& clear();
 
     // Element access methods :
-	const T& top() const;
-	T& top();
+	const T top() const;
+	T top();
 };
 
 }
