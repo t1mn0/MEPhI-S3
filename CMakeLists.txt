@@ -8,23 +8,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(INCLUDE_DIRS include VFS/include include/Exceptions)
 
 add_subdirectory(include/Exceptions)
-add_subdirectory(script/PLOT_SFML)	
 add_subdirectory(VFS/include)	
 
 target_include_directories(Exceptions INTERFACE ${INCLUDE_DIRS})
-target_include_directories(PLOT INTERFACE ${INCLUDE_DIRS})
 target_include_directories(VFS INTERFACE ${INCLUDE_DIRS})
-
-# --- Graphs (SFML) ---
-set(SFML_STATIC_LIBRARIES FALSE)
-find_package(SFML COMPONENTS window graphics system REQUIRED)
-if(NOT SFML_FOUND)
-    message(FATAL_ERROR "SFML not found. Please install the required dependencies for this project to work")
-    return()
-endif()
-
-add_executable(graphs script/Graph.cpp script/L3.cpp)
-target_link_libraries(graphs PLOT sfml-window sfml-system sfml-graphics)
 
 # --- Tests (GTest) ---
 find_package(GTest REQUIRED)
