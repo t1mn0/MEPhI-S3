@@ -58,6 +58,7 @@ void View::run() {
             } 
             else {
                 std::cerr << "Error: Password not specified!" << std::endl;
+                continue;
             }
 
             if (stay_option != "-st"){
@@ -104,11 +105,30 @@ void View::run() {
             iss >> path >> dirname;
             mkdir(path, std::move(dirname));
         } 
+        else if (command == "mkfile") {
+            std::string path, filename, content;
+            iss >> path >> filename;
+            std::getline (iss >> std::ws, content);
+
+            if (path == "-c"){
+                mkfile(filename, std::move(content), "");
+            }
+            else{
+                mkfile(filename, std::move(content), std::move(path));
+            }
+        } 
 
 
 
-
-
+        else if (command == "cat") {
+            std::string path, filename;
+            iss >> path >> filename;
+            if (filename.empty()){
+                filename = path;
+                path = "";
+            }
+            cat(filename, std::move(path));
+        } 
         else if (command == "ls") {
             std::string verbose_option;
             iss >> verbose_option;
@@ -156,11 +176,6 @@ void View::run() {
         else if (command == "pwd") {
             pwd();
         }
-        else if (command == "tree") {
-            std::string where, levels;
-            iss >> where >> levels;
-            tree(where == "-c", levels == "-o");
-        } 
         else if (command == "clear") {
             clear();
         }
@@ -215,6 +230,9 @@ void View::run() {
             else if (command_name == "rmfile"){
                 rmfile_help();
             }
+            else if (command_name == "cat"){
+                cat_help();
+            }
             else if (command_name == "ls"){
                 ls_help();
             }
@@ -226,9 +244,6 @@ void View::run() {
             }
             else if (command_name == "pwd"){
                 pwd_help();
-            }
-            else if (command_name == "tree"){
-                tree_help();
             }
             else if (command_name == "clear"){
                 clear_help();
@@ -249,18 +264,6 @@ void View::run() {
   
 void View::pwd() const noexcept {
     std::cout << vfs.PWD() << std::endl;
-}
-
-void View::tree(bool current_dir, bool one_level) noexcept {
-    if (current_dir){
-        vfs.Tree(one_level);
-    }
-    else{
-        unsigned long to_back = vfs.current_directory;
-        vfs.current_directory = 0;;
-        vfs.Tree(one_level);
-        vfs.current_directory = to_back;
-    }
 }
 
 void View::clear() const noexcept {

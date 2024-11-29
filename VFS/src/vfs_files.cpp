@@ -17,30 +17,24 @@ tmn_associative::HashSet<std::string> VirtualFileSystem::CurrentDirContent() {
     return set;
 }
 
-bool VirtualFileSystem::AddFile(const FileDescriptor& fd, const std::string& content) {
+bool VirtualFileSystem::AddFile(FileDescriptor& fd, const std::string& content) {
     for (auto& inner_file : files[current_directory].inner_files){
         if (fd.filename == files[inner_file].filename){
             std::cerr << "Error(AddFile): File with this name already exists in this directory" << std::endl;
             return false;
         }
     }
-    files[current_directory].inner_files.insert(fd.fd_id);
-    files.insert({fd.fd_id, fd});
     if (!fd.is_dir){
-        std::ofstream file(recording_files[fd.physical_file_id], std::ios::app | std::ios::binary); 
+        std::fstream file(recording_files[fd.physical_file_id], std::ios::in | std::ios::out | std::ios::binary | std::ios::ate); // opened in binary mode for correct size
 
         if (!file.is_open()) {
             std::cerr << "Error(AddFile): error opening a file: " << recording_files[fd.physical_file_id] << std::endl;
             return false;
         }
 
-        file << content;
-
-        if (!file.good()) {
-            std::cerr << "Error(AddFile): error writing in file: " << recording_files[fd.physical_file_id] << std::endl;
-            return false;
-        }
-
+        fd.content_offset = file.tellg();
+        file.write(content.c_str(), content.length());
+        fd.content_size = static_cast<unsigned long>(file.tellp()) - fd.content_offset;
         file.close();
 
         // Поиск конца файла в байтах:
@@ -51,6 +45,8 @@ bool VirtualFileSystem::AddFile(const FileDescriptor& fd, const std::string& con
         //std::cout << "Позиция конца файла: " << end_pos << " байт" << std::endl;
         //f.close();
     }
+    files[current_directory].inner_files.insert(fd.fd_id);
+    files.insert({fd.fd_id, fd});
     return true;
 }
 
@@ -129,6 +125,40 @@ bool VirtualFileSystem::RemoveDir(const std::string& filename, bool is_recursive
     }
     std::cerr << "Error(RemoveFile): file" << filename << "not found in current directory" << std::endl;
     return false;
+}
+
+std::string tmn_vfs::VirtualFileSystem::GetContent(const std::string& filename) {
+    for (auto& inner_id : files[current_directory].inner_files){
+        if (files[inner_id].filename == filename){
+            if (!files[inner_id].is_dir){
+                std::ifstream file(recording_files[files[inner_id].physical_file_id], std::ios::binary);
+
+                if (!file.is_open()) {
+                    throw std::runtime_error("Could not open file");
+                }
+
+                file.seekg(0, std::ios::end);
+
+                file.seekg(files[inner_id].content_offset);
+
+                std::vector<char> buffer(files[inner_id].content_size);
+                file.read(buffer.data(), files[inner_id].content_size);
+
+                std::string result(buffer.data(), buffer.size());
+                size_t nullbyte_pos = result.find('\0');
+                if (nullbyte_pos != std::string::npos) {
+                    result = result.substr(0, nullbyte_pos);
+                }
+
+                file.close();
+                return result;
+            }
+            std::cerr << "Error(GetContent): file" << filename << "is not regular file" << std::endl;
+            return "";
+        }
+    }
+    std::cerr << "Error(GetContent): file" << filename << "not found in specified directory" << std::endl;
+    return "";
 }
 
 tmn_sequence::ArraySequence<unsigned long> VirtualFileSystem::FindFileByName(const std::string& filename, bool in_current_dir) {

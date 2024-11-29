@@ -77,17 +77,16 @@ public:
 
     // Actions with files :
     tmn_associative::HashSet<std::string> CurrentDirContent();
-    bool AddFile(const FileDescriptor& fd, const std::string& content = "");
+    bool AddFile(FileDescriptor& fd, const std::string& content = "");
     bool RenameFile(const std::string& old_filename, const std::string& new_filename);
     //void NewContent(const std::string& filename, const std::string& content);
     bool RemoveFile(const std::string& filename);
     bool RemoveDir(const std::string& filename, bool is_recursive);
+    std::string GetContent(const std::string& filename);
 
     tmn_sequence::ArraySequence<unsigned long> FindFileByName(const std::string& filename, bool in_current_dir = true);
     tmn::Optional<std::string> DoPath(unsigned long) const noexcept;
     unsigned long NextRecordFile() noexcept;
-
-    void Tree(bool only_one_level = false) const;
 
     // Relocation user :
     bool GoTo(std::string& path);

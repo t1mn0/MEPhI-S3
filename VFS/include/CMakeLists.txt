@@ -4,7 +4,7 @@ project(VFS)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(VFS SHARED
+add_library(VFS STATIC
     ../src/FileDescriptor.cpp
     ../src/Group.cpp
     ../src/User.cpp

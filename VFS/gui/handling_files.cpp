@@ -23,30 +23,45 @@ void View::mkdir(const std::string& dirname, std::string&& path) noexcept {
     }
 }
 
-// void View::mkfile(const std::string& filename, const std::string& content, std::string&& path) noexcept {
-//     if (path.empty()){
-//         FileDescriptor fd(vfs.files.size(), false, 
-//             vfs.NextRecordFile(), vfs.current_directory, filename, 0, 0, vfs.active_user);
-//         vfs.AddFile(fd, content);
-//     }
-//     else{
-//         unsigned long curdir = vfs.current_directory;
-//         if(vfs.GoTo(path)){
-//             FileDescriptor fd(vfs.files.size(), true, 
-//                 vfs.NextRecordFile(), vfs.current_directory, filename, 0, 0, vfs.active_user);
-//             vfs.AddFile(fd);
-//         }
-//         vfs.current_directory = curdir;
-//     }
-// }
+void View::mkfile(const std::string& filename, std::string&& content, std::string path) noexcept {
+    unsigned long curdir = vfs.current_directory;
+    if (!path.empty()){
+        std::cout << path.size() << std::endl;
+        if(!vfs.GoTo(path)){
+            return;
+        }
+    }
+
+    FileDescriptor fd(vfs.files.size() + 1, false, 
+                vfs.NextRecordFile(), vfs.current_directory, filename, 0, 0, vfs.active_user);
+    vfs.AddFile(fd, content);
+    vfs.current_directory = curdir;
+}
 
 // void View::rmdir(const std::string& dirname, std::string&& path, bool r) noexcept {
 //     // TODO
 // }
 
-// void View::rmfile(const std::string& dirname, std::string&& path) noexcept {
+// void View::rmfile(const std::string& filename, std::string&& path) noexcept {
 //     // TODO
 // }
+
+void View::cat(const std::string& filename, std::string&& path) noexcept {
+    unsigned long curdir = vfs.current_directory;
+    if (!path.empty()){
+        if(!vfs.GoTo(path)){
+            return;
+        }
+    }
+    auto content = vfs.GetContent(filename);
+    if (content.empty()){
+        std::cout <<  "Content of the selected file is empty" << std::endl;
+    }
+    else{
+        std::cout <<  content << std::endl;
+    }
+    vfs.current_directory = curdir;
+}
 
 void View::ls(bool v) noexcept {
     if (v){

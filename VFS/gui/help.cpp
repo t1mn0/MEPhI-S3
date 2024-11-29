@@ -31,7 +31,6 @@ void View::global_help() const noexcept{
 	std::cout << "  - find  : Search for a file or directory" << std::endl;
 	std::cout << "Other" << std::endl;
 	std::cout << "  - pwd  : Show the name of the current working directory" << std::endl;
-	std::cout << "  - tree  : Show tree view of vfs" << std::endl;
 	std::cout << "  - clear  : Clear the screen " << std::endl;
 	std::cout << "  - help  : Show information on built-in commands" << std::endl;
 	std::cout << "  - exit  : Show information on built-in commands" << std::endl;
@@ -186,7 +185,7 @@ void View::mkfile_help() const noexcept{
     std::cout << " - mkfile <path> <filename> <content>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
-	std::cout << "Create a virtual regular file along the specified path, if specified. Otherwise, in the current directory" << std::endl;
+	std::cout << "Create a virtual regular file at the specified path. To avoid specifying the path of the current directory use the “-c” flag as <path>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 
@@ -210,6 +209,16 @@ void View::rmfile_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Remove a virtual regular file along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
+	std::cout << "- - - - - - - - - -" << std::endl;
+}
+
+void View::cat_help() const noexcept{
+	std::cout << "- - - - - - - - - -" << std::endl;
+	std::cout << "Usage:" << std::endl;
+    std::cout << " - cat <path> <filename>" << std::endl;
+	std::cout << "- - - - - - - - - -" << std::endl; 
+	std::cout << "Description:" << std::endl;
+	std::cout << "Shows the content of a regular file along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 
@@ -262,23 +271,6 @@ void View::pwd_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Show the name of the current working directory" << std::endl;
-	std::cout << "- - - - - - - - - -" << std::endl;
-}
-
-void View::tree_help() const noexcept{
-	std::cout << "- - - - - - - - - -" << std::endl;
-	std::cout << "Usage:" << std::endl;
-    std::cout << " - tree [option1] [option2]" << std::endl;
-	std::cout << "- - - - - - - - - -" << std::endl; 
-	std::cout << "Description:" << std::endl;
-	std::cout << "Show tree view of vfs" << std::endl;
-	std::cout << "- - - - - - - - - -" << std::endl;
-	std::cout << "Options:" << std::endl << 
-	"[option1]:" << std::endl << 
-	"  -r (root) " << "Show tree view of vfs, start from root" << std::endl <<
-	"  -c (current) " << "Show tree view of vfs, start from current directory" << std::endl <<
-	"[option2]:" << std::endl << 
-	"  -o (one) " << "Show tree view of vfs for only one level of nesting" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 

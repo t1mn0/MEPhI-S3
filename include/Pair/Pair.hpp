@@ -12,6 +12,7 @@ public:
 
     Pair(const T1& first, const T2& second) noexcept;
     Pair(const T1& first, T2&& second) noexcept;
+    Pair(const T1&& first, T2&& second) noexcept;
 
     Pair(const Pair<T1, T2>& other) noexcept;
 

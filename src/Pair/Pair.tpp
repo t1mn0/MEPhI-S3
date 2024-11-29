@@ -12,6 +12,9 @@ template <typename T1, typename T2>
 Pair<T1, T2>::Pair(const T1& first, T2&& second) noexcept : first(first), second(std::move(second)) {}
 
 template <typename T1, typename T2>
+Pair<T1, T2>::Pair(const T1&& first, T2&& second) noexcept : first(std::move(first)), second(std::move(second)) {}
+
+template <typename T1, typename T2>
 Pair<T1, T2>::Pair(const Pair<T1, T2>& other) noexcept : first(other.first), second(other.second) {}
 
 template <typename T1, typename T2>

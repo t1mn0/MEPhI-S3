@@ -189,31 +189,4 @@ bool VirtualFileSystem::GoTo(std::string& path) {
     return true;
 }
 
-void VirtualFileSystem::Tree(bool only_one_level) const {
-    // tmn_adapter::Stack<tmn::Pair<unsigned long, int>> stack; 
-    // bool first_level = false;
-    // stack.push({current_directory, 0});
-
-    // while (!stack.empty()) {
-    //     unsigned long dir_id = stack.top().first;
-    //     int level = stack.top().second;
-    //     stack.pop();
-
-    //     std::string indent(level * 2, ' ');
-        
-    //     std::cout << indent << files[dir_id].filename << std::endl;
-        
-    //     if (files[dir_id].is_dir && !first_level || files[dir_id].is_dir && !only_one_level) {
-    //         if (files[dir_id].inner_files.size() != 0){
-    //             for (auto fd_id : files[dir_id].inner_files) {
-    //                 if (fd_id != 0) {
-    //                     stack.push({fd_id, level + 1});
-    //                 }
-    //             }
-    //         }
-    //         first_level = true;
-    //     }
-    // }
-}
-
 };
