@@ -3,6 +3,7 @@
 
 #include "View.hpp"
 #include "../include/Utils.hpp"
+#include "../../include/Exceptions/RuntimeException.hpp"
 
 namespace tmn_vfs {
 
@@ -40,24 +41,48 @@ void View::groupcount() const noexcept {
 
 void View::newgroup(const std::string& groupname) noexcept {
     if (IsGoodUserName(groupname)){
-        Group group(1001 + vfs.groups_table.size(), groupname, vfs.active_user, GetTimeNow());
-        vfs.AddGroup(group);
+        ++vfs.group_id;
+        Group group(1001 + vfs.group_id, groupname, vfs.active_user, GetTimeNow());
+        try{
+            vfs.AddGroup(group);
+        }
+        catch (tmn_exception::RuntimeException& e){
+            --vfs.group_id;
+            std::cerr << e.what() << std::endl;
+            return;
+        }
+        
     }
     else{
-        std::cout << "Groupname is invalid" << std::endl;
+        std::cerr << "Groupname is invalid" << std::endl;
     }
 }
 
 void View::addtogroup(const std::string& username, const std::string& groupname) noexcept {
-    vfs.AddUserToGroup(username, groupname);
+    try{
+        vfs.AddUserToGroup(username, groupname);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void View::rmmefromgroup(const std::string& groupname) noexcept {
-    vfs.RemoveUserFromGroup(vfs.users_table[vfs.active_user].username, groupname);
+    try{
+        vfs.RemoveUserFromGroup(vfs.users_table[vfs.active_user].username, groupname);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void View::rmgroup(const std::string& groupname) noexcept {
-    vfs.RemoveGroup(groupname);
+    try{
+        vfs.RemoveGroup(groupname);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 }

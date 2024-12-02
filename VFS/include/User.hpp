@@ -4,7 +4,7 @@
 
 #include "../../include/Associative/HashSet.hpp"
 
-namespace tmn_vfs{
+namespace tmn_vfs {
 
 class VirtualFileSystem;
 class View;

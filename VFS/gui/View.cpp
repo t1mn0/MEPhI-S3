@@ -5,11 +5,20 @@
 
 namespace tmn_vfs {
 
+View::View() {
+    vfs = VirtualFileSystem::Init();
+}
+
+View::View(std::string password) {
+    vfs = VirtualFileSystem::Init(password);
+}
+
 void View::run() {
     bool exit = false;
+    getchar();
     while (!exit) {
         std::string line;
-        std::cout << "> ";
+        std::cout << "(vfs) > ";
         std::getline(std::cin, line);
 
         std::istringstream iss(line);
@@ -103,23 +112,25 @@ void View::run() {
         else if (command == "mkdir") {
             std::string path, dirname;
             iss >> path >> dirname;
-            mkdir(path, std::move(dirname));
+            if (dirname.empty()){
+                dirname = path;
+                path = "";
+            }
+            mkdir(dirname, path);
         } 
         else if (command == "mkfile") {
-            std::string path, filename, content;
-            iss >> path >> filename;
-            std::getline (iss >> std::ws, content);
+            std::string path, filename, physical_file_path;
+            iss >> path >> filename >> physical_file_path;
 
             if (path == "-c"){
-                mkfile(filename, std::move(content), "");
+                mkfile(filename, std::filesystem::path(physical_file_path));
             }
             else{
-                mkfile(filename, std::move(content), std::move(path));
+                mkfile(filename, std::filesystem::path(physical_file_path), path);
             }
         } 
-
-
-
+        // else if (command == "addcontent")
+        // else if (command == "setgroup")
         else if (command == "cat") {
             std::string path, filename;
             iss >> path >> filename;
@@ -127,7 +138,7 @@ void View::run() {
                 filename = path;
                 path = "";
             }
-            cat(filename, std::move(path));
+            cat(filename, path);
         } 
         else if (command == "ls") {
             std::string verbose_option;

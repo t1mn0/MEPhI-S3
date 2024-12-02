@@ -12,9 +12,10 @@ private:
 public:
 // Run parser :
     void run();
-    View() {
-        vfs = VirtualFileSystem::Init();
-    }
+
+    View();
+
+    View(std::string password);
 
 // Help :
     void global_help() const noexcept;
@@ -35,6 +36,9 @@ public:
 
     void mkdir_help() const noexcept;
     void mkfile_help() const noexcept;
+    void addcontent_help() const noexcept;
+    void setgroup_help() const noexcept;
+    void renamefile_help() const noexcept;
     void rmdir_help() const noexcept;
     void rmfile_help() const noexcept;
     void cat_help() const noexcept;
@@ -43,7 +47,6 @@ public:
     void find_help() const noexcept;
 
     void pwd_help() const noexcept;
-    void tree_help() const noexcept;
     void clear_help() const noexcept;
     void help_help() const noexcept;
     void exit_help() const noexcept;
@@ -63,12 +66,13 @@ public:
     void rmmefromgroup(const std::string& groupname) noexcept;
     void rmgroup(const std::string& groupname) noexcept;
 
-    // TODO : calculations offsets and size for files
-    void mkdir(const std::string& dirname, std::string&& path = "") noexcept;
-    void mkfile(const std::string& filename, std::string&& content, std::string path = "") noexcept;
-    // void rmdir(const std::string& dirname, std::string&& path = "", bool r = false) noexcept;
-    // void rmfile(const std::string& dirname, std::string&& path = "") noexcept;
-    void cat(const std::string& filename, std::string&& path = "") noexcept;
+    void mkdir(const std::string& dirname, std::string path = "") noexcept;
+    void mkfile(const std::string& filename, std::filesystem::path, std::string path = "") noexcept; // ! NOT WORKING NOW
+    // ! void addcontent(const std::string& path, std::string content) noexcept;
+    // ! void setgroup(const std::string& path, std::string content) noexcept;
+    // ! void rmdir(const std::string& dirname, std::string&& path = "", bool r = false) noexcept;
+    // ! void rmfile(const std::string& dirname, std::string&& path = "") noexcept;
+    void cat(const std::string& filename, std::string path = "") noexcept;
     void ls(bool v = false) noexcept;
     void cd(std::string& path) noexcept;
     void find(short filetype, bool where, const std::string& name_pattern) noexcept;

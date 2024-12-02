@@ -1,6 +1,8 @@
 #pragma once
 
-namespace tmn_vfs{
+#include <string>
+
+namespace tmn_vfs {
 
 std::string GetTimeNow();
 
@@ -16,6 +18,6 @@ bool IsGoodUserFullName(const std::string& fullname);
 
 bool IsGoodFileName(const std::string& filename);
 
-std::string ReversePath(const std::string& path);
+bool IsGoodPassword(const std::string& password);
 
 }

@@ -19,9 +19,8 @@ class VirtualFileSystem {
 private:
 // Support functions for initialization :
     static void CreateHelperFiles();
-    static bool VFSInSystem();
     static bool IsValidSystemFile(const std::filesystem::path& path);
-    unsigned long FindRecordingFiles(const std::filesystem::path& path, unsigned long parent_id) noexcept; 
+
     void InitUsers();
     void InitGroups();
     void InitFileDescriptors();
@@ -29,17 +28,22 @@ private:
 
 private:
 // Support functions for shutdown :
-    void SaveConfig() const noexcept;
-    void SaveDescriptors() const noexcept;
-    void SaveGroups() const noexcept;
-    void SaveUsers() const noexcept;
-    void SaveAll() const noexcept;
+    void SaveConfig() const;
+    void SaveDescriptors() const;
+    void SaveGroups() const;
+    void SaveUsers() const;
+    void SaveAll() const;
 
 private:
-    // Fields :
-    unsigned long recording_file = 0;
+// Fields :
+    unsigned long rec_id = 0;
+    unsigned long fd_id = 0;
+    unsigned long user_id = 1;
+    unsigned long group_id = 1;
+
     unsigned long active_user;
     unsigned long current_directory = 0;
+
     tmn_associative::HashTable<std::string, unsigned long> usernames;
     tmn_associative::HashTable<std::string, unsigned long> groupnames;
     tmn_associative::HashTable<unsigned long, std::string> recording_files;
@@ -50,46 +54,44 @@ private:
 public:
     ~VirtualFileSystem();
     
-    // Checkers :
-    std::string PWD() const;
-    std::size_t CountUser() const;
-    std::size_t CountGroup() const;
-    std::size_t CountMembers(const std::string& groupname) const;
-    bool IsUserInSystem(const std::string& username) const;
-    bool IsGroupInSystem(const std::string& groupname) const;
-    bool IsFileInCurrentDir(const std::string& filename) const;
-    bool IsMember(const std::string& groupname, const std::string& username) const;
+// Checkers :
+    std::string PWD() const noexcept;
+    std::size_t CountUser() const noexcept;
+    std::size_t CountGroup() const noexcept;
+    tmn::Optional<std::size_t> CountMembers(const std::string& groupname) const noexcept;
 
-    // Initializing :
+// Initializing :
     [[nodiscard]]
-    static VirtualFileSystem Init();
+    static VirtualFileSystem Init(std::string root_password = "");
 
-    // Users policy & actions :
-    bool AddUser(User& user);
-    bool Authorization(const std::string& username, const std::string& password_hash);
-    bool RemoveUser(const std::string& username);
+// Users policy & actions :
+    void AddUser(User& user);
+    void Authorization(const std::string& username, const std::string& password_hash);
+    void RemoveUser(const std::string& username);
 
-    // Groups policy & actions :
-    bool AddGroup(Group& group);
-    bool AddUserToGroup(const std::string& username, const std::string& groupname);
-    bool RemoveUserFromGroup(const std::string& username, const std::string& groupname);
-    bool RemoveGroup(const std::string& groupname);
+// Groups policy & actions :
+    void AddGroup(Group& group);
+    void AddUserToGroup(const std::string& username, const std::string& groupname);
+    void RemoveUserFromGroup(const std::string& username, const std::string& groupname);
+    void RemoveGroup(const std::string& groupname);
 
-    // Actions with files :
-    tmn_associative::HashSet<std::string> CurrentDirContent();
-    bool AddFile(FileDescriptor& fd, const std::string& content = "");
-    bool RenameFile(const std::string& old_filename, const std::string& new_filename);
-    //void NewContent(const std::string& filename, const std::string& content);
-    bool RemoveFile(const std::string& filename);
-    bool RemoveDir(const std::string& filename, bool is_recursive);
-    std::string GetContent(const std::string& filename);
+// Actions with files :
+    tmn_associative::HashSet<std::string> CurrentDirContent() const noexcept;
+    std::string GetFileContent(const std::string& filename);
+    void AddFile(FileDescriptor);
+    void SetOwnerGroup(unsigned long fd_id, unsigned long group_id);
+    void RenameFile(const std::string& old_filename, const std::string& new_filename);
+    void RemoveFile(const std::string& filename); // ! handle content shifting 
+    void RemoveDir(const std::string& filename, bool is_recursive);
 
-    tmn_sequence::ArraySequence<unsigned long> FindFileByName(const std::string& filename, bool in_current_dir = true);
+// Relocation user & other methods :
+    static bool VFSInSystem();
+    
+    void GoTo(std::string& path);
     tmn::Optional<std::string> DoPath(unsigned long) const noexcept;
-    unsigned long NextRecordFile() noexcept;
-
-    // Relocation user :
-    bool GoTo(std::string& path);
+    tmn_sequence::ArraySequence<unsigned long> FindFileByName(const std::string& filename, bool in_current_dir = true) const noexcept ;
+    bool HavePermission(unsigned long fd_id, unsigned long user_id, unsigned int perm) const;
+    
 
     friend class View;
 };

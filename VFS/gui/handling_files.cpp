@@ -3,64 +3,133 @@
 
 #include "View.hpp"
 #include "../include/Utils.hpp"
+#include "../../include/Exceptions/RuntimeException.hpp"
 
 namespace tmn_vfs {
 
-void View::mkdir(const std::string& dirname, std::string&& path) noexcept {
-    if (path.empty()){
-        FileDescriptor fd(vfs.files.size(), true, 
-            vfs.NextRecordFile(), vfs.current_directory, dirname, 0, 0, vfs.active_user);
-        vfs.AddFile(fd);
+void View::mkdir(const std::string& dirname, std::string path) noexcept {
+    if(!IsGoodFileName(dirname)){
+        std::cerr << "Bad name for directory" << std::endl;
+        return;
     }
-    else{
-        unsigned long curdir = vfs.current_directory;
-        if(vfs.GoTo(path)){
-            FileDescriptor fd(vfs.files.size(), true, 
-                vfs.NextRecordFile(), vfs.current_directory, dirname, 0, 0, vfs.active_user);
+
+    unsigned long rec_id = 0;
+    bool flag = false;
+    for (auto& pair : vfs.recording_files){
+        if (pair.second == path){
+            rec_id = pair.first;
+            flag = true;
+            break;
+        }
+    }
+    if (!flag) {
+        ++vfs.rec_id;
+        rec_id = vfs.rec_id;
+        vfs.recording_files.insert({rec_id, path});
+    }
+
+    ++vfs.fd_id;
+
+    if (path.empty()){
+
+        FileDescriptor fd(vfs.fd_id, true, rec_id, vfs.current_directory, dirname, 0, 0, vfs.active_user);
+        
+        try {
             vfs.AddFile(fd);
         }
-        vfs.current_directory = curdir;
+        catch (tmn_exception::RuntimeException& e){
+            if (!flag) {
+                vfs.recording_files.erase(rec_id);
+            }
+
+            --vfs.fd_id;
+
+            std::cerr << e.what() << std::endl;
+        }
+
+        return;
+    }
+
+    try {
+        vfs.GoTo(path);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        if (!flag) {
+            vfs.recording_files.erase(rec_id);
+        }
+
+        --vfs.fd_id;
+
+        std::cerr << e.what() << std::endl;
+        return;
+    }
+        
+    FileDescriptor fd(vfs.fd_id, true, rec_id, vfs.current_directory, dirname, 0, 0, vfs.active_user);
+
+    try {
+        vfs.AddFile(fd);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        if (!flag) {
+            vfs.recording_files.erase(rec_id);
+        }
+
+        --vfs.fd_id;
+
+        std::cerr << e.what() << std::endl;
+        return;
     }
 }
 
-void View::mkfile(const std::string& filename, std::string&& content, std::string path) noexcept {
-    unsigned long curdir = vfs.current_directory;
+// TODO 
+void View::mkfile(const std::string& filename, std::filesystem::path ph_path, std::string path) noexcept {
+    // unsigned long curdir = vfs.current_directory;
+
+    // if (!path.empty()){
+    //     try{
+    //         vfs.GoTo(path);
+    //     }
+    //     catch (tmn_exception::RuntimeException& e){
+    //         std::cerr << e.what() << std::endl;
+    //     }
+    // }
+    // if (!IsGoodFileName(filename)){
+    //     return;
+    // }
+
+    // FileDescriptor fd(vfs.files.size() + 1, false, 
+    //     vfs.NextRecordFile(), vfs.current_directory, filename, 0, 0, vfs.active_user);
+
+    // vfs.AddFile(fd, content);
+    // vfs.current_directory = curdir;
+}
+
+void View::cat(const std::string& filename, std::string path) noexcept {
     if (!path.empty()){
-        std::cout << path.size() << std::endl;
-        if(!vfs.GoTo(path)){
+        try{
+            vfs.GoTo(path);
+        }
+        catch (tmn_exception::RuntimeException& e){
+            std::cerr << e.what() << std::endl;
             return;
         }
     }
 
-    FileDescriptor fd(vfs.files.size() + 1, false, 
-                vfs.NextRecordFile(), vfs.current_directory, filename, 0, 0, vfs.active_user);
-    vfs.AddFile(fd, content);
-    vfs.current_directory = curdir;
-}
-
-// void View::rmdir(const std::string& dirname, std::string&& path, bool r) noexcept {
-//     // TODO
-// }
-
-// void View::rmfile(const std::string& filename, std::string&& path) noexcept {
-//     // TODO
-// }
-
-void View::cat(const std::string& filename, std::string&& path) noexcept {
-    unsigned long curdir = vfs.current_directory;
-    if (!path.empty()){
-        if(!vfs.GoTo(path)){
-            return;
-        }
+    std::string content = "";
+    
+    try{
+        content = vfs.GetFileContent(filename);
     }
-    auto content = vfs.GetContent(filename);
+    catch (tmn_exception::RuntimeException& e){
+        std::cerr << e.what() << std::endl;
+        return;
+    }
     if (content.empty()){
         std::cout <<  "Content of the selected file is empty" << std::endl;
     }
     else{
-        std::cout <<  content << std::endl;
+        std::cout << content << std::endl;
     }
-    vfs.current_directory = curdir;
 }
 
 void View::ls(bool v) noexcept {
@@ -90,7 +159,12 @@ void View::ls(bool v) noexcept {
 }
 
 void View::cd(std::string& path) noexcept {
-    vfs.GoTo(path);
+    try{
+        vfs.GoTo(path);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void View::find(short filetype, bool where, const std::string& name_pattern) noexcept {

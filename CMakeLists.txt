@@ -28,5 +28,5 @@ else()
     endif()
 endif()
 
-add_executable(main main.cpp)
-target_link_libraries(main VFS Exceptions)
+add_executable(vfs main.cpp)
+target_link_libraries(vfs VFS Exceptions)

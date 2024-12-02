@@ -81,6 +81,9 @@ public:
     unsigned long owner_user,
     FilePermissions file_permissions = FilePermissions(Permission::READWRITE, Permission::READ, Permission::NONE));
 
+  void ModificateContentNow() noexcept;
+  void ModificateDescriptorNow() noexcept;
+
   std::string toString() const noexcept;
   static FileDescriptor fromString(const std::string& fd_string);
 

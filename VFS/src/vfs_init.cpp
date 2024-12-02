@@ -1,11 +1,10 @@
 #include <string>
 #include <fstream> 
 #include <filesystem>
-#include <iostream> // for std::cerr
 
 #include "../include/VFS.hpp"
-#include "../include/Utils.hpp"
-#include "../include/vfs_constants.hpp"
+#include "../include/Utils.hpp" // for GetTimeNow()
+#include "../../include/Exceptions/RuntimeException.hpp"
 
 namespace tmn_vfs {
 
@@ -33,61 +32,7 @@ bool VirtualFileSystem::IsValidSystemFile(const std::filesystem::path& path) {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-// Configuration for initialization for the first time:
-
-unsigned long VirtualFileSystem::FindRecordingFiles(const std::filesystem::path& path, unsigned long parent_id) noexcept {
-    if (!std::filesystem::exists(path) || !std::filesystem::is_directory(path)) {
-        std::cerr << "Error(FindRecordingFiles): Passed argument 'PATH' is not a valid directory." << std::endl;
-        return 0;
-    }
-
-    std::string time = GetTimeNow();
-
-    FileDescriptor fd;
-
-    for (const auto& entry : std::filesystem::directory_iterator(path)) {
-        if (std::filesystem::is_regular_file(entry)) {
-            recording_files.insert({recording_files.size() + 1, entry.path().string()});
-        }
-
-        if (std::filesystem::is_directory(entry)){
-            fd.fd_id = files.size() + 1;
-            fd.is_dir = true;
-            fd.filename = entry.path().filename().string();
-            fd.parent_dir_id = parent_id;
-            fd.creation_time = time;
-            fd.modification_time = time;
-            fd.descriptor_modification_time = time;
-            fd.file_permissions = FilePermissions(Permission::READWRITE, Permission::READWRITE, Permission::READWRITE);
-            tmn::Pair<const unsigned long, FileDescriptor> pair(fd.fd_id, fd);
-            files.insert(pair);
-
-            files[parent_id].inner_files.insert(fd.fd_id);
-            
-            if (!std::filesystem::is_empty(entry.path())){
-                files[fd.fd_id].inner_files.insert(FindRecordingFiles(entry.path(), fd.fd_id));
-            }
-        }
-        else{
-            fd.fd_id = files.size() + 1;
-            fd.is_dir = false;
-            fd.parent_dir_id = parent_id;
-            fd.filename = entry.path().filename();
-            fd.content_size = entry.file_size();
-            fd.creation_time = time;
-            fd.modification_time = time;
-            fd.descriptor_modification_time = time;
-            fd.file_permissions = FilePermissions(Permission::READWRITE, Permission::READWRITE, Permission::READ);
-
-            files[parent_id].inner_files.insert(fd.fd_id);
-
-            tmn::Pair<const unsigned long, FileDescriptor> pair(fd.fd_id, fd);
-            files.insert(pair);
-        }        
-    }
-
-    return fd.fd_id;
-}
+// Configuration for initialization for the first time :
 
 void VirtualFileSystem::CreateHelperFiles() {
     std::filesystem::path entry_point(ENTRY_POINT_PATH);
@@ -103,8 +48,8 @@ void VirtualFileSystem::CreateHelperFiles() {
     std::ofstream config_file(entry_point / VFS_CONFIG_PATH);
 
     if (!users_file.is_open() || !groups_file.is_open() || !descriptors_file.is_open() || !config_file.is_open()) {
-        std::cerr << "Error: Could not create helper files." << std::endl;
-        return;
+        std::string err_message = "Error(CreateHelperFiles): Could not create helper files";
+        throw tmn_exception::RuntimeException(err_message);
     }
 }
 
@@ -114,8 +59,8 @@ void VirtualFileSystem::CreateHelperFiles() {
 void VirtualFileSystem::InitUsers() {
     std::ifstream users_file(USERS_PATH);
     if (!users_file.is_open()) {
-        std::cerr << "Error(InitUsers): Could not open users file: " << USERS_PATH << std::endl;
-        return;
+        std::string err_message = "Error(InitUsers): Could not open users file";
+        throw tmn_exception::RuntimeException(err_message);
     }
 
     std::string line;
@@ -129,8 +74,8 @@ void VirtualFileSystem::InitUsers() {
 void VirtualFileSystem::InitGroups() {
     std::ifstream groups_file(GROUPS_PATH);
     if (!groups_file.is_open()) {
-        std::cerr << "Error(InitGroups): Could not open users file: " << GROUPS_PATH << std::endl;
-        return;
+        std::string err_message = "Error(InitGroups): Could not open groups file";
+        throw tmn_exception::RuntimeException(err_message);
     }
 
     std::string line;
@@ -144,8 +89,8 @@ void VirtualFileSystem::InitGroups() {
 void VirtualFileSystem::InitFileDescriptors() {
     std::ifstream descriptors_file(FILE_DESCRIPTORS_PATH);
     if (!descriptors_file.is_open()) {
-        std::cerr << "Error(InitFileDescriptors): Could not open users file: " << FILE_DESCRIPTORS_PATH << std::endl;
-        return;
+        std::string err_message = "Error(InitFileDescriptors): Could not open descriptors file";
+        throw tmn_exception::RuntimeException(err_message);
     }
 
     std::string line;
@@ -158,8 +103,8 @@ void VirtualFileSystem::InitFileDescriptors() {
 void VirtualFileSystem::InitSystemParameters(){
     std::ifstream config_file(VFS_CONFIG_PATH);
     if (!config_file.is_open()) {
-        std::cerr << "Error(InitSystemParameters): Could not open users file: " << VFS_CONFIG_PATH << std::endl;
-        return;
+        std::string err_message = "Error(InitSystemParameters): Could not open config file";
+        throw tmn_exception::RuntimeException(err_message);
     }
 
     std::string line;
@@ -170,7 +115,7 @@ void VirtualFileSystem::InitSystemParameters(){
     }
 }
 
-VirtualFileSystem VirtualFileSystem::Init() {
+VirtualFileSystem VirtualFileSystem::Init(std::string root_password) {
     VirtualFileSystem vfs;
     if (VFSInSystem()){ // checks the integrity of the file system
         vfs.InitUsers();
@@ -182,11 +127,11 @@ VirtualFileSystem VirtualFileSystem::Init() {
     else{
         CreateHelperFiles();
         FileDescriptor fd(0, true, 0, 0, "/", 0, 0, 0, FilePermissions(Permission::READWRITE, Permission::READWRITE, Permission::READWRITE));
-        User user(0, SUPER_USERNAME, SUPER_FULLNAME, GetTimeNow(), "-", UserStatus::SUPER);
+        User user(0, SUPER_USERNAME, SUPER_FULLNAME, GetTimeNow(), std::to_string(std::hash<std::string>{}(root_password)), UserStatus::SUPER);
         vfs.active_user = 0;
-        vfs.AddFile(fd);
         vfs.AddUser(user);
-        vfs.FindRecordingFiles(std::filesystem::path(ENTRY_POINT_PATH), 0);
+        vfs.files.insert({fd.fd_id, fd});
+        vfs.files[fd.fd_id].inner_files.insert(0);
     }
 
     return vfs;

@@ -3,6 +3,7 @@
 
 #include "View.hpp"
 #include "../include/Utils.hpp"
+#include "../../include/Exceptions/RuntimeException.hpp"
 
 namespace tmn_vfs {
 
@@ -41,26 +42,48 @@ void View::usercount() const noexcept {
 }
 
 void View::login(const std::string& username, const std::string& password_hash) noexcept {
-    if (vfs.Authorization(username, password_hash)){
+    try{
+        vfs.Authorization(username, password_hash);
         std::cout << "Successful authorization" << std::endl;
+    }
+    catch (tmn_exception::RuntimeException& e){
+        std::cerr << e.what() << std::endl;
+        return;
     }
 }
 
 void View::newuser(const std::string& username, const std::string& fullname, const std::string& password_hash, bool st) noexcept {
     if (IsGoodUserName(username)){
         if (IsGoodUserFullName(fullname)){
-            User user(vfs.users_table.size() + 1, username,  fullname, tmn_vfs::GetTimeNow(), password_hash);
-            vfs.AddUser(user);
+            ++vfs.user_id;
+            User user(vfs.user_id, username,  fullname, tmn_vfs::GetTimeNow(), password_hash);
+            try{
+                vfs.AddUser(user);
+            }
+            catch (tmn_exception::RuntimeException& e){
+                --vfs.user_id;
+                std::cerr << e.what() << std::endl;
+                return;
+            }
+
             if (!st){
-                vfs.Authorization(username, password_hash);
+                try{
+                    vfs.Authorization(username, password_hash);
+                    std::cout << "Successful authorization" << std::endl;
+                }
+                catch (tmn_exception::RuntimeException& e){
+                    --vfs.user_id;
+                    std::cerr << e.what() << std::endl;
+                    return;
+                }
             }
         }
         else{
-            std::cout << "Fullname is invalid" << std::endl;
+            std::cerr << "Fullname is invalid" << std::endl;
         }
     }
     else{
-        std::cout << "Username is invalid" << std::endl;
+        std::cerr << "Username is invalid" << std::endl;
     }
 }
 

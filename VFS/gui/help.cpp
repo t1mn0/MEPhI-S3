@@ -26,6 +26,7 @@ void View::global_help() const noexcept{
 	std::cout << "  - mkfile  : Creates a virtual regular file along the specified path, if specified. Otherwise, in the current directory" << std::endl;
 	std::cout << "  - rmdir  : Removes a virtual directory along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
 	std::cout << "  - rmfile  : Removes a virtual regular file along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
+	std::cout << "  - virtual  : Virtualize a physical file (or directory) " << std::endl;
 	std::cout << "  - ls  : Show internal directory files internal directory files" << std::endl;
 	std::cout << "  - cd  : Move between directories" << std::endl;
 	std::cout << "  - find  : Search for a file or directory" << std::endl;
@@ -36,12 +37,14 @@ void View::global_help() const noexcept{
 	std::cout << "  - exit  : Show information on built-in commands" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Use [help] [command] for a detailed description of the commands and their modifications " << std::endl;
+	std::cout << "{} brackets indicate that parameter is optional" << std::endl;
+	std::cout << "<> brackets indicate that parameter must be specified" << std::endl;
 }
 
 void View::users_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - users [options]" << std::endl;
+    std::cout << " - users {options}" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Description:" << std::endl;
 	std::cout << "Show all users in the system" << std::endl;
@@ -54,7 +57,7 @@ void View::users_help() const noexcept{
 void View::whoami_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-	std::cout << " - whoami [options]" << std::endl;
+	std::cout << " - whoami {options}" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Description:" << std::endl;
 	std::cout << "Show the active user" << std::endl;
@@ -86,7 +89,7 @@ void View::login_help() const noexcept{
 void View::newuser_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - newuser [options] <username> <fullname> <password>" << std::endl;
+    std::cout << " - newuser {options} <username> <fullname> <password>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Create new user" << std::endl;
@@ -98,7 +101,7 @@ void View::newuser_help() const noexcept{
 void View::groups_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - groups [options]" << std::endl;
+    std::cout << " - groups {options}" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Show all groups in the system" << std::endl;
@@ -110,7 +113,7 @@ void View::groups_help() const noexcept{
 void View::mygroups_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage" << std::endl;
-    std::cout << " - mygroups [options]" << std::endl;
+    std::cout << " - mygroups {options}" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Show all user-groups in the system" << std::endl;
@@ -172,7 +175,7 @@ void View::rmgroup_help() const noexcept{
 void View::mkdir_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - mkdir <path> <dirname>" << std::endl;
+    std::cout << " - mkdir {path} <dirname>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Create a virtual directory along the specified path, if specified. Otherwise, in the current directory" << std::endl;
@@ -182,30 +185,50 @@ void View::mkdir_help() const noexcept{
 void View::mkfile_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - mkfile <path> <filename> <content>" << std::endl;
+    std::cout << " - mkfile <path> <filename> <physical_file_path>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
-	std::cout << "Create a virtual regular file at the specified path. To avoid specifying the path of the current directory use the “-c” flag as <path>" << std::endl;
+	std::cout << "Create a virtual regular file at the specified path (in vfs). Bind the specified physical file to write content. To avoid specifying the path to the current directory, use the “-c” flag as <path>" << std::endl;
+	std::cout << "- - - - - - - - - -" << std::endl;
+}
+
+void View::addcontent_help() const noexcept{
+	std::cout << "- - - - - - - - - -" << std::endl;
+	std::cout << "Usage:" << std::endl;
+    std::cout << " - addcontent <path> <content>" << std::endl;
+	std::cout << "- - - - - - - - - -" << std::endl; 
+	std::cout << "Description:" << std::endl;
+	std::cout << "Create a virtual regular file at the specified path (in vfs). Bind the specified physical file to write content. To avoid specifying the path to the current directory, use the “-c” flag as <path>" << std::endl;
+	std::cout << "- - - - - - - - - -" << std::endl;
+}
+
+void View::setgroup_help() const noexcept{
+	std::cout << "- - - - - - - - - -" << std::endl;
+	std::cout << "Usage:" << std::endl;
+    std::cout << " - setgroup <path> <groupname>" << std::endl;
+	std::cout << "- - - - - - - - - -" << std::endl; 
+	std::cout << "Description:" << std::endl;
+	std::cout << "Change the owner group for the file. Can only be executed by owner user." << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 
 void View::rmdir_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - rmdir [options] <path> <dirname>" << std::endl;
+    std::cout << " - rmdir {options} {path} <dirname>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Removes a virtual directory along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Options:" << std::endl << "-r (recursive) " << "Will recursively delete a directory and all its contents" << 
-	std::endl << "(normally rm will not delete directories, while rmdir will only delete empty directories)" << std::endl;
+	std::endl << "(normally rmdir (without '-r') will only delete empty directories)" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 
 void View::rmfile_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - rmfile <path> <dirname>" << std::endl;
+    std::cout << " - rmfile {path} <dirname>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Remove a virtual regular file along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
@@ -215,7 +238,7 @@ void View::rmfile_help() const noexcept{
 void View::cat_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - cat <path> <filename>" << std::endl;
+    std::cout << " - cat {path} <filename>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Shows the content of a regular file along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
@@ -225,7 +248,7 @@ void View::cat_help() const noexcept{
 void View::ls_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - ls [options]" << std::endl;
+    std::cout << " - ls {op{ions}" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Show internal directory files" << std::endl;
@@ -248,7 +271,7 @@ void View::cd_help() const noexcept{
 void View::find_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - find [option1] [option2] <name_pattern>" << std::endl;
+    std::cout << " - find <option1> <option2> <name_pattern>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
 	std::cout << "Search for a file or directory" << std::endl;

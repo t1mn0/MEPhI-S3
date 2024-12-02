@@ -1,19 +1,18 @@
 #include <string>
 #include <fstream> 
 #include <filesystem>
-#include <iostream> // for std::cerr
 
 #include "../include/VFS.hpp"
-#include "../include/vfs_constants.hpp"
+#include "../../include/Exceptions/RuntimeException.hpp"
 
 namespace tmn_vfs {
 
-void VirtualFileSystem::SaveUsers() const noexcept {
+void VirtualFileSystem::SaveUsers() const {
     std::ofstream users_file(USERS_PATH);
 
     if (!users_file.is_open()) {
-        std::cerr << "Error(SaveUsers): error with opening file: " << USERS_PATH << std::endl;
-        return;
+        std::string err_message = "Error(SaveUsers): error with opening file";
+        throw tmn_exception::RuntimeException(err_message);
     }
 
     for (const auto& pair : users_table) {
@@ -21,12 +20,12 @@ void VirtualFileSystem::SaveUsers() const noexcept {
     }
 }
 
-void VirtualFileSystem::SaveGroups() const noexcept {
+void VirtualFileSystem::SaveGroups() const {
     std::ofstream groups_file(GROUPS_PATH);
 
     if (!groups_file.is_open()) {
-        std::cerr << "Error(SaveGroups): error with opening file: " << GROUPS_PATH << std::endl;
-        return;
+        std::string err_message = "Error(SaveGroups): error with opening file";
+        throw tmn_exception::RuntimeException(err_message);
     }
 
     for (const auto& pair : groups_table) {
@@ -34,12 +33,12 @@ void VirtualFileSystem::SaveGroups() const noexcept {
     }
 }
 
-void VirtualFileSystem::SaveDescriptors() const noexcept {
+void VirtualFileSystem::SaveDescriptors() const {
     std::ofstream descriptors_file(FILE_DESCRIPTORS_PATH);
 
     if (!descriptors_file.is_open()) {
-        std::cerr << "Error(SaveDescriptors): error with opening file: " << FILE_DESCRIPTORS_PATH << std::endl;
-        return;
+        std::string err_message = "Error(SaveDescriptors): error with opening file";
+        throw tmn_exception::RuntimeException(err_message);
     }
 
     for (const auto& pair : files) {
@@ -47,12 +46,12 @@ void VirtualFileSystem::SaveDescriptors() const noexcept {
     }
 }
 
-void VirtualFileSystem::SaveConfig() const noexcept {
+void VirtualFileSystem::SaveConfig() const {
     std::ofstream config_file(VFS_CONFIG_PATH);
 
     if (!config_file.is_open()) {
-        std::cerr << "Error(SaveSystemParameters): error with opening file: " << VFS_CONFIG_PATH << std::endl; 
-        return;
+        std::string err_message = "Error(SaveSystemParameters): error with opening file";
+        throw tmn_exception::RuntimeException(err_message);
     }
 
     for (const auto& path : recording_files) {
@@ -60,7 +59,7 @@ void VirtualFileSystem::SaveConfig() const noexcept {
     }
 }
 
-void VirtualFileSystem::SaveAll() const noexcept {
+void VirtualFileSystem::SaveAll() const {
     SaveUsers();
     SaveGroups();
     SaveDescriptors();
