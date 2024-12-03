@@ -11,13 +11,13 @@ if(NOT EXISTS "${VFS_DIR}")
   execute_process(COMMAND mkdir -p "${VFS_DIR}" RESULT_VARIABLE CREATE_DIR_RESULT)
 
   if(CREATE_DIR_RESULT EQUAL 0)
-    message(STATUS "'${VFS_DIR}' directory with user-config was successfully created")
+    message(STATUS "'${VFS_DIR}' directory with user-config was successfully created. Continuing to build ...")
   else()
     message(FATAL_ERROR "Error while creating directory '${VFS_DIR}'. Error code: ${CREATE_DIR_RESULT}")
   endif()
 
 else()
-  message(STATUS "'${VFS_DIR}' directory already exists. All good")
+  message(STATUS "'${VFS_DIR}' directory already exists. All good. Continuing to build ...")
 
 endif()
 

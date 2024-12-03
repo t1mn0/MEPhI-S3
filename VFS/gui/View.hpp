@@ -67,9 +67,10 @@ public:
     void rmgroup(const std::string& groupname) noexcept;
 
     void mkdir(const std::string& dirname, std::string path = "") noexcept;
-    void mkfile(const std::string& filename, std::filesystem::path, std::string path = "") noexcept; // ! NOT WORKING NOW
+    void mkfile(const std::string& filename, std::filesystem::path, std::string path = "") noexcept;
     // ! void addcontent(const std::string& path, std::string content) noexcept;
-    // ! void setgroup(const std::string& path, std::string content) noexcept;
+    void setgroup(const std::string &filename, const std::string& groupname) noexcept;
+    void renamefile(const std::string& old_filename, const std::string& new_filename) noexcept;
     // ! void rmdir(const std::string& dirname, std::string&& path = "", bool r = false) noexcept;
     // ! void rmfile(const std::string& dirname, std::string&& path = "") noexcept;
     void cat(const std::string& filename, std::string path = "") noexcept;

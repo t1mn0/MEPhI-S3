@@ -16,7 +16,7 @@ void VirtualFileSystem::AddUser(User& user) {
         throw tmn_exception::RuntimeException(err_message);
     }
 
-    if(users_table.contains(user.user_id)){
+    if(usernames.contains(user.username) || users_table.contains(user.user_id)){
         std::string err_message = "Error(AddUser): User with name '" + user.username + "' already is in system";
         throw tmn_exception::RuntimeException(err_message);
     }
@@ -29,6 +29,7 @@ void VirtualFileSystem::AddUser(User& user) {
         AddGroup(default_group);
         user.groups.insert(user.user_id);
         users_table.insert(tmn::Pair<const unsigned long, User>(user.user_id, user));
+        users_table[user.user_id].groups.insert(default_group.group_id);
         usernames.insert(tmn::Pair<const std::string, unsigned long>(user.username, user.user_id));
     }
     catch (tmn_exception::RuntimeException& e){
@@ -48,6 +49,7 @@ void VirtualFileSystem::Authorization(const std::string& username, const std::st
     }
 
     active_user = users_table[usernames[username]].user_id;
+    current_directory = 0;
 }
 
 void VirtualFileSystem::RemoveUser(const std::string& username){

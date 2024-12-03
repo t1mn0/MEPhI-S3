@@ -41,13 +41,13 @@ void View::groupcount() const noexcept {
 
 void View::newgroup(const std::string& groupname) noexcept {
     if (IsGoodUserName(groupname)){
-        ++vfs.group_id;
         Group group(1001 + vfs.group_id, groupname, vfs.active_user, GetTimeNow());
+        group.members.insert(vfs.active_user);
         try{
             vfs.AddGroup(group);
+            ++vfs.group_id;
         }
         catch (tmn_exception::RuntimeException& e){
-            --vfs.group_id;
             std::cerr << e.what() << std::endl;
             return;
         }

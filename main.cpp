@@ -11,6 +11,7 @@ int main(){
         std::string password;
         std::cout << "Enter the password for the root user" << std::endl; 
         std::cin >> password;
+        getchar();
 
         while (!tmn_vfs::IsGoodPassword(password)){
             std::cout << "Bad password" << std::endl; 

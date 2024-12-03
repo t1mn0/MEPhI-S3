@@ -7,11 +7,12 @@ namespace tmn_vfs {
 
 // AddGroup(group) not added active_user to argument-group
 void VirtualFileSystem::AddGroup(Group& group){
-    if(groups_table.contains(group.group_id)){
-        std::string err_message = "Error(AddGroup): Group '" + group.groupname + "' is already in system";
+    if(groupnames.contains(group.groupname) || groups_table.contains(group.group_id)){
+        std::string err_message = "Error(AddGroup): Group '" + group.groupname + std::to_string(group.group_id) + std::to_string(group_id) + "' is already in system";
         throw tmn_exception::RuntimeException(err_message);
     }
 
+    users_table[group.user_id].groups.insert(group.group_id);
     groups_table.insert(tmn::Pair<const unsigned long, Group>(group.group_id, group));
     groupnames.insert(tmn::Pair<const std::string, unsigned long>(group.groupname, group.group_id));
 }

@@ -126,10 +126,21 @@ VirtualFileSystem VirtualFileSystem::Init(std::string root_password) {
     }
     else{
         CreateHelperFiles();
-        FileDescriptor fd(0, true, 0, 0, "/", 0, 0, 0, FilePermissions(Permission::READWRITE, Permission::READWRITE, Permission::READWRITE));
         User user(0, SUPER_USERNAME, SUPER_FULLNAME, GetTimeNow(), std::to_string(std::hash<std::string>{}(root_password)), UserStatus::SUPER);
+        Group default_group(user.user_id, user.username, user.user_id, user.creation_time);
+        FileDescriptor fd(0, true, 0, 0, "/", 0, 0, 0, FilePermissions(Permission::READWRITE, Permission::READWRITE, Permission::READWRITE));
+        
         vfs.active_user = 0;
-        vfs.AddUser(user);
+
+        user.groups.insert(user.user_id);
+        vfs.users_table.insert(tmn::Pair<const unsigned long, User>(user.user_id, user));
+        vfs.usernames.insert(tmn::Pair<const std::string, unsigned long>(user.username, user.user_id));
+        
+        default_group.members.insert(user.user_id);
+
+        vfs.groups_table.insert(tmn::Pair<const unsigned long, Group>(default_group.group_id, default_group));
+        vfs.groupnames.insert(tmn::Pair<const std::string, unsigned long>(default_group.groupname, default_group.group_id));
+
         vfs.files.insert({fd.fd_id, fd});
         vfs.files[fd.fd_id].inner_files.insert(0);
     }

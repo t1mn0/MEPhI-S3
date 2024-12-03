@@ -13,26 +13,82 @@ void View::mkdir(const std::string& dirname, std::string path) noexcept {
         return;
     }
 
-    unsigned long rec_id = 0;
-    bool flag = false;
-    for (auto& pair : vfs.recording_files){
-        if (pair.second == path){
-            rec_id = pair.first;
-            flag = true;
-            break;
-        }
-    }
-    if (!flag) {
-        ++vfs.rec_id;
-        rec_id = vfs.rec_id;
-        vfs.recording_files.insert({rec_id, path});
-    }
+    unsigned long curdir = vfs.current_directory; // for quick return to the directory from which the command was executed
 
     ++vfs.fd_id;
 
     if (path.empty()){
 
-        FileDescriptor fd(vfs.fd_id, true, rec_id, vfs.current_directory, dirname, 0, 0, vfs.active_user);
+        FileDescriptor fd(vfs.fd_id, true, 0, vfs.current_directory, dirname, 0, 0, vfs.active_user);
+        
+        try {
+            vfs.AddFile(fd);
+        }
+        catch (tmn_exception::RuntimeException& e){
+            --vfs.fd_id;
+
+            std::cerr << e.what() << std::endl;
+        }
+
+        return;
+    }
+
+    try {
+        vfs.GoTo(path);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        --vfs.fd_id;
+        
+        std::cerr << e.what() << std::endl;
+        return;
+    }
+        
+    FileDescriptor fd(vfs.fd_id, true, 0, vfs.current_directory, dirname, 0, 0, vfs.active_user);
+
+    try {
+        vfs.AddFile(fd);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        --vfs.fd_id;
+
+        std::cerr << e.what() << std::endl;
+        return;
+    }
+
+    vfs.current_directory = curdir; // quick return to the directory from which the command was executed
+}
+
+void View::mkfile(const std::string& filename, std::filesystem::path ph_path, std::string path) noexcept {
+    if(!IsGoodFileName(filename)){
+        std::cerr << "Bad name for file" << std::endl;
+        return;
+    }
+
+    unsigned long curdir = vfs.current_directory;
+
+    ++vfs.fd_id;
+
+    unsigned long rec_id = 0;
+    bool flag = false;
+    for (auto& pair : vfs.recording_files){
+        if (pair.second == ph_path.string()){
+            rec_id = pair.first;
+            flag = true;
+            break;
+        }
+    }
+    
+    if (!flag) {
+        ++vfs.rec_id;
+        rec_id = vfs.rec_id;
+        vfs.recording_files.insert({rec_id, ph_path.string()});
+    }
+
+    ++vfs.fd_id;
+
+    if (path.empty() || path == "-c"){
+
+        FileDescriptor fd(vfs.fd_id, false, rec_id, vfs.current_directory, filename, 0, 0, vfs.active_user);
         
         try {
             vfs.AddFile(fd);
@@ -64,7 +120,7 @@ void View::mkdir(const std::string& dirname, std::string path) noexcept {
         return;
     }
         
-    FileDescriptor fd(vfs.fd_id, true, rec_id, vfs.current_directory, dirname, 0, 0, vfs.active_user);
+    FileDescriptor fd(vfs.fd_id, false, rec_id, vfs.current_directory, filename, 0, 0, vfs.active_user);
 
     try {
         vfs.AddFile(fd);
@@ -77,34 +133,49 @@ void View::mkdir(const std::string& dirname, std::string path) noexcept {
         --vfs.fd_id;
 
         std::cerr << e.what() << std::endl;
+    }
+
+    vfs.current_directory = curdir;
+    return;
+}
+
+void View::setgroup(const std::string &filename, const std::string& groupname) noexcept {
+    if (!vfs.groupnames.contains(groupname)){
+        std::cerr << "Group not found: '" + groupname + "'" << std::endl;
         return;
+    }
+    for (auto& inner_id : vfs.files[vfs.current_directory].inner_files){
+        if (!vfs.files.contains(inner_id)){
+            std::cerr << "File not found: '" + filename + "'" << std::endl;
+        return;
+        }
+        
+        try {
+            vfs.SetOwnerGroup(inner_id, vfs.groupnames[groupname]);
+        }
+        catch (tmn_exception::RuntimeException& e){
+            std::cerr << e.what() << std::endl;
+        }
     }
 }
 
-// TODO 
-void View::mkfile(const std::string& filename, std::filesystem::path ph_path, std::string path) noexcept {
-    // unsigned long curdir = vfs.current_directory;
+void View::renamefile(const std::string& old_filename, const std::string& new_filename) noexcept {
+    if(!IsGoodFileName(new_filename)){
+        std::cerr << "Bad name for directory" << std::endl;
+        return;
+    }
 
-    // if (!path.empty()){
-    //     try{
-    //         vfs.GoTo(path);
-    //     }
-    //     catch (tmn_exception::RuntimeException& e){
-    //         std::cerr << e.what() << std::endl;
-    //     }
-    // }
-    // if (!IsGoodFileName(filename)){
-    //     return;
-    // }
-
-    // FileDescriptor fd(vfs.files.size() + 1, false, 
-    //     vfs.NextRecordFile(), vfs.current_directory, filename, 0, 0, vfs.active_user);
-
-    // vfs.AddFile(fd, content);
-    // vfs.current_directory = curdir;
+    try {
+        vfs.RenameFile(old_filename, new_filename);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void View::cat(const std::string& filename, std::string path) noexcept {
+    unsigned long curdir = vfs.current_directory;
+
     if (!path.empty()){
         try{
             vfs.GoTo(path);
@@ -130,6 +201,8 @@ void View::cat(const std::string& filename, std::string path) noexcept {
     else{
         std::cout << content << std::endl;
     }
+
+    vfs.current_directory = curdir;
 }
 
 void View::ls(bool v) noexcept {

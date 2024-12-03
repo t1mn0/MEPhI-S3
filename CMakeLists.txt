@@ -24,7 +24,6 @@ else()
     if(BUILD_TESTS)
         enable_testing()
         add_subdirectory(test/Hash)
-#        add_subdirectory(test/VFS)
     endif()
 endif()
 

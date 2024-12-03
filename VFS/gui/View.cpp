@@ -15,7 +15,6 @@ View::View(std::string password) {
 
 void View::run() {
     bool exit = false;
-    getchar();
     while (!exit) {
         std::string line;
         std::cout << "(vfs) > ";
@@ -130,7 +129,18 @@ void View::run() {
             }
         } 
         // else if (command == "addcontent")
-        // else if (command == "setgroup")
+        else if (command == "setgroup") {
+            std::string filename, groupname;
+            iss >> filename >> groupname;
+
+            setgroup(filename, groupname);
+        }
+        else if (command == "renamefile"){
+            std::string old_filename, new_filename;
+            iss >> old_filename >> new_filename;
+
+            renamefile(old_filename, new_filename);
+        }
         else if (command == "cat") {
             std::string path, filename;
             iss >> path >> filename;

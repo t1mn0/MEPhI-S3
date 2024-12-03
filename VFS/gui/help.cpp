@@ -15,18 +15,20 @@ void View::global_help() const noexcept{
 	std::cout << "  - newuser : Create new user" << std::endl;
 	std::cout << "Handling groups" << std::endl;
 	std::cout << "  - groups  : Show all groups in the system" << std::endl;
-	std::cout << "  - mygroups : Show all user-groups in the system" << std::endl;
-	std::cout << "  - groupcount : Show the number of groups on the vfs (without superuser's group)" << std::endl;
-	std::cout << "  - newgroup : Create new group and add active user in it" << std::endl;
-	std::cout << "  - addtogroup : Add the specified user to the specified group" << std::endl;
-	std::cout << "  - rmmefromgroup : Remove the active user from the specified group" << std::endl;
-	std::cout << "  - rmgroup : Remove the specified user group, if possible" << std::endl;
+	std::cout << "  - mygroups  : Show all user-groups in the system" << std::endl;
+	std::cout << "  - groupcount  : Show the number of groups on the vfs (without superuser's group)" << std::endl;
+	std::cout << "  - newgroup  : Create new group and add active user in it" << std::endl;
+	std::cout << "  - addtogroup  : Add the specified user to the specified group" << std::endl;
+	std::cout << "  - rmmefromgroup  : Remove the active user from the specified group" << std::endl;
+	std::cout << "  - rmgroup  : Remove the specified user group, if possible" << std::endl;
 	std::cout << "Handling files" << std::endl;
 	std::cout << "  - mkdir  : Creates a virtual directory along the specified path, if specified. Otherwise, in the current directory" << std::endl;
 	std::cout << "  - mkfile  : Creates a virtual regular file along the specified path, if specified. Otherwise, in the current directory" << std::endl;
+	std::cout << "  - addcontent  : Write the content of a virtual file (performe to his physical file)" << std::endl;
+	std::cout << "  - setgroup  : Change the owner group for the file. Can only be executed by owner user" << std::endl;
+	std::cout << "  - renamefile  : Rename the specified file in current directory" << std::endl;	
 	std::cout << "  - rmdir  : Removes a virtual directory along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
 	std::cout << "  - rmfile  : Removes a virtual regular file along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
-	std::cout << "  - virtual  : Virtualize a physical file (or directory) " << std::endl;
 	std::cout << "  - ls  : Show internal directory files internal directory files" << std::endl;
 	std::cout << "  - cd  : Move between directories" << std::endl;
 	std::cout << "  - find  : Search for a file or directory" << std::endl;
@@ -34,7 +36,7 @@ void View::global_help() const noexcept{
 	std::cout << "  - pwd  : Show the name of the current working directory" << std::endl;
 	std::cout << "  - clear  : Clear the screen " << std::endl;
 	std::cout << "  - help  : Show information on built-in commands" << std::endl;
-	std::cout << "  - exit  : Show information on built-in commands" << std::endl;
+	std::cout << "  - exit  : Shutdown VFS" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Use [help] [command] for a detailed description of the commands and their modifications " << std::endl;
 	std::cout << "{} brackets indicate that parameter is optional" << std::endl;
@@ -195,20 +197,30 @@ void View::mkfile_help() const noexcept{
 void View::addcontent_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - addcontent <path> <content>" << std::endl;
+    std::cout << " - addcontent <filename> <content>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
-	std::cout << "Create a virtual regular file at the specified path (in vfs). Bind the specified physical file to write content. To avoid specifying the path to the current directory, use the “-c” flag as <path>" << std::endl;
+	std::cout << "Write the content of a virtual file (performe to his physical file). Searches in the current directory" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 
 void View::setgroup_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - setgroup <path> <groupname>" << std::endl;
+    std::cout << " - setgroup <filename> <groupname>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
-	std::cout << "Change the owner group for the file. Can only be executed by owner user." << std::endl;
+	std::cout << "Change the owner group for the file. Can only be executed by owner user. Searches in the current directory" << std::endl;
+	std::cout << "- - - - - - - - - -" << std::endl;
+}
+
+void View::renamefile_help() const noexcept {
+	std::cout << "- - - - - - - - - -" << std::endl;
+	std::cout << "Usage:" << std::endl;
+    std::cout << " - renamefile <old_filename> <new_filename>" << std::endl;
+	std::cout << "- - - - - - - - - -" << std::endl; 
+	std::cout << "Description:" << std::endl;
+	std::cout << "Rename the specified file in current directory" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 
