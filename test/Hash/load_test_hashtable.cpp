@@ -7,10 +7,8 @@
 
 #include "../../include/Associative/HashTable.hpp"
 
-
-
-TEST(LoadTestHashTable, HashTableInsert100000) {
-    const int key_block = 100000;
+TEST(LoadTestHashTable, Insert) {
+    const int key_block = 1000000;
     const int block_count = 1000;
 
     double timers[key_block / block_count];
@@ -19,7 +17,7 @@ TEST(LoadTestHashTable, HashTableInsert100000) {
     tmn_associative::HashTable<int, float> htable;
 
     // For now, the path is absolute - it's all temporary
-    const std::string filename = "/home/timno/Documents/MEPhI-S3/test/_test_results/load_test_hashtable.txt";
+    const std::string filename = std::string(EXECUTABLE_PATH) + "/load_test_hashtable.txt";
 
     if (std::filesystem::exists(filename)) {
         std::filesystem::remove(filename);
@@ -49,17 +47,17 @@ TEST(LoadTestHashTable, HashTableInsert100000) {
     output_file.close();
 }
 
-TEST(LoadUnorderedMap, UnorderedMapInsert100000){
-    const int key_block = 100000;
+TEST(LoadTestUnorderedMap, Insert) {
+    const int key_block = 1000000;
     const int block_count = 1000;
 
     double timers[key_block / block_count];
     double start_point = 0;
 
-    std::unordered_map<int, float> umap;
+    std::unordered_map<int, float> htable;
 
     // For now, the path is absolute - it's all temporary
-    const std::string filename = "/home/timno/Documents/MEPhI-S3/test/_test_results/load_test_unorderedmap.txt";
+    const std::string filename = std::string(EXECUTABLE_PATH) + "/load_test_unorderedmap.txt";
 
     if (std::filesystem::exists(filename)) {
         std::filesystem::remove(filename);
@@ -70,9 +68,9 @@ TEST(LoadUnorderedMap, UnorderedMapInsert100000){
         FAIL() << "Could not open output file";
     }
 
-    for (int i = 0; i < key_block; ++i){
+    for (int i = 0; i < key_block; ++i) {
         auto start = std::chrono::high_resolution_clock::now();
-        umap.insert({i, static_cast<float>(i) / (i * i * i)});
+        htable.insert({i, static_cast<float>(i) / (i * i * i)});
         auto end = std::chrono::high_resolution_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
         start_point += elapsed.count();
@@ -85,4 +83,6 @@ TEST(LoadUnorderedMap, UnorderedMapInsert100000){
                        << " pairs) [TEST_UNORDEREDMAP]" << std::endl;
         }
     }
+
+    output_file.close();
 }
