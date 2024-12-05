@@ -38,8 +38,8 @@ public:
     void mkfile_help() const noexcept;
     void addcontent_help() const noexcept;
     void setgroup_help() const noexcept;
+    void chmod_help() const noexcept;
     void renamefile_help() const noexcept;
-    void rmdir_help() const noexcept;
     void rmfile_help() const noexcept;
     void cat_help() const noexcept;
     void ls_help() const noexcept;
@@ -68,12 +68,12 @@ public:
 
     void mkdir(const std::string& dirname, std::string path = "") noexcept;
     void mkfile(const std::string& filename, std::filesystem::path, std::string path = "") noexcept;
-    // ! void addcontent(const std::string& path, std::string content) noexcept;
+    void addcontent(const std::string& filename, std::string content) noexcept;
     void setgroup(const std::string &filename, const std::string& groupname) noexcept;
+    void chmod(const std::string &filename, unsigned int new_permissions) noexcept;
     void renamefile(const std::string& old_filename, const std::string& new_filename) noexcept;
-    // ! void rmdir(const std::string& dirname, std::string&& path = "", bool r = false) noexcept;
-    // ! void rmfile(const std::string& dirname, std::string&& path = "") noexcept;
-    void cat(const std::string& filename, std::string path = "") noexcept;
+    void rmfile(const std::string& filename) noexcept;
+    void cat(const std::string& filename, std::string path = "") noexcept; // ! test it ! ! ! 
     void ls(bool v = false) noexcept;
     void cd(std::string& path) noexcept;
     void find(short filetype, bool where, const std::string& name_pattern) noexcept;

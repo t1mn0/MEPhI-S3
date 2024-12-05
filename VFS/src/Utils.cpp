@@ -3,6 +3,11 @@
 #include <iomanip> // GetTimeNow()
 #include <string>
 
+#include <filesystem> // isRegularWritableBinaryFile() 
+#include <ostream> // isRegularWritableBinaryFile() 
+#include <fstream> // isRegularWritableBinaryFile() 
+#include <iostream> // isRegularWritableBinaryFile() 
+
 #include "../include/Utils.hpp"
 #include "../include/vfs_constants.hpp"
 
@@ -118,6 +123,15 @@ bool IsGoodPassword(const std::string& password) {
         return false;
     }
 
+    return true;
+}
+
+
+bool isRegularWritableBinaryFile(const std::string& path) {
+    if (!std::filesystem::exists(path) || !std::filesystem::is_regular_file(path)) {
+        return false;
+    }
+    
     return true;
 }
 

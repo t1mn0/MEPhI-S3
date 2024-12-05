@@ -47,3 +47,8 @@ Release/
 *.bak
 *~
 Thumbs.db
+
+load_test_hashtable.txt
+load_test_unorderedmap.txt
+output_load_test_hashtable.txt
+output_load_test_unorderedmap.txt

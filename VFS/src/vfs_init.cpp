@@ -110,7 +110,7 @@ void VirtualFileSystem::InitSystemParameters(){
     std::string line;
     std::size_t i = 0;
     while (std::getline(config_file, line) && !line.empty()) {
-        recording_files.insert({i, line});
+        recording_files.insert({i + 1, line});
         ++i;
     }
 }
@@ -123,6 +123,11 @@ VirtualFileSystem VirtualFileSystem::Init(std::string root_password) {
         vfs.InitFileDescriptors();
         vfs.InitSystemParameters();
         vfs.active_user = 0;
+        vfs.current_directory = 0;
+        vfs.fd_id = vfs.files.size();
+        vfs.user_id = vfs.users_table.size();
+        vfs.group_id = vfs.groups_table.size();
+        vfs.rec_id = vfs.recording_files.size();
     }
     else{
         CreateHelperFiles();

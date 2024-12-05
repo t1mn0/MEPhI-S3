@@ -64,40 +64,35 @@ void View::mkfile(const std::string& filename, std::filesystem::path ph_path, st
         return;
     }
 
+    if (!isRegularWritableBinaryFile(ph_path)){
+        std::cerr << "Bad physical_file_path for file" << std::endl;
+        return;
+    }
+
     unsigned long curdir = vfs.current_directory;
 
-    ++vfs.fd_id;
-
-    unsigned long rec_id = 0;
-    bool flag = false;
     for (auto& pair : vfs.recording_files){
         if (pair.second == ph_path.string()){
-            rec_id = pair.first;
-            flag = true;
-            break;
+            std::cerr << "Bad physical_file_path for file: for 1 virtual file there is 1 physical file" << std::endl;
+            return;
         }
     }
     
-    if (!flag) {
-        ++vfs.rec_id;
-        rec_id = vfs.rec_id;
-        vfs.recording_files.insert({rec_id, ph_path.string()});
-    }
+    ++vfs.rec_id;
+    vfs.recording_files.insert({vfs.rec_id, ph_path.string()});
 
     ++vfs.fd_id;
-
     if (path.empty() || path == "-c"){
 
-        FileDescriptor fd(vfs.fd_id, false, rec_id, vfs.current_directory, filename, 0, 0, vfs.active_user);
+        FileDescriptor fd(vfs.fd_id, false, vfs.rec_id, vfs.current_directory, filename, 0, 0, vfs.active_user);
         
         try {
             vfs.AddFile(fd);
         }
         catch (tmn_exception::RuntimeException& e){
-            if (!flag) {
-                vfs.recording_files.erase(rec_id);
-            }
+            vfs.recording_files.erase(vfs.rec_id);
 
+            --vfs.rec_id;
             --vfs.fd_id;
 
             std::cerr << e.what() << std::endl;
@@ -110,26 +105,28 @@ void View::mkfile(const std::string& filename, std::filesystem::path ph_path, st
         vfs.GoTo(path);
     }
     catch (tmn_exception::RuntimeException& e){
-        if (!flag) {
-            vfs.recording_files.erase(rec_id);
-        }
+        
+        vfs.recording_files.erase(vfs.rec_id);
+        
 
+        --vfs.rec_id;
         --vfs.fd_id;
 
         std::cerr << e.what() << std::endl;
         return;
     }
         
-    FileDescriptor fd(vfs.fd_id, false, rec_id, vfs.current_directory, filename, 0, 0, vfs.active_user);
+    FileDescriptor fd(vfs.fd_id, false, vfs.rec_id, vfs.current_directory, filename, 0, 0, vfs.active_user);
 
     try {
         vfs.AddFile(fd);
     }
     catch (tmn_exception::RuntimeException& e){
-        if (!flag) {
-            vfs.recording_files.erase(rec_id);
-        }
+        
+        vfs.recording_files.erase(vfs.rec_id);
+        
 
+        --vfs.rec_id;
         --vfs.fd_id;
 
         std::cerr << e.what() << std::endl;
@@ -138,6 +135,16 @@ void View::mkfile(const std::string& filename, std::filesystem::path ph_path, st
     vfs.current_directory = curdir;
     return;
 }
+
+void View::addcontent(const std::string& filename, std::string content) noexcept {
+    try {
+        vfs.AddFileContent(filename, content);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        std::cerr << e.what() << std::endl;
+    }
+}
+
 
 void View::setgroup(const std::string &filename, const std::string& groupname) noexcept {
     if (!vfs.groupnames.contains(groupname)){
@@ -159,6 +166,15 @@ void View::setgroup(const std::string &filename, const std::string& groupname) n
     }
 }
 
+void View::chmod(const std::string& filename, unsigned int new_permissions) noexcept {
+    try{
+        vfs.ChangeFilePermissions(filename, new_permissions);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        std::cerr << e.what() << std::endl;
+    }
+}
+
 void View::renamefile(const std::string& old_filename, const std::string& new_filename) noexcept {
     if(!IsGoodFileName(new_filename)){
         std::cerr << "Bad name for directory" << std::endl;
@@ -167,6 +183,15 @@ void View::renamefile(const std::string& old_filename, const std::string& new_fi
 
     try {
         vfs.RenameFile(old_filename, new_filename);
+    }
+    catch (tmn_exception::RuntimeException& e){
+        std::cerr << e.what() << std::endl;
+    }
+}
+
+void View::rmfile(const std::string& filename) noexcept {
+    try{
+        vfs.RemoveFile(filename);
     }
     catch (tmn_exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;

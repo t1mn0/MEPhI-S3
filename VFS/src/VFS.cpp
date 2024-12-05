@@ -212,6 +212,10 @@ bool VirtualFileSystem::HavePermission(unsigned long fd_id, unsigned long user_i
         std::string err_message = "Error(CanRead): user not found";
         throw tmn_exception::RuntimeException(err_message);
     }
+
+    if (user_id == 0){ // SUPER
+        return true;
+    }
     
     if(files[fd_id].owner_user == user_id){
         return static_cast<unsigned int>(files[fd_id].file_permissions.user) >= perm;

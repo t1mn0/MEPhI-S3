@@ -128,18 +128,43 @@ void View::run() {
                 mkfile(filename, std::filesystem::path(physical_file_path), path);
             }
         } 
-        // else if (command == "addcontent")
+        else if (command == "addcontent") {
+            std::string filename;
+            std::string content;
+            iss >> filename;
+            std::getline(std::cin, content);
+
+            addcontent(filename, content);
+        }
         else if (command == "setgroup") {
             std::string filename, groupname;
             iss >> filename >> groupname;
 
             setgroup(filename, groupname);
         }
+        else if (command == "chmod"){
+            std::string filename, number;
+            iss >> filename >> number;
+
+            try {
+                int num = std::stoi(number);
+                chmod(filename, num);
+            } 
+            catch (...) {
+                std::cerr << "Bad number for convert to FilePermissions" << std::endl;
+            }
+        }
         else if (command == "renamefile"){
             std::string old_filename, new_filename;
             iss >> old_filename >> new_filename;
 
             renamefile(old_filename, new_filename);
+        }
+        else if (command == "rmfile"){
+            std::string filename;
+            iss >> filename;
+
+            rmfile(filename);
         }
         else if (command == "cat") {
             std::string path, filename;
@@ -245,8 +270,17 @@ void View::run() {
             else if (command_name == "mkfile"){
                 mkfile_help();
             }
-            else if (command_name == "rmdir"){
-                rmdir_help();
+            else if (command_name == "addcontent"){
+                addcontent_help();
+            }
+            else if (command_name == "setgroup"){
+                setgroup_help();
+            }
+            else if (command_name == "chmod"){
+                chmod_help();
+            }
+            else if (command_name == "renamefile"){
+                renamefile_help();
             }
             else if (command_name == "rmfile"){
                 rmfile_help();

@@ -20,4 +20,6 @@ bool IsGoodFileName(const std::string& filename);
 
 bool IsGoodPassword(const std::string& password);
 
+bool isRegularWritableBinaryFile(const std::string& path);
+
 }

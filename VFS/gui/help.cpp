@@ -25,10 +25,10 @@ void View::global_help() const noexcept{
 	std::cout << "  - mkdir  : Creates a virtual directory along the specified path, if specified. Otherwise, in the current directory" << std::endl;
 	std::cout << "  - mkfile  : Creates a virtual regular file along the specified path, if specified. Otherwise, in the current directory" << std::endl;
 	std::cout << "  - addcontent  : Write the content of a virtual file (performe to his physical file)" << std::endl;
+	std::cout << "  - chmod  : Change file permissions for user-group-other. Only through a three-digit number" << std::endl;
 	std::cout << "  - setgroup  : Change the owner group for the file. Can only be executed by owner user" << std::endl;
 	std::cout << "  - renamefile  : Rename the specified file in current directory" << std::endl;	
-	std::cout << "  - rmdir  : Removes a virtual directory along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
-	std::cout << "  - rmfile  : Removes a virtual regular file along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
+	std::cout << "  - rmfile  : Removes a virtual regular file in current directory" << std::endl;
 	std::cout << "  - ls  : Show internal directory files internal directory files" << std::endl;
 	std::cout << "  - cd  : Move between directories" << std::endl;
 	std::cout << "  - find  : Search for a file or directory" << std::endl;
@@ -214,6 +214,16 @@ void View::setgroup_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 
+void View::chmod_help() const noexcept {
+	std::cout << "- - - - - - - - - -" << std::endl;
+	std::cout << "Usage:" << std::endl;
+    std::cout << " - chmod <filename> <three-digit number>" << std::endl;
+	std::cout << "- - - - - - - - - -" << std::endl; 
+	std::cout << "Description:" << std::endl;
+	std::cout << "Change file permissions for user-group-other. Only through a three-digit number" << std::endl;
+	std::cout << "- - - - - - - - - -" << std::endl;
+}
+
 void View::renamefile_help() const noexcept {
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
@@ -224,26 +234,13 @@ void View::renamefile_help() const noexcept {
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 
-void View::rmdir_help() const noexcept{
-	std::cout << "- - - - - - - - - -" << std::endl;
-	std::cout << "Usage:" << std::endl;
-    std::cout << " - rmdir {options} {path} <dirname>" << std::endl;
-	std::cout << "- - - - - - - - - -" << std::endl; 
-	std::cout << "Description:" << std::endl;
-	std::cout << "Removes a virtual directory along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
-	std::cout << "- - - - - - - - - -" << std::endl;
-	std::cout << "Options:" << std::endl << "-r (recursive) " << "Will recursively delete a directory and all its contents" << 
-	std::endl << "(normally rmdir (without '-r') will only delete empty directories)" << std::endl;
-	std::cout << "- - - - - - - - - -" << std::endl;
-}
-
 void View::rmfile_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 	std::cout << "Usage:" << std::endl;
-    std::cout << " - rmfile {path} <dirname>" << std::endl;
+    std::cout << " - rmfile <filename>" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl; 
 	std::cout << "Description:" << std::endl;
-	std::cout << "Remove a virtual regular file along the specified path, if specified. Otherwise, searches in the current directory" << std::endl;
+	std::cout << "Remove a virtual regular in current directory" << std::endl;
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 

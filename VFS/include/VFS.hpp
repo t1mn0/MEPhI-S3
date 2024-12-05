@@ -77,11 +77,14 @@ public:
 
 // Actions with files :
     tmn_associative::HashSet<std::string> CurrentDirContent() const noexcept;
+    void AddFileContent(const std::string& filename, const std::string& content);
     std::string GetFileContent(const std::string& filename);
     void AddFile(FileDescriptor);
+    void ChangeFilePermissions(const std::string& filename, unsigned int perm);
     void SetOwnerGroup(unsigned long fd_id, unsigned long group_id);
     void RenameFile(const std::string& old_filename, const std::string& new_filename);
-    void RemoveFile(const std::string& filename); // ! handle content shifting 
+    void RemoveFileContent(const std::string& filename);
+    void RemoveFile(const std::string& filename);
     void RemoveDir(const std::string& filename, bool is_recursive);
 
 // Relocation user & other methods :
