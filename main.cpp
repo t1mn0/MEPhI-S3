@@ -7,13 +7,13 @@
 #include <iostream>
 
 int main(){
-    if (!tmn_vfs::VirtualFileSystem::VFSInSystem()){
+    if (!tmn_vfs::VirtualFileSystem::in_system()){
         std::string password;
         std::cout << "Enter the password for the root user" << std::endl; 
         std::cin >> password;
         getchar();
 
-        while (!tmn_vfs::IsGoodPassword(password)){
+        while (!tmn_vfs::is_good_password(password)){
             std::cout << "Bad password" << std::endl; 
             std::cin >> password;
         }

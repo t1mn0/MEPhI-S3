@@ -4,22 +4,22 @@
 
 namespace tmn_vfs {
 
-std::string GetTimeNow();
+std::string get_time_now();
 
-bool FullMatch(const std::string& file_name, const std::string& pattern);
+bool full_match(const std::string& file_name, const std::string& pattern);
 
-bool WildcardMatch(const std::string& file_name, const std::string& pattern);
+bool wildcard_match(const std::string& file_name, const std::string& pattern);
 
-bool FileNameMatch(const std::string& file_name, const std::string& pattern);
+bool file_name_match(const std::string& file_name, const std::string& pattern);
 
-bool IsGoodUserName(const std::string& username);
+bool is_good_username(const std::string& username);
 
-bool IsGoodUserFullName(const std::string& fullname);
+bool is_good_fullname(const std::string& fullname);
 
-bool IsGoodFileName(const std::string& filename);
+bool is_good_filename(const std::string& filename);
 
-bool IsGoodPassword(const std::string& password);
+bool is_good_password(const std::string& password);
 
-bool isRegularWritableBinaryFile(const std::string& path);
+bool is_regular_writable_binfile(const std::string& path);
 
 }

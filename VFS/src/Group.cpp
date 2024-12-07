@@ -52,15 +52,15 @@ tmn_vfs::Group::~Group(){
     members.clear();
 }
 
-Group::Group(unsigned int group_id, 
-    const std::string &groupname, unsigned int user_id, std::string creation_time) noexcept :
+Group::Group(uint64_t group_id, 
+    const std::string &groupname, uint64_t user_id, std::string creation_time) noexcept :
     group_id(group_id), groupname(groupname), user_id(user_id), creation_time(creation_time) {}
 
-Group::Group(unsigned int group_id, 
-    const std::string &groupname, unsigned int user_id) noexcept :
-    group_id(group_id), groupname(groupname), user_id(user_id), creation_time(GetTimeNow()) {}
+Group::Group(uint64_t group_id, 
+    const std::string &groupname, uint64_t user_id) noexcept :
+    group_id(group_id), groupname(groupname), user_id(user_id), creation_time(get_time_now()) {}
 
-std::string Group::toString() const noexcept {
+std::string Group::to_string() const noexcept {
     std::string group_string = "";
     group_string.reserve(64);
     group_string += "gid:"; group_string += std::to_string(group_id);
@@ -78,7 +78,7 @@ std::string Group::toString() const noexcept {
     return group_string;
 }
 
-Group Group::fromString(const std::string& group_string) {
+Group Group::from_string(const std::string& group_string) {
     Group group;
     std::stringstream ss(group_string);
     std::string segment;

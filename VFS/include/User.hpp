@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstdint>
 
 #include "../../include/Associative/HashSet.hpp"
 
@@ -9,7 +10,7 @@ namespace tmn_vfs {
 class VirtualFileSystem;
 class View;
 
-enum class UserStatus : unsigned int { 
+enum class UserStatus : uint8_t { 
     SUPER = 0, 
     LOCAL = 1, 
     SYSTEM = 2 
@@ -17,7 +18,7 @@ enum class UserStatus : unsigned int {
 
 struct User {
 private:
-    unsigned int user_id = 0;
+    uint64_t user_id = 0;
     std::string username = "-";
     std::string fullname = "-";
     std::string creation_time = "-";
@@ -25,7 +26,7 @@ private:
     
     UserStatus status = UserStatus::LOCAL;
 
-    tmn_associative::HashSet<unsigned int> groups;
+    tmn_associative::HashSet<uint64_t> groups;
     
 public:
     User() = default;
@@ -35,18 +36,18 @@ public:
     User& operator=(User&&) noexcept;
     ~User();
 
-    User(unsigned int user_id, 
+    User(uint64_t user_id, 
         const std::string& username, const std::string& fullname, 
         const std::string& creation_time, const std::string& password_hash, 
         UserStatus status = UserStatus::LOCAL) noexcept;
 
-    User(unsigned int user_id, 
+    User(uint64_t user_id, 
         const std::string& username, 
         const std::string& creation_time, const std::string& password_hash, 
         UserStatus status = UserStatus::LOCAL) noexcept; 
 
-    std::string toString() const noexcept;
-    static User fromString(const std::string& user_string);
+    std::string to_string() const noexcept;
+    static User from_string(const std::string& user_string);
 
     friend class VirtualFileSystem;
     friend class View;

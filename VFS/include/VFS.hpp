@@ -2,6 +2,7 @@
 
 #include <string>
 #include <filesystem>
+#include <cstdint>
 
 #include "../../include/Associative/HashTable.hpp"
 #include "../../include/Sequence/ArraySequence.hpp"
@@ -18,82 +19,82 @@ class View;
 class VirtualFileSystem {
 private:
 // Support functions for initialization :
-    static void CreateHelperFiles();
-    static bool IsValidSystemFile(const std::filesystem::path& path);
+    static void create_helper_files();
+    static bool is_valid_system_files(const std::filesystem::path& path);
 
-    void InitUsers();
-    void InitGroups();
-    void InitFileDescriptors();
-    void InitSystemParameters();
+    void init_users();
+    void init_groups();
+    void init_file_descriptors();
+    void init_system_parameters();
 
 private:
 // Support functions for shutdown :
-    void SaveConfig() const;
-    void SaveDescriptors() const;
-    void SaveGroups() const;
-    void SaveUsers() const;
-    void SaveAll() const;
+    void save_config() const;
+    void save_file_descriptors() const;
+    void save_groups() const;
+    void save_users() const;
+    void save_all() const;
 
 private:
 // Fields :
-    unsigned long rec_id = 0;
-    unsigned long fd_id = 0;
-    unsigned long user_id = 1;
-    unsigned long group_id = 1;
+    uint64_t rec_id = 0;
+    uint64_t fd_id = 0;
+    uint64_t user_id = 1;
+    uint64_t group_id = 1;
 
-    unsigned long active_user;
-    unsigned long current_directory = 0;
+    uint64_t active_user;
+    uint64_t current_directory = 0;
 
-    tmn_associative::HashTable<std::string, unsigned long> usernames;
-    tmn_associative::HashTable<std::string, unsigned long> groupnames;
-    tmn_associative::HashTable<unsigned long, std::string> recording_files;
-    tmn_associative::HashTable<unsigned long, FileDescriptor> files;
-    tmn_associative::HashTable<unsigned long, User> users_table;
-    tmn_associative::HashTable<unsigned long, Group> groups_table;
+    tmn_associative::HashTable<std::string, uint64_t> usernames;
+    tmn_associative::HashTable<std::string, uint64_t> groupnames;
+    tmn_associative::HashTable<uint64_t, std::string> recording_files;
+    tmn_associative::HashTable<uint64_t, FileDescriptor> files;
+    tmn_associative::HashTable<uint64_t, User> users_table;
+    tmn_associative::HashTable<uint64_t, Group> groups_table;
 
 public:
     ~VirtualFileSystem();
     
 // Checkers :
-    std::string PWD() const noexcept;
-    std::size_t CountUser() const noexcept;
-    std::size_t CountGroup() const noexcept;
-    tmn::Optional<std::size_t> CountMembers(const std::string& groupname) const noexcept;
+    std::string pwd() const noexcept;
+    std::size_t count_users() const noexcept;
+    std::size_t count_groups() const noexcept;
+    tmn::Optional<std::size_t> count_members(const std::string& groupname) const noexcept;
 
 // Initializing :
     [[nodiscard]]
-    static VirtualFileSystem Init(std::string root_password = "");
+    static VirtualFileSystem init(std::string root_password = "");
 
 // Users policy & actions :
-    void AddUser(User& user);
-    void Authorization(const std::string& username, const std::string& password_hash);
-    void RemoveUser(const std::string& username);
+    void add_user(User& user);
+    void login(const std::string& username, const std::string& password_hash);
+    void remove_user(const std::string& username);
 
 // Groups policy & actions :
-    void AddGroup(Group& group);
-    void AddUserToGroup(const std::string& username, const std::string& groupname);
-    void RemoveUserFromGroup(const std::string& username, const std::string& groupname);
-    void RemoveGroup(const std::string& groupname);
+    void add_group(Group& group);
+    void add_user_to_group(const std::string& username, const std::string& groupname);
+    void remove_user_from_group(const std::string& username, const std::string& groupname);
+    void remove_group(const std::string& groupname);
 
 // Actions with files :
-    tmn_associative::HashSet<std::string> CurrentDirContent() const noexcept;
-    void AddFileContent(const std::string& filename, const std::string& content);
-    std::string GetFileContent(const std::string& filename);
-    void AddFile(FileDescriptor);
-    void ChangeFilePermissions(const std::string& filename, unsigned int perm);
-    void SetOwnerGroup(unsigned long fd_id, unsigned long group_id);
-    void RenameFile(const std::string& old_filename, const std::string& new_filename);
-    void RemoveFileContent(const std::string& filename);
-    void RemoveFile(const std::string& filename);
-    void RemoveDir(const std::string& filename, bool is_recursive);
+    tmn_associative::HashSet<std::string> current_dir_content() const noexcept;
+    void add_file_content(const std::string& filename, const std::string& content);
+    std::string get_file_content(const std::string& filename);
+    void add_file(FileDescriptor);
+    void change_file_permissions(const std::string& filename, uint8_t perm);
+    void set_owner_group(uint64_t fd_id, uint64_t group_id);
+    void rename_file(const std::string& old_filename, const std::string& new_filename);
+    void remove_file_content(const std::string& filename);
+    void remove_file(const std::string& filename);
+    void remove_dir(const std::string& filename, bool is_recursive);
 
 // Relocation user & other methods :
-    static bool VFSInSystem();
+    static bool in_system();
     
-    void GoTo(std::string& path);
-    tmn::Optional<std::string> DoPath(unsigned long) const noexcept;
-    tmn_sequence::ArraySequence<unsigned long> FindFileByName(const std::string& filename, bool in_current_dir = true) const noexcept ;
-    bool HavePermission(unsigned long fd_id, unsigned long user_id, unsigned int perm) const;
+    void go_to(std::string& path);
+    tmn::Optional<std::string> do_path(uint64_t) const noexcept;
+    tmn_sequence::ArraySequence<uint64_t> find_file_by_name(const std::string& filename, bool in_current_dir = true) const noexcept ;
+    bool have_permission(uint64_t fd_id, uint64_t user_id, uint8_t perm) const;
     
 
     friend class View;

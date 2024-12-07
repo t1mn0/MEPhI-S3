@@ -8,7 +8,7 @@
 namespace tmn_vfs {
 
 void View::mkdir(const std::string& dirname, std::string path) noexcept {
-    if(!IsGoodFileName(dirname)){
+    if(!is_good_filename(dirname)){
         std::cerr << "Bad name for directory" << std::endl;
         return;
     }
@@ -22,7 +22,7 @@ void View::mkdir(const std::string& dirname, std::string path) noexcept {
         FileDescriptor fd(vfs.fd_id, true, 0, vfs.current_directory, dirname, 0, 0, vfs.active_user);
         
         try {
-            vfs.AddFile(fd);
+            vfs.add_file(fd);
         }
         catch (tmn_exception::RuntimeException& e){
             --vfs.fd_id;
@@ -34,7 +34,7 @@ void View::mkdir(const std::string& dirname, std::string path) noexcept {
     }
 
     try {
-        vfs.GoTo(path);
+        vfs.go_to(path);
     }
     catch (tmn_exception::RuntimeException& e){
         --vfs.fd_id;
@@ -46,7 +46,7 @@ void View::mkdir(const std::string& dirname, std::string path) noexcept {
     FileDescriptor fd(vfs.fd_id, true, 0, vfs.current_directory, dirname, 0, 0, vfs.active_user);
 
     try {
-        vfs.AddFile(fd);
+        vfs.add_file(fd);
     }
     catch (tmn_exception::RuntimeException& e){
         --vfs.fd_id;
@@ -59,12 +59,12 @@ void View::mkdir(const std::string& dirname, std::string path) noexcept {
 }
 
 void View::mkfile(const std::string& filename, std::filesystem::path ph_path, std::string path) noexcept {
-    if(!IsGoodFileName(filename)){
+    if(!is_good_filename(filename)){
         std::cerr << "Bad name for file" << std::endl;
         return;
     }
 
-    if (!isRegularWritableBinaryFile(ph_path)){
+    if (!is_regular_writable_binfile(ph_path)){
         std::cerr << "Bad physical_file_path for file" << std::endl;
         return;
     }
@@ -87,7 +87,7 @@ void View::mkfile(const std::string& filename, std::filesystem::path ph_path, st
         FileDescriptor fd(vfs.fd_id, false, vfs.rec_id, vfs.current_directory, filename, 0, 0, vfs.active_user);
         
         try {
-            vfs.AddFile(fd);
+            vfs.add_file(fd);
         }
         catch (tmn_exception::RuntimeException& e){
             vfs.recording_files.erase(vfs.rec_id);
@@ -102,7 +102,7 @@ void View::mkfile(const std::string& filename, std::filesystem::path ph_path, st
     }
 
     try {
-        vfs.GoTo(path);
+        vfs.go_to(path);
     }
     catch (tmn_exception::RuntimeException& e){
         
@@ -119,7 +119,7 @@ void View::mkfile(const std::string& filename, std::filesystem::path ph_path, st
     FileDescriptor fd(vfs.fd_id, false, vfs.rec_id, vfs.current_directory, filename, 0, 0, vfs.active_user);
 
     try {
-        vfs.AddFile(fd);
+        vfs.add_file(fd);
     }
     catch (tmn_exception::RuntimeException& e){
         
@@ -138,7 +138,7 @@ void View::mkfile(const std::string& filename, std::filesystem::path ph_path, st
 
 void View::addcontent(const std::string& filename, std::string content) noexcept {
     try {
-        vfs.AddFileContent(filename, content);
+        vfs.add_file_content(filename, content);
     }
     catch (tmn_exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
@@ -158,7 +158,7 @@ void View::setgroup(const std::string &filename, const std::string& groupname) n
         }
         
         try {
-            vfs.SetOwnerGroup(inner_id, vfs.groupnames[groupname]);
+            vfs.set_owner_group(inner_id, vfs.groupnames[groupname]);
         }
         catch (tmn_exception::RuntimeException& e){
             std::cerr << e.what() << std::endl;
@@ -168,7 +168,7 @@ void View::setgroup(const std::string &filename, const std::string& groupname) n
 
 void View::chmod(const std::string& filename, unsigned int new_permissions) noexcept {
     try{
-        vfs.ChangeFilePermissions(filename, new_permissions);
+        vfs.change_file_permissions(filename, new_permissions);
     }
     catch (tmn_exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
@@ -176,13 +176,13 @@ void View::chmod(const std::string& filename, unsigned int new_permissions) noex
 }
 
 void View::renamefile(const std::string& old_filename, const std::string& new_filename) noexcept {
-    if(!IsGoodFileName(new_filename)){
+    if(!is_good_filename(new_filename)){
         std::cerr << "Bad name for directory" << std::endl;
         return;
     }
 
     try {
-        vfs.RenameFile(old_filename, new_filename);
+        vfs.rename_file(old_filename, new_filename);
     }
     catch (tmn_exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
@@ -191,7 +191,7 @@ void View::renamefile(const std::string& old_filename, const std::string& new_fi
 
 void View::rmfile(const std::string& filename) noexcept {
     try{
-        vfs.RemoveFile(filename);
+        vfs.remove_file(filename);
     }
     catch (tmn_exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
@@ -203,7 +203,7 @@ void View::cat(const std::string& filename, std::string path) noexcept {
 
     if (!path.empty()){
         try{
-            vfs.GoTo(path);
+            vfs.go_to(path);
         }
         catch (tmn_exception::RuntimeException& e){
             std::cerr << e.what() << std::endl;
@@ -214,7 +214,7 @@ void View::cat(const std::string& filename, std::string path) noexcept {
     std::string content = "";
     
     try{
-        content = vfs.GetFileContent(filename);
+        content = vfs.get_file_content(filename);
     }
     catch (tmn_exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
@@ -235,12 +235,12 @@ void View::ls(bool v) noexcept {
         for (auto& id : vfs.files[vfs.current_directory].inner_files){
             if (vfs.current_directory != id){ // for root-dir (parent dir = 0) 
                 if (vfs.files[id].is_dir){
-                    std::cout << "[DIR]" << vfs.files[id].file_permissions.toString() << " " << 
+                    std::cout << "[DIR]" << vfs.files[id].file_permissions.to_string() << " " << 
                     vfs.files[id].creation_time << " " << 
                     vfs.files[id].filename << std::endl;
                 }
                 else{
-                    std::cout << "[REG]" << vfs.files[id].file_permissions.toString() << " " << 
+                    std::cout << "[REG]" << vfs.files[id].file_permissions.to_string() << " " << 
                     vfs.files[id].content_size << " bytes " << vfs.files[id].creation_time << " " << 
                     vfs.files[id].filename << std::endl;
                 }
@@ -258,7 +258,7 @@ void View::ls(bool v) noexcept {
 
 void View::cd(std::string& path) noexcept {
     try{
-        vfs.GoTo(path);
+        vfs.go_to(path);
     }
     catch (tmn_exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
@@ -266,7 +266,7 @@ void View::cd(std::string& path) noexcept {
 }
 
 void View::find(short filetype, bool where, const std::string& name_pattern) noexcept {
-    tmn_sequence::ArraySequence<unsigned long> result = vfs.FindFileByName(name_pattern, where);
+    tmn_sequence::ArraySequence<unsigned long> result = vfs.find_file_by_name(name_pattern, where);
 
     if (result.empty()){
         std::cout << "No files found" << std::endl;
@@ -276,10 +276,10 @@ void View::find(short filetype, bool where, const std::string& name_pattern) noe
             std::cout << "[SEARCH RESULTS] : " << std::endl;
             for (auto& id : result){
                 if (vfs.files[id].is_dir){
-                    std::cout << "  - [DIR] " << vfs.DoPath(id).value() << std::endl;
+                    std::cout << "  - [DIR] " << vfs.do_path(id).value() << std::endl;
                 }
                 else {
-                    std::cout << "  - [REG] " << vfs.DoPath(id).value() << std::endl;
+                    std::cout << "  - [REG] " << vfs.do_path(id).value() << std::endl;
                 }
             }
         }
@@ -288,7 +288,7 @@ void View::find(short filetype, bool where, const std::string& name_pattern) noe
             std::cout << "[SEARCH RESULTS] : " << std::endl;
             for (auto& id : result){
                 if (!vfs.files[id].is_dir){
-                    std::cout << "  - [REG] " << vfs.DoPath(id).value() << std::endl;
+                    std::cout << "  - [REG] " << vfs.do_path(id).value() << std::endl;
                     just_one = true;
                 }
             }
@@ -301,7 +301,7 @@ void View::find(short filetype, bool where, const std::string& name_pattern) noe
             std::cout << "[SEARCH RESULTS] : " << std::endl;
             for (auto& id : result){
                 if (vfs.files[id].is_dir){
-                    std::cout << "  - [DIR] " << vfs.DoPath(id).value() << std::endl;
+                    std::cout << "  - [DIR] " << vfs.do_path(id).value() << std::endl;
                     just_one = true;
                 }
             }

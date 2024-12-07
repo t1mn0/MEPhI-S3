@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstdint>
 
 #include "../../include/Associative/HashSet.hpp"
 
@@ -11,12 +12,12 @@ class View;
 
 struct Group {
 private:
-    unsigned int group_id = 0;
+    uint64_t group_id = 0;
     std::string groupname = "-";
-    unsigned int user_id = 0;
+    uint64_t user_id = 0;
     std::string creation_time = "-";
     
-    tmn_associative::HashSet<unsigned int> members;
+    tmn_associative::HashSet<uint64_t> members;
 
 public:
     Group() = default;
@@ -26,15 +27,15 @@ public:
     Group& operator=(Group&&) noexcept;
     ~Group();
 
-    Group(unsigned int group_id, 
-        const std::string& groupname, unsigned int user_id, 
+    Group(uint64_t group_id, 
+        const std::string& groupname, uint64_t user_id, 
         std::string creation_time) noexcept;
 
-    Group(unsigned int group_id, 
-        const std::string& groupname, unsigned int user_id) noexcept;
+    Group(uint64_t group_id, 
+        const std::string& groupname, uint64_t user_id) noexcept;
 
-    std::string toString() const noexcept;
-    static Group fromString(const std::string& group_string);
+    std::string to_string() const noexcept;
+    static Group from_string(const std::string& group_string);
 
     friend class VirtualFileSystem;
     friend class View;

@@ -1,4 +1,5 @@
 #include <sstream>
+#include <cstdint>
 
 #include "../include/FileDescriptor.hpp"
 #include "../include/Utils.hpp"
@@ -11,36 +12,36 @@ namespace tmn_vfs {
 FilePermissions::FilePermissions(Permission user, Permission group, Permission other) :
     user(user), group(group), other(other) {}
 
-std::string FilePermissions::PermissionToString(Permission p){
+std::string FilePermissions::permission_to_string(Permission p){
     if (p == Permission::READ) return "r-";
     if (p == Permission::WRITE) return "-w";
     if (p == Permission::READWRITE) return "rw";
     return "--";
 }
 
-std::string FilePermissions::toString() {
+std::string FilePermissions::to_string() {
     std::string result = "";
-    result += PermissionToString(user);
-    result += PermissionToString(group);
-    result += PermissionToString(other);
+    result += permission_to_string(user);
+    result += permission_to_string(group);
+    result += permission_to_string(other);
     return result;
 }
 
-FilePermissions::operator unsigned int() const{
+FilePermissions::operator uint8_t() const{
     // '<<' is shift left
-    return (static_cast<unsigned int>(user) << 6) |
-            (static_cast<unsigned int>(group) << 3) |
-            (static_cast<unsigned int>(other));
+    return (static_cast<uint8_t>(user) << 6) |
+            (static_cast<uint8_t>(group) << 3) |
+            (static_cast<uint8_t>(other));
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // FileDescriptor :
 
 FileDescriptor::FileDescriptor(
-    unsigned long fd_id, bool is_dir, 
-    unsigned long physical_file_id, unsigned long parent_dir_id, std::string filename,
-    unsigned long content_offset, unsigned long content_size,
-    unsigned long owner_user, unsigned long owner_group,
+    uint64_t fd_id, bool is_dir, 
+    uint64_t physical_file_id, uint64_t parent_dir_id, std::string filename,
+    uint64_t content_offset, uint64_t content_size,
+    uint64_t owner_user, uint64_t owner_group,
     const std::string& creation_time, const std::string& modification_time, const std::string& descriptor_modification_time,
     FilePermissions file_permissions)
     :
@@ -51,28 +52,28 @@ FileDescriptor::FileDescriptor(
     {}
 
 FileDescriptor::FileDescriptor(
-    unsigned long fd_id, bool is_dir, 
-    unsigned long physical_file_id, unsigned long parent_dir_id, std::string filename,
-    unsigned long content_offset, unsigned long content_size,
-    unsigned long owner_user, unsigned long owner_group,
+    uint64_t fd_id, bool is_dir, 
+    uint64_t physical_file_id, uint64_t parent_dir_id, std::string filename,
+    uint64_t content_offset, uint64_t content_size,
+    uint64_t owner_user, uint64_t owner_group,
     FilePermissions file_permissions)
     :
     fd_id(fd_id), is_dir(is_dir), physical_file_id(physical_file_id), parent_dir_id(parent_dir_id), filename(filename),
     content_offset(content_offset), content_size(content_size), owner_user(owner_user), owner_group(owner_group),
-    creation_time(GetTimeNow()), modification_time(GetTimeNow()), descriptor_modification_time(GetTimeNow()),
+    creation_time(get_time_now()), modification_time(get_time_now()), descriptor_modification_time(get_time_now()),
     file_permissions(file_permissions) 
     {}
 
 FileDescriptor::FileDescriptor(
-    unsigned long fd_id, bool is_dir, 
-    unsigned long physical_file_id, unsigned long parent_dir_id, std::string filename,
-    unsigned long content_offset, unsigned long content_size,
-    unsigned long owner_user,
+    uint64_t fd_id, bool is_dir, 
+    uint64_t physical_file_id, uint64_t parent_dir_id, std::string filename,
+    uint64_t content_offset, uint64_t content_size,
+    uint64_t owner_user,
     FilePermissions file_permissions)
     :
     fd_id(fd_id), is_dir(is_dir), physical_file_id(physical_file_id), parent_dir_id(parent_dir_id), filename(filename),
     content_offset(content_offset), content_size(content_size), owner_user(owner_user), owner_group(owner_user),
-    creation_time(GetTimeNow()), modification_time(GetTimeNow()), descriptor_modification_time(GetTimeNow()),
+    creation_time(get_time_now()), modification_time(get_time_now()), descriptor_modification_time(get_time_now()),
     file_permissions(file_permissions) 
     {}
 
@@ -142,7 +143,7 @@ FileDescriptor::FileDescriptor(FileDescriptor&& other) :
         other.creation_time = "";
         other.modification_time = "";
         other.descriptor_modification_time = "";
-        other.inner_files = tmn_associative::HashSet<unsigned long>();
+        other.inner_files = tmn_associative::HashSet<uint64_t>();
     }
 
 FileDescriptor& FileDescriptor::operator=(FileDescriptor&& other) noexcept {
@@ -170,7 +171,7 @@ FileDescriptor& FileDescriptor::operator=(FileDescriptor&& other) noexcept {
     other.creation_time = "";
     other.modification_time = "";
     other.descriptor_modification_time = "";
-    other.inner_files = tmn_associative::HashSet<unsigned long>();
+    other.inner_files = tmn_associative::HashSet<uint64_t>();
 
     return *this;
 }
@@ -179,7 +180,7 @@ FileDescriptor::~FileDescriptor() {
     inner_files.clear();
 }
 
-std::string FileDescriptor::toString() const noexcept {
+std::string FileDescriptor::to_string() const noexcept {
     std::string fd_string = "";
     fd_string.reserve(128);
     fd_string += "fd_id:"; fd_string += std::to_string(fd_id);
@@ -196,9 +197,9 @@ std::string FileDescriptor::toString() const noexcept {
     fd_string += " d_mod_time:"; fd_string += descriptor_modification_time;
 
     fd_string += " <";
-    fd_string += std::to_string(static_cast<unsigned int>(file_permissions.user));
-    fd_string += std::to_string(static_cast<unsigned int>(file_permissions.group));
-    fd_string += std::to_string(static_cast<unsigned int>(file_permissions.other));
+    fd_string += std::to_string(static_cast<uint8_t>(file_permissions.user));
+    fd_string += std::to_string(static_cast<uint8_t>(file_permissions.group));
+    fd_string += std::to_string(static_cast<uint8_t>(file_permissions.other));
     fd_string += ">";
 
     fd_string += " [";
@@ -211,7 +212,7 @@ std::string FileDescriptor::toString() const noexcept {
     return fd_string;
 }
 
-FileDescriptor FileDescriptor::fromString(const std::string& fd_string) {
+FileDescriptor FileDescriptor::from_string(const std::string& fd_string) {
     FileDescriptor fd;
     std::stringstream ss(fd_string);
     std::string segment = "-";

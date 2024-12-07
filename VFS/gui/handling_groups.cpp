@@ -36,15 +36,15 @@ void View::mygroups(bool v) const noexcept {
 }
 
 void View::groupcount() const noexcept {
-    std::cout << vfs.CountGroup() << std::endl;
+    std::cout << vfs.count_groups() << std::endl;
 }
 
 void View::newgroup(const std::string& groupname) noexcept {
-    if (IsGoodUserName(groupname)){
-        Group group(1001 + vfs.group_id, groupname, vfs.active_user, GetTimeNow());
+    if (is_good_username(groupname)){
+        Group group(1001 + vfs.group_id, groupname, vfs.active_user, get_time_now());
         group.members.insert(vfs.active_user);
         try{
-            vfs.AddGroup(group);
+            vfs.add_group(group);
             ++vfs.group_id;
         }
         catch (tmn_exception::RuntimeException& e){
@@ -60,7 +60,7 @@ void View::newgroup(const std::string& groupname) noexcept {
 
 void View::addtogroup(const std::string& username, const std::string& groupname) noexcept {
     try{
-        vfs.AddUserToGroup(username, groupname);
+        vfs.add_user_to_group(username, groupname);
     }
     catch (tmn_exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
@@ -69,7 +69,7 @@ void View::addtogroup(const std::string& username, const std::string& groupname)
 
 void View::rmmefromgroup(const std::string& groupname) noexcept {
     try{
-        vfs.RemoveUserFromGroup(vfs.users_table[vfs.active_user].username, groupname);
+        vfs.remove_user_from_group(vfs.users_table[vfs.active_user].username, groupname);
     }
     catch (tmn_exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
@@ -78,7 +78,7 @@ void View::rmmefromgroup(const std::string& groupname) noexcept {
 
 void View::rmgroup(const std::string& groupname) noexcept {
     try{
-        vfs.RemoveGroup(groupname);
+        vfs.remove_group(groupname);
     }
     catch (tmn_exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;

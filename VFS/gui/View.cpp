@@ -6,11 +6,11 @@
 namespace tmn_vfs {
 
 View::View() {
-    vfs = VirtualFileSystem::Init();
+    vfs = VirtualFileSystem::init();
 }
 
 View::View(std::string password) {
-    vfs = VirtualFileSystem::Init(password);
+    vfs = VirtualFileSystem::init(password);
 }
 
 void View::run() {
@@ -151,7 +151,7 @@ void View::run() {
                 chmod(filename, num);
             } 
             catch (...) {
-                std::cerr << "Bad number for convert to FilePermissions" << std::endl;
+                std::cerr << "Bad number for convert to FilePermissions (or no parameter is specified)" << std::endl;
             }
         }
         else if (command == "renamefile"){
@@ -318,7 +318,7 @@ void View::run() {
 }
   
 void View::pwd() const noexcept {
-    std::cout << vfs.PWD() << std::endl;
+    std::cout << vfs.pwd() << std::endl;
 }
 
 void View::clear() const noexcept {

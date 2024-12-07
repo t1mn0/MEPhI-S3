@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <string>
 #include <sstream>
+#include <cstdint>
 
 #include "../include/VFS.hpp"
 #include "../include/Utils.hpp"
@@ -14,11 +15,11 @@ namespace tmn_vfs{
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Checkers :
 
-std::string VirtualFileSystem::PWD() const noexcept {
+std::string VirtualFileSystem::pwd() const noexcept {
     if (current_directory == 0) return "/";
 
     tmn_adapter::Stack<std::string> stack;
-    unsigned long fid = current_directory; 
+    uint64_t fid = current_directory; 
     stack.push(files[fid].filename);
 
     while (fid != 0){
@@ -38,15 +39,15 @@ std::string VirtualFileSystem::PWD() const noexcept {
     return path;
 }
 
-std::size_t VirtualFileSystem::CountUser() const noexcept {
+std::size_t VirtualFileSystem::count_users() const noexcept {
     return users_table.size();
 }
 
-std::size_t VirtualFileSystem::CountGroup() const noexcept {
+std::size_t VirtualFileSystem::count_groups() const noexcept {
     return groups_table.size();
 }
 
-tmn::Optional<std::size_t> VirtualFileSystem::CountMembers(const std::string& groupname) const noexcept {
+tmn::Optional<std::size_t> VirtualFileSystem::count_members(const std::string& groupname) const noexcept {
     if (groupnames.contains(groupname)) {
         return tmn::Optional<std::size_t>(groups_table[groupnames[groupname]].members.size());
     }
@@ -57,9 +58,9 @@ tmn::Optional<std::size_t> VirtualFileSystem::CountMembers(const std::string& gr
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Other methods :
 
-void VirtualFileSystem::GoTo(std::string& path) {
+void VirtualFileSystem::go_to(std::string& path) {
     if (path.empty()){
-        std::string err_message = "Error(GoTo): Path is invalid";
+        std::string err_message = "Error(go_to): Path is invalid";
         throw tmn_exception::RuntimeException(err_message);
     }
 
@@ -69,8 +70,8 @@ void VirtualFileSystem::GoTo(std::string& path) {
     }
 
     // If an error occurs during execution, you must return to the original directory
-    unsigned long init_dir = current_directory;
-    unsigned long iter_dir;
+    uint64_t init_dir = current_directory;
+    uint64_t iter_dir;
 
     tmn_sequence::ArraySequence<std::string> components;
     size_t pos = 0;
@@ -98,13 +99,13 @@ void VirtualFileSystem::GoTo(std::string& path) {
                 }
                 else{
                     current_directory = init_dir;
-                    std::string err_message = "Error(GoTo): Path is invalid";
+                    std::string err_message = "Error(go_to): Path is invalid";
                     throw tmn_exception::RuntimeException(err_message);
                 }
             }
             else{
                 current_directory = init_dir;
-                std::string err_message = "Error(GoTo): Path is invalid";
+                std::string err_message = "Error(go_to): Path is invalid";
                 throw tmn_exception::RuntimeException(err_message);
             }
         }
@@ -112,9 +113,9 @@ void VirtualFileSystem::GoTo(std::string& path) {
             bool flag = false; 
             for (auto& inner_fid : files[iter_dir].inner_files){
                 if (files[inner_fid].filename == components[i]){
-                    if (!HavePermission(inner_fid, active_user, 1)){
+                    if (!have_permission(inner_fid, active_user, 1)){
                         current_directory = init_dir;
-                        std::string err_message = "Error(GetContent): permission denied";
+                        std::string err_message = "Error(GetContent): Permission denied";
                         throw tmn_exception::RuntimeException(err_message);
                     }
                     
@@ -125,13 +126,13 @@ void VirtualFileSystem::GoTo(std::string& path) {
                     }
                     else{
                         current_directory = init_dir;
-                        std::string err_message = "Error(GoTo): Path is invalid";
+                        std::string err_message = "Error(go_to): Path is invalid";
                         throw tmn_exception::RuntimeException(err_message);
                     }
                 }
             }
             if (!flag) {
-                std::string err_message = "Error(GoTo): Path is invalid";
+                std::string err_message = "Error(go_to): Path is invalid";
                 throw tmn_exception::RuntimeException(err_message);
             }
         }
@@ -140,14 +141,14 @@ void VirtualFileSystem::GoTo(std::string& path) {
     current_directory = iter_dir;
 }
 
-tmn::Optional<std::string> VirtualFileSystem::DoPath(unsigned long id) const noexcept {
+tmn::Optional<std::string> VirtualFileSystem::do_path(uint64_t id) const noexcept {
     if (!files.contains(id)){
         return tmn::Optional<std::string>();
     }
     
     std::string path = files[id].filename + "/";
 
-    unsigned long current_file_id = id;
+    uint64_t current_file_id = id;
 
     while (current_file_id != 0){
         if (!files.contains(current_file_id)){
@@ -180,19 +181,19 @@ tmn::Optional<std::string> VirtualFileSystem::DoPath(unsigned long id) const noe
     return tmn::Optional<std::string>(reversed_path.str());
 }
 
-tmn_sequence::ArraySequence<unsigned long> VirtualFileSystem::FindFileByName(const std::string& filename, bool in_current_dir) const noexcept {
-    tmn_sequence::ArraySequence<unsigned long> result;
+tmn_sequence::ArraySequence<uint64_t> VirtualFileSystem::find_file_by_name(const std::string& filename, bool in_current_dir) const noexcept {
+    tmn_sequence::ArraySequence<uint64_t> result;
     
     if (in_current_dir){
         for (auto& inner_fd_id : files[current_directory].inner_files){
-            if (FileNameMatch(files[inner_fd_id].filename, filename)){
+            if (file_name_match(files[inner_fd_id].filename, filename)){
                 result.push_back(inner_fd_id);
             }
         }
     }
     else{
         for (auto& fd : files){
-            if (FileNameMatch(fd.second.filename, filename)){
+            if (file_name_match(fd.second.filename, filename)){
                 result.push_back(fd.first);
             }
         }
@@ -202,14 +203,14 @@ tmn_sequence::ArraySequence<unsigned long> VirtualFileSystem::FindFileByName(con
 }
 
 // perm = 1 -> read, perm = 2 -> write, etc
-bool VirtualFileSystem::HavePermission(unsigned long fd_id, unsigned long user_id, unsigned int perm) const {
+bool VirtualFileSystem::have_permission(uint64_t fd_id, uint64_t user_id, uint8_t perm) const {
     if (!files.contains(fd_id)){
-        std::string err_message = "Error(CanRead): file not found in current directory";
+        std::string err_message = "Error(have_permission): File not found in current directory";
         throw tmn_exception::RuntimeException(err_message);
     }
 
     if (!users_table.contains(user_id)){
-        std::string err_message = "Error(CanRead): user not found";
+        std::string err_message = "Error(have_permission): User not found";
         throw tmn_exception::RuntimeException(err_message);
     }
 
@@ -218,14 +219,14 @@ bool VirtualFileSystem::HavePermission(unsigned long fd_id, unsigned long user_i
     }
     
     if(files[fd_id].owner_user == user_id){
-        return static_cast<unsigned int>(files[fd_id].file_permissions.user) >= perm;
+        return static_cast<uint8_t>(files[fd_id].file_permissions.user) >= perm;
     }
     
     if (groups_table[files[fd_id].owner_group].members.contains(user_id)){
-        return static_cast<unsigned int>(files[fd_id].file_permissions.group) >= perm;
+        return static_cast<uint8_t>(files[fd_id].file_permissions.group) >= perm;
     }
 
-    return static_cast<unsigned int>(files[fd_id].file_permissions.other) >= perm;
+    return static_cast<uint8_t>(files[fd_id].file_permissions.other) >= perm;
 }
 
 };

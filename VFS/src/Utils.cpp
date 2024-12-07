@@ -13,7 +13,7 @@
 
 namespace tmn_vfs{
 
-std::string GetTimeNow() {
+std::string get_time_now() {
     auto now = std::chrono::system_clock::now();
     auto tt = std::chrono::system_clock::to_time_t(now);
     std::tm* tm = std::localtime(&tt);
@@ -26,11 +26,11 @@ std::string GetTimeNow() {
     return std::string(buffer);
 }
 
-bool FullMatch(const std::string& file_name, const std::string& pattern) {
+bool full_match(const std::string& file_name, const std::string& pattern) {
     return file_name == pattern;
 }
 
-bool WildcardMatch(const std::string& str, const std::string& pattern) {
+bool wildcard_match(const std::string& str, const std::string& pattern) {
     if (pattern == "*") return !str.empty();
 
     size_t star_pos = pattern.find('*');
@@ -47,14 +47,14 @@ bool WildcardMatch(const std::string& str, const std::string& pattern) {
     }
 }
 
-bool FileNameMatch(const std::string& file_name, const std::string& pattern) {
+bool file_name_match(const std::string& file_name, const std::string& pattern) {
     if (pattern.find('*') == std::string::npos) {
-        return FullMatch(file_name, pattern);
+        return full_match(file_name, pattern);
     } 
-    return WildcardMatch(file_name, pattern);
+    return wildcard_match(file_name, pattern);
 }
 
-bool IsGoodUserName(const std::string& username){
+bool is_good_username(const std::string& username){
     if (username.empty()) {
         return false;
     }
@@ -80,7 +80,7 @@ bool IsGoodUserName(const std::string& username){
     return true;
 }
 
-bool IsGoodUserFullName(const std::string& fullname){
+bool is_good_fullname(const std::string& fullname){
     if (fullname.empty()) {
         return false;
     }
@@ -98,7 +98,7 @@ bool IsGoodUserFullName(const std::string& fullname){
     return true;
 }
 
-bool IsGoodFileName(const std::string& filename){
+bool is_good_filename(const std::string& filename){
     if (filename.empty()) {
         return false;
     }
@@ -108,7 +108,7 @@ bool IsGoodFileName(const std::string& filename){
     }
 
     for (char c : filename) {
-        if (!isalnum(c) && !isspace(c) && c != '.' && c != '(' && c != ')' && c != '-') {
+        if (!isalnum(c) && !isspace(c) && c != '.' && c != '(' && c != ')') {
             return false;
         }
     }
@@ -116,7 +116,7 @@ bool IsGoodFileName(const std::string& filename){
     return true;
 }
 
-bool IsGoodPassword(const std::string& password) {
+bool is_good_password(const std::string& password) {
     const int min_len = 8;
 
     if (password.length() < min_len) {
@@ -127,7 +127,7 @@ bool IsGoodPassword(const std::string& password) {
 }
 
 
-bool isRegularWritableBinaryFile(const std::string& path) {
+bool is_regular_writable_binfile(const std::string& path) {
     if (!std::filesystem::exists(path) || !std::filesystem::is_regular_file(path)) {
         return false;
     }

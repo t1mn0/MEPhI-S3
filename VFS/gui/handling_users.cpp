@@ -38,12 +38,12 @@ void View::whoami(bool v) const noexcept {
 }
 
 void View::usercount() const noexcept {
-    std::cout << vfs.CountUser() << std::endl;
+    std::cout << vfs.count_users() << std::endl;
 }
 
 void View::login(const std::string& username, const std::string& password_hash) noexcept {
     try{
-        vfs.Authorization(username, password_hash);
+        vfs.login(username, password_hash);
         std::cout << "Successful authorization" << std::endl;
     }
     catch (tmn_exception::RuntimeException& e){
@@ -53,12 +53,12 @@ void View::login(const std::string& username, const std::string& password_hash) 
 }
 
 void View::newuser(const std::string& username, const std::string& fullname, const std::string& password_hash, bool st) noexcept {
-    if (IsGoodUserName(username)){
-        if (IsGoodUserFullName(fullname)){
+    if (is_good_username(username)){
+        if (is_good_fullname(fullname)){
             ++vfs.user_id;
-            User user(vfs.user_id, username,  fullname, tmn_vfs::GetTimeNow(), password_hash);
+            User user(vfs.user_id, username,  fullname, tmn_vfs::get_time_now(), password_hash);
             try{
-                vfs.AddUser(user);
+                vfs.add_user(user);
             }
             catch (tmn_exception::RuntimeException& e){
                 --vfs.user_id;
@@ -68,7 +68,7 @@ void View::newuser(const std::string& username, const std::string& fullname, con
 
             if (!st){
                 try{
-                    vfs.Authorization(username, password_hash);
+                    vfs.login(username, password_hash);
                     std::cout << "Successful authorization" << std::endl;
                 }
                 catch (tmn_exception::RuntimeException& e){

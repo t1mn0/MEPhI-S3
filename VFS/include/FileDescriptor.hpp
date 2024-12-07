@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstdint>
 
 #include "../../include/Associative/HashSet.hpp"
 #include "vfs_constants.hpp"
@@ -10,8 +11,8 @@ namespace tmn_vfs {
 class VirtualFileSystem;
 class View;
 
-enum class Permission : unsigned int {
-  NONE = 0,       //            string: --
+enum class Permission : uint8_t {
+  NONE = 0,       // 000        string: --
   READ = 1,       // 001        string: r-
   WRITE = 2,      // 010        string: -w
   READWRITE = 3   // 011        string: rw
@@ -25,31 +26,31 @@ struct FilePermissions {
   FilePermissions() = default;
   FilePermissions(Permission user, Permission group, Permission other);
 
-  explicit operator unsigned int() const;
+  explicit operator uint8_t() const;
 
-  std::string toString();
+  std::string to_string();
 
 private:
-  std::string PermissionToString(Permission p);
+  std::string permission_to_string(Permission p);
 };
 
 struct FileDescriptor {
 private:
-  unsigned long fd_id;
+  uint64_t fd_id;
   bool is_dir;
-  unsigned long physical_file_id = 0;                      
-  unsigned long parent_dir_id = 0;                       
+  uint64_t physical_file_id = 0;                      
+  uint64_t parent_dir_id = 0;                       
   std::string filename = "file";                          
-  unsigned long content_offset = 0;                          
-  unsigned long content_size = 0;                           
-  unsigned long owner_user = 0; 
-  unsigned long owner_group = 0;
+  uint64_t content_offset = 0;                          
+  uint64_t content_size = 0;                           
+  uint64_t owner_user = 0; 
+  uint64_t owner_group = 0;
   std::string creation_time = "-";
   std::string modification_time = "-";                       
   std::string descriptor_modification_time = "-";      
   FilePermissions file_permissions;
 
-  tmn_associative::HashSet<unsigned long> inner_files;
+  tmn_associative::HashSet<uint64_t> inner_files;
 
 public:
   FileDescriptor() : file_permissions(Permission::READWRITE, Permission::READWRITE, Permission::READ) {}
@@ -60,32 +61,32 @@ public:
   ~FileDescriptor();
 
   FileDescriptor(
-    unsigned long fd_id, bool is_dir, 
-    unsigned long physical_file_id, unsigned long parent_dir_id, std::string filename, 
-    unsigned long content_offset, unsigned long content_size,
-    unsigned long owner_user, unsigned long owner_group,
+    uint64_t fd_id, bool is_dir, 
+    uint64_t physical_file_id, uint64_t parent_dir_id, std::string filename, 
+    uint64_t content_offset, uint64_t content_size,
+    uint64_t owner_user, uint64_t owner_group,
     const std::string& creation_time, const std::string& modification_time, const std::string& descriptor_modification_time,
     FilePermissions file_permissions = FilePermissions(Permission::READWRITE, Permission::READ, Permission::NONE));
 
   FileDescriptor(
-    unsigned long fd_id, bool is_dir, 
-    unsigned long physical_file_id, unsigned long parent_dir_id, std::string filename, 
-    unsigned long content_offset, unsigned long content_size,
-    unsigned long owner_user, unsigned long owner_group,
+    uint64_t fd_id, bool is_dir, 
+    uint64_t physical_file_id, uint64_t parent_dir_id, std::string filename, 
+    uint64_t content_offset, uint64_t content_size,
+    uint64_t owner_user, uint64_t owner_group,
     FilePermissions file_permissions = FilePermissions(Permission::READWRITE, Permission::READ, Permission::NONE));
 
   FileDescriptor(
-    unsigned long fd_id, bool is_dir, 
-    unsigned long physical_file_id, unsigned long parent_dir_id, std::string filename,
-    unsigned long content_offset, unsigned long content_size,
-    unsigned long owner_user,
+    uint64_t fd_id, bool is_dir, 
+    uint64_t physical_file_id, uint64_t parent_dir_id, std::string filename,
+    uint64_t content_offset, uint64_t content_size,
+    uint64_t owner_user,
     FilePermissions file_permissions = FilePermissions(Permission::READWRITE, Permission::READ, Permission::NONE));
 
-  void ModificateContentNow() noexcept;
-  void ModificateDescriptorNow() noexcept;
+  void modificate_content_now() noexcept;
+  void modificate_descriptor_now() noexcept;
 
-  std::string toString() const noexcept;
-  static FileDescriptor fromString(const std::string& fd_string);
+  std::string to_string() const noexcept;
+  static FileDescriptor from_string(const std::string& fd_string);
 
   friend class VirtualFileSystem;
   friend class View;

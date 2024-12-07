@@ -60,7 +60,7 @@ User& User::operator=(User&& other) noexcept {
     return *this;
 }
 
-User::User(unsigned int user_id, 
+User::User(uint64_t user_id, 
     const std::string& username, const std::string& fullname, 
     const std::string& creation_time, const std::string& password_hash, 
     UserStatus status) noexcept 
@@ -68,7 +68,7 @@ User::User(unsigned int user_id,
     user_id(user_id), username(username), fullname(fullname), 
     creation_time(creation_time), password_hash(password_hash), status(status) {}
 
-User::User(unsigned int user_id, 
+User::User(uint64_t user_id, 
     const std::string& username,
     const std::string& creation_time, const std::string& password_hash, 
     UserStatus status) noexcept 
@@ -80,7 +80,7 @@ tmn_vfs::User::~User(){
     groups.clear();
 }
 
-std::string User::toString() const noexcept {
+std::string User::to_string() const noexcept {
     std::string user_string = "";
     user_string.reserve(64);
     user_string += "uid:"; user_string += std::to_string(user_id);
@@ -88,7 +88,7 @@ std::string User::toString() const noexcept {
     user_string += " fullname:"; user_string += fullname;
     user_string += " cr_time:"; user_string += creation_time;
     user_string += " password_hash:"; user_string += password_hash;
-    user_string += " status:"; user_string += std::to_string(static_cast<unsigned int>(status));
+    user_string += " status:"; user_string += std::to_string(static_cast<uint64_t>(status));
 
     user_string += " [";
     for (const auto& group_id : groups) {
@@ -100,7 +100,7 @@ std::string User::toString() const noexcept {
     return user_string;
 }
 
-User User::fromString(const std::string& user_string) {
+User User::from_string(const std::string& user_string) {
     User user;
     std::stringstream ss(user_string);
     std::string segment;
