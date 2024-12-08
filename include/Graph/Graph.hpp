@@ -16,31 +16,31 @@ namespace tmn_graph {
 // provided that I use MY std::function & std::tuple implementations 
 
 // concept or something else: "ResultWeightType is comparable type (<, >, >=, <=, ==)"
-template <bool is_oriented, typename VertexId, typename VertexType, typename ResultWeightType, typename ... WeightTypes>
+template <bool is_oriented, typename VertexId, typename VertexType, typename ... WeightTypes>
 class Graph {
 private:
 // Support structures :
+// добавить специализацию для <> - граф не взвешенный
     class Edge {
     private:
         VertexId from;
         VertexId to; 
 
-        std::function<ResultWeight (WeightTypes... weights)> get_result_weight; // calculating the total weight of the edge
-
         Tuple<WeightTypes...> weights; // different weights of one edge
 
     public:
-        Edge(std::function<ResultWeight (WeightTypes... weights)> updater /* = summa (by default we can try to use summation)*/, WeightTypes... weights);
-        
-        update(); // updater() method call
-
-        // etc
+        explicit Edge(WeightTypes... weights) noexcept;
     };
 
 private:
 // Fields :
-    // use alias for it 
-    HashTable<VertexId, HashTable<VertexId, SharedPtr<Edge>> > adjacency_list;
+    using connected_vertices = HashTable<VertexId, SharedPtr<Edge>>;
+
+    HashTable<VertexId, connected_vertices> adjacency_list;
+
+    HashTable<VertexId, VertexType> resources;
+
+    std::function<ResultWeight (WeightTypes... weights)> get_result_weight; // calculating the total weight of the edge
 
     void add_edge(VertexId, VertexId, std::function<ResultWeight (WeightTypes... weights)> updater /* by def = summa */, WeightTypes... weights);
     // if our Graph is_oriented == false, we just create 1 edge from VertexId_1 to VertexId_2 and wrap it to SharedPtr 

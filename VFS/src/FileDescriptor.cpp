@@ -180,6 +180,14 @@ FileDescriptor::~FileDescriptor() {
     inner_files.clear();
 }
 
+void FileDescriptor::modificate_content_now() noexcept {
+    modification_time = get_time_now();
+}
+
+void FileDescriptor::modificate_descriptor_now() noexcept {
+    descriptor_modification_time = get_time_now();
+}
+
 std::string FileDescriptor::to_string() const noexcept {
     std::string fd_string = "";
     fd_string.reserve(128);

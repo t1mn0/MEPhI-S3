@@ -2,6 +2,8 @@
 
 namespace tmn_tuple {
 
+// special case: tuple stores one type
+
 template <typename Type>
 class Tuple {
 private:
@@ -67,8 +69,5 @@ private:
     template <typename T, typename Head, typename... Others>
     friend class get_by_type;
 }
-
-
-
 
 }

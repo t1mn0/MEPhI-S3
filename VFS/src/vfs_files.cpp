@@ -62,6 +62,8 @@ void VirtualFileSystem::add_file_content(const std::string& filename, const std:
     file.write(content.c_str(), content.length());
 
     files[fd_id].content_size = static_cast<uint64_t>(file.tellg()) - files[fd_id].content_offset;
+    files[fd_id].modificate_content_now();
+    files[fd_id].modificate_descriptor_now();
     file.close();
 }
 
@@ -107,7 +109,7 @@ std::string tmn_vfs::VirtualFileSystem::get_file_content(const std::string& file
     throw tmn_exception::RuntimeException(err_message);
 }
 
-void VirtualFileSystem::change_file_permissions(const std::string& filename, uint8_t perm) {
+void VirtualFileSystem::change_file_permissions(const std::string& filename, uint64_t perm) {
     uint64_t fd_id = 0;
     bool flag = false;
     for (auto& inner_file : files[current_directory].inner_files){
@@ -138,8 +140,8 @@ void VirtualFileSystem::change_file_permissions(const std::string& filename, uin
         throw tmn_exception::RuntimeException(err_message);
     }
 
-    if (perm / 100 > 3 || (perm / 10) % 10 > 3 || perm % 10 > 3){
-        std::string err_message = "Error(change_file_permissions): Bad digit performance for permission";
+    if ((perm / 100 > 3) || ((perm / 10) % 10 > 3) || (perm % 10 > 3)){
+        std::string err_message = "Error(change_file_permissions): Bad digit performance for permission" + std::to_string(perm);
         throw tmn_exception::RuntimeException(err_message);
     }
     
@@ -148,6 +150,7 @@ void VirtualFileSystem::change_file_permissions(const std::string& filename, uin
     Permission other_perm = static_cast<Permission>(perm % 10);
 
     files[fd_id].file_permissions = FilePermissions(user_perm, group_perm, other_perm);
+    files[fd_id].modificate_descriptor_now();
 }
 
 // add_file(FileDescriptor& fd) - sets the content_offset, content_size, owner_user, owner_group, parent_dir_id fields for fd
@@ -187,6 +190,8 @@ void VirtualFileSystem::rename_file(const std::string& old_filename, const std::
                 throw tmn_exception::RuntimeException(err_message);
             }
             files[inner_file].filename = new_filename;
+            files[inner_file].modificate_descriptor_now();
+            return;
         }
     }
 
@@ -211,6 +216,7 @@ void VirtualFileSystem::set_owner_group(uint64_t fd_id, uint64_t group_id) {
     }
 
     files[fd_id].owner_group = group_id;
+    files[fd_id].modificate_descriptor_now();
 }
 
 void VirtualFileSystem::remove_file_content(const std::string& filename) {
@@ -247,6 +253,9 @@ void VirtualFileSystem::remove_file_content(const std::string& filename) {
     std::filesystem::resize_file(std::filesystem::path(recording_files[files[id].physical_file_id]), file_size - files[id].content_size);
 
     file.close();
+
+    files[id].modificate_descriptor_now();
+    files[id].modificate_content_now();
 }
 
 void VirtualFileSystem::remove_file(const std::string& filename) {

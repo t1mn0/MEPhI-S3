@@ -81,7 +81,7 @@ public:
     void add_file_content(const std::string& filename, const std::string& content);
     std::string get_file_content(const std::string& filename);
     void add_file(FileDescriptor);
-    void change_file_permissions(const std::string& filename, uint8_t perm);
+    void change_file_permissions(const std::string& filename, uint64_t perm);
     void set_owner_group(uint64_t fd_id, uint64_t group_id);
     void rename_file(const std::string& old_filename, const std::string& new_filename);
     void remove_file_content(const std::string& filename);
