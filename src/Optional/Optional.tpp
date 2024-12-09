@@ -1,11 +1,7 @@
 #include "../../include/Optional/Optional.hpp"
 #include "../../include/Exceptions/Exception.hpp"
 
-
-
 namespace tmn {
-
-
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Constructors & assignment & conversion & destructors :
@@ -42,9 +38,6 @@ Optional<T>::~Optional(){
         reinterpret_cast<T*>(_value)->~T();
     }
 }
-
-
-
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Observers :
