@@ -2,46 +2,9 @@
 #include <string>
 
 #include "../../include/Graph/Graph.hpp"
+#include "graph_test_utils.hpp"
 
 using namespace tmn_graph;
-
-using Matrix = ArraySequence<ArraySequence<int>>;
-
-template <typename VertexId>
-void pretty_print_matrix(int num, const Matrix& matrix, const ArraySequence<VertexId>& seq){
-    std::cout << "--- Graph" + std::to_string(num) + " ---" << std::endl << "  ";
-    
-    for (auto& id : seq) {
-        std::cout << id << " ";
-    }
-    std::cout << std::endl;
-
-    std::size_t k = 0;
-    for (auto& i : matrix){
-        std::cout << seq[k] << " ";
-        for (auto& j : i){
-            std::cout << j << " ";
-        }
-        ++k;
-        std::cout << std::endl;
-    }
-}
-
-bool is_symmetric(const Matrix& matrix) {
-    if (matrix.empty() || matrix.size() != matrix[0].size()) {
-        return false;
-    }
-
-    size_t n = matrix.size();
-    for (size_t i = 0; i < n; ++i) {
-        for (size_t j = i + 1; j < n; ++j) {
-            if (matrix[i][j] != matrix[j][i]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
 
 TEST(UnweightedGraphTest, DefaultConstructor) {
     Graph<true, char, char, void> graph;
@@ -60,13 +23,13 @@ TEST(UnweightedGraphTest, InitializerList1) {
     // | /                     D          
     // A -> B <-> С            G 1     1
     auto pair1 = graph1.basic_adjacency_list();
-    pretty_print_matrix(1, pair1.first, pair1.second);
+    pretty_print_matrix(1, "FT UNW-GRAPH", pair1.first, pair1.second);
     ASSERT_EQ(graph1.v_size(), 5);
 
 
     Graph<true, char, char, void> graph2 = { EdgeChar('A', 'A'), EdgeChar('B', 'B'), EdgeChar('C', 'C') };
     auto pair2 = graph2.basic_adjacency_list();
-    pretty_print_matrix(2, pair2.first, pair2.second);
+    pretty_print_matrix(2, "FT UNW-GRAPH", pair2.first, pair2.second);
     ASSERT_EQ(graph2.v_size(), 3);
 
     Graph<false, char, char, void> graph3 = { 
@@ -77,19 +40,19 @@ TEST(UnweightedGraphTest, InitializerList1) {
         EdgeChar('A', 'V'), EdgeChar('A', 'W'), EdgeChar('A', 'X'), EdgeChar('A', 'Y'), EdgeChar('A', 'Z') };
     ASSERT_EQ(graph3.v_size(), 26);
     auto pair3 = graph3.basic_adjacency_list();
-    pretty_print_matrix(3, pair3.first, pair3.second);
-    ASSERT_TRUE(is_symmetric(pair3.first));
+    pretty_print_matrix(3, "FT UNW-GRAPH", pair3.first, pair3.second);
+    ASSERT_TRUE(is_symmetric_matrix(pair3.first));
 
     Graph<true, double, double, void> graph4 = {  };
     auto pair4 = graph4.basic_adjacency_list();
-    pretty_print_matrix(4, pair4.first, pair4.second);
+    pretty_print_matrix(4, "FT UNW-GRAPH", pair4.first, pair4.second);
     ASSERT_EQ(graph4.v_size(), 0);
 
     Graph<false, int, double, void> graph5 = { EdgeInt(1, 2), EdgeInt(2, 3), EdgeInt(4, 5), EdgeInt(6, 7), EdgeInt(8, 9), EdgeInt(9, 0) };
     auto pair5 = graph5.basic_adjacency_list();
-    pretty_print_matrix(5, pair5.first, pair5.second);
+    pretty_print_matrix(5, "FT UNW-GRAPH", pair5.first, pair5.second);
     ASSERT_EQ(graph5.v_size(), 10);
-    ASSERT_TRUE(is_symmetric(pair5.first));
+    ASSERT_TRUE(is_symmetric_matrix(pair5.first));
 }
 
 TEST(UnweightedGraphTest, InitializerList2) {
@@ -111,7 +74,7 @@ TEST(UnweightedGraphTest, InitializerList2) {
     //  \_____________|
 
     auto pair1 = graph1.basic_adjacency_list();
-    pretty_print_matrix(6, pair1.first, pair1.second);
+    pretty_print_matrix(6, "FT UNW-GRAPH", pair1.first, pair1.second);
     ASSERT_EQ(graph1.v_size(), 5);
 
 
@@ -123,9 +86,9 @@ TEST(UnweightedGraphTest, InitializerList2) {
     };
 
     auto pair2 = graph2.basic_adjacency_list();
-    pretty_print_matrix(7, pair2.first, pair2.second);
+    pretty_print_matrix(7, "FT UNW-GRAPH", pair2.first, pair2.second);
     ASSERT_EQ(graph2.v_size(), 4);
-    ASSERT_TRUE(is_symmetric(pair2.first));
+    ASSERT_TRUE(is_symmetric_matrix(pair2.first));
 }
 
 TEST(UnweightedGraphTest, CopyConstructor) {
@@ -139,13 +102,13 @@ TEST(UnweightedGraphTest, CopyConstructor) {
 
     auto original_pair = original.basic_adjacency_list();
     auto copied_pair = copy.basic_adjacency_list();
-    pretty_print_matrix(8, original_pair.first, original_pair.second);
-    pretty_print_matrix(9, copied_pair.first, copied_pair.second);
+    pretty_print_matrix(8, "FT UNW-GRAPH", original_pair.first, original_pair.second);
+    pretty_print_matrix(9, "FT UNW-GRAPH", copied_pair.first, copied_pair.second);
 
     ASSERT_EQ(copy.v_size(), 3);
     ASSERT_EQ(original.v_size(), 3);
-    ASSERT_TRUE(is_symmetric(original_pair.first));
-    ASSERT_TRUE(is_symmetric(copied_pair.first));
+    ASSERT_TRUE(is_symmetric_matrix(original_pair.first));
+    ASSERT_TRUE(is_symmetric_matrix(copied_pair.first));
 }
 
 TEST(UnweightedGraphTest, MoveConstructor) {
@@ -159,12 +122,12 @@ TEST(UnweightedGraphTest, MoveConstructor) {
 
     auto original_pair = original.basic_adjacency_list();
     auto moved_pair = moved.basic_adjacency_list();
-    pretty_print_matrix(10, original_pair.first, original_pair.second);
-    pretty_print_matrix(11, moved_pair.first, moved_pair.second);
+    pretty_print_matrix(10, "FT UNW-GRAPH", original_pair.first, original_pair.second);
+    pretty_print_matrix(11, "FT UNW-GRAPH", moved_pair.first, moved_pair.second);
     
     ASSERT_EQ(moved.v_size(), 3);
     ASSERT_EQ(original.v_size(), 0);
-    ASSERT_TRUE(is_symmetric(moved_pair.first));
+    ASSERT_TRUE(is_symmetric_matrix(moved_pair.first));
 }
 
 TEST(UnweightedGraphTest, CopyOperator) {
@@ -223,13 +186,7 @@ TEST(UnweightedGraphTest, AddVertexWithoutResource) {
 
     ASSERT_EQ(graph.v_size(), 5);
     
-    try{
-        graph.add_vertex(1);
-        ASSERT_FALSE(true);
-    }
-    catch(tmn_exception::LogicException& e){
-        std::cout << e.what() << std::endl;
-    }
+    ASSERT_FALSE(graph.add_vertex(1));
 
     ASSERT_EQ(graph.v_size(), 5);
 
@@ -321,12 +278,19 @@ TEST(UnweightedGraphTest, ConnectedVertices) {
         {5, {1, 2, 3, 4, 0}}
     };
 
-    ASSERT_EQ(graph1.connected_vertices_count(0), 3);
-    ASSERT_EQ(graph1.connected_vertices_count(1), 2);
-    ASSERT_EQ(graph1.connected_vertices_count(2), 5);
-    ASSERT_EQ(graph1.connected_vertices_count(3), 1);
-    ASSERT_EQ(graph1.connected_vertices_count(4), 1);
-    ASSERT_EQ(graph1.connected_vertices_count(5), 5);
+    ASSERT_TRUE(graph1.connected_vertices_count(0).has_value());
+    ASSERT_TRUE(graph1.connected_vertices_count(1).has_value());
+    ASSERT_TRUE(graph1.connected_vertices_count(2).has_value());
+    ASSERT_TRUE(graph1.connected_vertices_count(3).has_value());
+    ASSERT_TRUE(graph1.connected_vertices_count(4).has_value());
+    ASSERT_TRUE(graph1.connected_vertices_count(5).has_value());
+
+    ASSERT_EQ(graph1.connected_vertices_count(0).value(), 3);
+    ASSERT_EQ(graph1.connected_vertices_count(1).value(), 2);
+    ASSERT_EQ(graph1.connected_vertices_count(2).value(), 5);
+    ASSERT_EQ(graph1.connected_vertices_count(3).value(), 1);
+    ASSERT_EQ(graph1.connected_vertices_count(4).value(), 1);
+    ASSERT_EQ(graph1.connected_vertices_count(5).value(), 5);
 
     auto connected_v_0 = graph1.connected_vertices(0);
     auto connected_v_2 = graph1.connected_vertices(2);
@@ -372,7 +336,7 @@ TEST(UnweightedGraphTest, ChangeVertexId) {
     graph.change_vertex_id(5, 9);
 
     auto pair = graph.basic_adjacency_list();
-    pretty_print_matrix(12, pair.first, pair.second);
+    pretty_print_matrix(12, "FT UNW-GRAPH", pair.first, pair.second);
 }
 
 TEST(UnweightedGraphTest, ChangeVertexResource) {
@@ -417,4 +381,119 @@ TEST(UnweightedGraphTest, AllVertices) {
         std::cout << elem << " ";
     } 
     std::cout << std::endl;
+}
+
+TEST(UnweightedGraphTest, AddEdge) {
+    using EdgeChar = tmn::Pair<char, char>;
+
+    Graph<false, char, char, void> graph1 = { 
+        EdgeChar('A', 'B'), EdgeChar('A', 'C'), EdgeChar('A', 'D'), EdgeChar('A', 'E'), EdgeChar('A', 'F'), 
+        EdgeChar('A', 'G'), EdgeChar('A', 'H'), EdgeChar('A', 'I'), EdgeChar('A', 'J'), EdgeChar('A', 'K'), 
+        EdgeChar('A', 'L'), EdgeChar('A', 'M'), EdgeChar('A', 'N'), EdgeChar('A', 'O'), EdgeChar('A', 'P'), 
+        EdgeChar('A', 'Q'), EdgeChar('A', 'R'), EdgeChar('A', 'S'), EdgeChar('A', 'T'), EdgeChar('A', 'U'), 
+        EdgeChar('A', 'V'), EdgeChar('A', 'W'), EdgeChar('A', 'X'), EdgeChar('A', 'Y'), EdgeChar('A', 'Z') };
+
+    try {
+        graph1.add_edge('!', 'A');
+        ASSERT_FALSE(true);
+    }
+    catch(tmn_exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        graph1.add_edge('A', '!');
+        ASSERT_FALSE(true);
+    }
+    catch(tmn_exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    graph1.add_edge('B', 'D');
+    graph1.add_edge('V', 'W');
+    graph1.add_edge('Q', 'X');
+    graph1.add_edge('W', 'Y');
+    graph1.add_edge('R', 'Z');
+    graph1.add_edge('T', 'T');
+
+    auto pair1  = graph1.basic_adjacency_list();
+
+    pretty_print_matrix(13, "FT UNW-GRAPH", pair1.first, pair1.second);
+    ASSERT_TRUE(is_symmetric_matrix(pair1.first));
+    ASSERT_TRUE(graph1.is_connected('B', 'D'));
+    ASSERT_TRUE(graph1.is_connected('V', 'W'));
+    ASSERT_TRUE(graph1.is_connected('Q', 'X'));
+    ASSERT_TRUE(graph1.is_connected('W', 'Y'));
+    ASSERT_TRUE(graph1.is_connected('R', 'Z'));
+    ASSERT_TRUE(graph1.is_connected('T', 'T'));
+
+    Graph<false, int, char, void> graph2 = { 
+        {0, {2, 4, 6}},
+        {1, {3, 5}   },
+        {2, {1, 3, 4, 5, 6}},
+        {3, {4}},
+        {4, {5}},
+        {5, {1, 2, 3, 4, 0}}
+    };
+
+    try {
+        graph2.add_edge(12, 3);
+        ASSERT_FALSE(true);
+    }
+    catch(tmn_exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        graph2.add_edge(5, 11);
+        ASSERT_FALSE(true);
+    }
+    catch(tmn_exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    graph2.add_edge(0, 1); graph2.add_edge(0, 3); graph2.add_edge(0, 5); 
+    graph2.add_edge(1, 2); graph2.add_edge(1, 4); graph2.add_edge(1, 6);
+    graph2.add_edge(3, 5); graph2.add_edge(3, 6);
+    graph2.add_edge(4, 6);
+    graph2.add_edge(5, 6);
+
+    auto pair2 = graph2.basic_adjacency_list();
+    pretty_print_matrix(14, "FT UNW-GRAPH", pair2.first, pair2.second);
+    ASSERT_TRUE(is_symmetric_matrix(pair2.first));
+}
+
+TEST(UnweightedGraphTest, RemoveEdge) {
+    Graph<false, int, char, void> graph = { 
+        {0, {2, 4, 6}},
+        {1, {3, 5}   },
+        {2, {1, 3, 4, 5, 6}},
+        {3, {4}},
+        {4, {5}},
+        {5, {1, 2, 3, 4, 0}}
+    };
+
+    try {
+        graph.remove_edge(12, 3);
+        ASSERT_FALSE(true);
+    }
+    catch(tmn_exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        graph.remove_edge(5, 11);
+        ASSERT_FALSE(true);
+    }
+    catch(tmn_exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    graph.remove_edge(0, 5); graph.remove_edge(0, 6);
+    graph.remove_edge(1, 5);
+    graph.remove_edge(4, 2); graph.remove_edge(4, 5);
+    graph.remove_edge(3, 2); graph.remove_edge(3, 1);
+
+    auto pair = graph.basic_adjacency_list();
+    pretty_print_matrix(15, "FT UNW-GRAPH", pair.first, pair.second);
 }

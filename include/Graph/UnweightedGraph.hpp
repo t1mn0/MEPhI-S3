@@ -12,10 +12,12 @@ template <bool is_oriented, typename VertexId, typename VertexType>
 class Graph<is_oriented, VertexId, VertexType, void> {
 private:
 // Fields & aliases :
-    using ConnectedVertices = HashSet<VertexId>;
+    using ConnectedVerticesList = HashSet<VertexId>;
+    using TwoConnectedVertices = tmn::Pair<VertexId, VertexId>;
     using GraphPath = ListSequence<VertexId>;
+    using IntMatrix = tmn_sequence::ArraySequence<tmn_sequence::ArraySequence<int>>;
 
-    HashTable<VertexId, ConnectedVertices> adjacency_list;
+    HashTable<VertexId, ConnectedVerticesList> adjacency_list;
     HashTable<VertexId, VertexType> resources;
 
 public:
@@ -23,23 +25,24 @@ public:
     Graph() = default;
     Graph(const Graph& other) noexcept;
     Graph(Graph&& other) noexcept;
-    Graph(const ArraySequence<tmn::Pair<VertexId, VertexId>>& edges); // graph without resources
-    Graph(const std::initializer_list<tmn::Pair<VertexId, VertexId>>& list); // graph without resources
-    Graph(const std::initializer_list<tmn::Pair<VertexId, std::initializer_list<VertexId> >>& list); // graph without resources
+    Graph(const ArraySequence<TwoConnectedVertices>& edges);                                                // graph without resources 
+    Graph(const ArraySequence< tmn::Pair< VertexId, ArraySequence<VertexId>> >& edges);                     // graph without resources
+    Graph(const std::initializer_list<tmn::Pair<VertexId, VertexId>>& list);                                // graph without resources
+    Graph(const std::initializer_list< tmn::Pair<VertexId, std::initializer_list<VertexId>> >& list);       // graph without resources
 
     Graph& operator= (const Graph&);
     Graph& operator= (Graph&&);
     ~Graph();
 
 // Basic methods:
-    void add_vertex(VertexId vertex_id);
-    void add_vertex(VertexId vertex_id, const VertexType& vertex_resource);
-    void add_vertex(VertexId vertex_id, VertexType&& vertex_resource);
-    void remove_vertex(VertexId vertex_id);
+    bool add_vertex(VertexId vertex_id) noexcept;
+    bool add_vertex(VertexId vertex_id, const VertexType& vertex_resource, bool strict = true);
+    bool add_vertex(VertexId vertex_id, VertexType&& vertex_resource, bool strict = true);
+    bool remove_vertex(VertexId vertex_id, bool strict = true);
     bool vertex_in_graph(VertexId vertex_id) const noexcept;
     HashSet<VertexId> all_vertices() const noexcept;
     std::size_t v_size() const noexcept; 
-    std::size_t connected_vertices_count(VertexId vertex_id) const;
+    tmn::Optional<std::size_t> connected_vertices_count(VertexId vertex_id) const noexcept;
     HashSet<VertexId> connected_vertices(VertexId vertex_id) const;
     void change_vertex_id(VertexId old_vertex_id, VertexId new_vertex_id);
 
@@ -48,14 +51,14 @@ public:
     void change_vertex_resource(VertexId vertex_id, const VertexType& vertex_resource);
     void change_vertex_resource(VertexId vertex_id, VertexType&& vertex_resource);
 
-    void add_edge(VertexId from, VertexId to);                                       // TODO : TEST 
-    void remove_edge(VertexId from, VertexId to);                                    // TODO : TEST 
-    bool edge_in_graph(VertexId from, VertexId to) const;                            // TODO : TEST 
+    bool add_edge(VertexId from, VertexId to, bool strict = true);
+    bool remove_edge(VertexId from, VertexId to, bool strict = true);
+    bool is_connected(VertexId from, VertexId to, bool strict = true) const;
 
-    void reserve(std::size_t capacity);                                              // TODO : TEST 
-    void clear();                                                                    // TODO : TEST 
+    void reserve(std::size_t capacity); 
+    void clear();
 
-    tmn::Pair<ArraySequence<ArraySequence<int>>, ArraySequence<VertexId>> basic_adjacency_list() const noexcept;
+    tmn::Pair<IntMatrix, ArraySequence<VertexId>> basic_adjacency_list() const noexcept;
 
 // Algorithms:
     GraphPath dijkstra_shortest_path(VertexId from, VertexId to) const;

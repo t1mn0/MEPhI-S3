@@ -13,7 +13,8 @@ private:
     Weight weight;
 
 public:
-    explicit Edge(VertexId from, VertexId to, Weight weight) noexcept : from(from), to(to), weight(weight) {}
+    explicit Edge(VertexId from, VertexId to, const Weight& weight) noexcept : from(from), to(to), weight(weight) {}
+    explicit Edge(VertexId from, VertexId to, Weight&& weight) noexcept : from(from), to(to), weight(std::move(weight)) {}
 };
 
 }

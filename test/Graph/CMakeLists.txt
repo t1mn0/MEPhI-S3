@@ -8,6 +8,7 @@ target_include_directories(Exceptions PUBLIC ../include/Exceptions)
 
 set(TESTS
   functional_test_unweighted_graph
+  functional_test_singleweighted_graph
 )
 
 find_package(GTest REQUIRED)
@@ -15,9 +16,11 @@ if (NOT GTest_FOUND)
   message(FATAL_ERROR "GTest not found. Please install the required dependencies for this project to work")
 endif()
 
+add_library(graph_test_utils STATIC graph_test_utils.cpp)
+
 foreach(TEST ${TESTS})
   add_executable(${TEST} ${TEST}.cpp)
-  target_link_libraries(${TEST} GTest::gtest GTest::gtest_main Exceptions)
+  target_link_libraries(${TEST} GTest::gtest GTest::gtest_main Exceptions graph_test_utils)
   target_compile_definitions(${TEST} PRIVATE EXECUTABLE_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
   add_test(NAME ${TEST} COMMAND ${TEST})
 endforeach()

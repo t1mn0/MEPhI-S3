@@ -8,13 +8,14 @@
 
 #include <cstdint> // uint8_t
 #include <type_traits>
+#include <concepts>
+
+namespace tmn_graph {
 
 using namespace tmn_associative;
 using namespace tmn_sequence;
 using namespace tmn_smart_ptr;
 using namespace tmn_tuple;
-
-namespace tmn_graph {
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename ResultWeight, typename ... WeightTypes>
 class Graph {
@@ -24,11 +25,11 @@ private:
 
 public:
 // Fields & aliases :
-    using ConnectedVertices = HashTable<VertexId, SharedPtr<Edge>>;
+    using ConnectedVerticesList = HashTable<VertexId, SharedPtr<Edge>>;
     using GraphPath = ListSequence<VertexId>;
     using WeightsTuple = Tuple<WeightTypes...>;
 
-    HashTable<VertexId, ConnectedVertices> adjacency_list;
+    HashTable<VertexId, ConnectedVerticesList> adjacency_list;
     HashTable<VertexId, VertexType> resources;
 
 public:
@@ -52,7 +53,6 @@ public:
     tmn::Optional<WeightsTuple> bandwidth(VertexId from, VertexId to);
 
     tmn::Pair<ArraySequence<ArraySequence<uint8_t>>, ArraySequence<VertexId>> basic_adjacency_list();
-    tmn::Pair<ArraySequence<ArraySequence<WeightsTuple>>, ArraySequence<VertexId>> detailed_adjacency_list();
 
 // Algorithms:
     GraphPath dijkstra_shortest_path(VertexId from, VertexId to) const;
