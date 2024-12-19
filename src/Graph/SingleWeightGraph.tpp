@@ -10,7 +10,9 @@ Graph<is_oriented, VertexId, VertexType, Weight>::Graph(const Graph<is_oriented,
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 Graph<is_oriented, VertexId, VertexType, Weight>::Graph(Graph<is_oriented, VertexId, VertexType, Weight>&& other) noexcept : 
-    adjacency_list(std::move(other.adjacency_list)), resources(std::move(other.resources)) {}
+    adjacency_list(std::move(other.adjacency_list)), resources(std::move(other.resources)) {
+        
+    }
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 Graph<is_oriented, VertexId, VertexType, Weight>::Graph(const ArraySequence<tmn::Pair<TwoConnectedVertices, Weight>>& edges) {
@@ -58,6 +60,11 @@ template <bool is_oriented, typename VertexId, typename VertexType, typename Wei
 Graph<is_oriented, VertexId, VertexType, Weight>::~Graph() {
     adjacency_list.clear();
     resources.clear();
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+bool Graph<is_oriented, VertexId, VertexType, Weight>::oriented() const noexcept {
+    return is_oriented;
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
@@ -338,12 +345,16 @@ bool Graph<is_oriented, VertexId, VertexType, Weight>::is_connected(VertexId fro
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 tmn::Optional<Weight> Graph<is_oriented, VertexId, VertexType, Weight>::pass_weight(VertexId from, VertexId to) const noexcept {
-    if (!adjacency_list.contains(from)){
-        tmn::Optional<Weight>();
+    if (!adjacency_list.contains(from)){ 
+        return tmn::Optional<Weight>();
     }
 
     if (!adjacency_list.contains(to)){
-        tmn::Optional<Weight>();
+        return tmn::Optional<Weight>();
+    }
+
+    if (!adjacency_list[from].contains(to)){
+        return tmn::Optional<Weight>();
     }
 
     return tmn::Optional<Weight>(adjacency_list[from][to].weight);

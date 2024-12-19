@@ -35,6 +35,8 @@ public:
     ~Graph();
 
 // Basic methods:
+    bool oriented() const noexcept;
+
     bool add_vertex(VertexId vertex_id) noexcept;
     bool add_vertex(VertexId vertex_id, const VertexType& vertex_resource, bool strict = true);
     bool add_vertex(VertexId vertex_id, VertexType&& vertex_resource, bool strict = true);

@@ -4,7 +4,7 @@
 #include <vector>
 #include <sstream>
 
-#include "gnuplot-iostream.h"
+#include "../../dependencies/gnuplot-iostream.h"
 
 int main() {
     Gnuplot gp;

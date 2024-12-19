@@ -1,4 +1,5 @@
 #include <utility>
+#include <map>
 
 #include "../../include/Graph/UnweightedGraph.hpp"
 
@@ -10,7 +11,10 @@ Graph<is_oriented, VertexId, VertexType, void>::Graph(const Graph<is_oriented, V
 
 template <bool is_oriented, typename VertexId, typename VertexType>
 Graph<is_oriented, VertexId, VertexType, void>::Graph(Graph<is_oriented, VertexId, VertexType, void>&& other) noexcept : 
-    adjacency_list(std::move(other.adjacency_list)), resources(std::move(other.resources)) {}
+    adjacency_list(std::move(other.adjacency_list)), resources(std::move(other.resources)) {
+        other.adjacency_list.clear();
+        other.resources.clear();
+    }
 
 template <bool is_oriented, typename VertexId, typename VertexType>
 Graph<is_oriented, VertexId, VertexType, void>::Graph(const ArraySequence<TwoConnectedVertices>& edges) {
@@ -107,6 +111,9 @@ Graph<is_oriented, VertexId, VertexType, void>&
         adjacency_list = std::move(other_graph.adjacency_list);
         resources = std::move(other_graph.resources);
 
+        other_graph.adjacency_list.clear();
+        other_graph.resources.clear();
+
         return *this;
 }
 
@@ -114,6 +121,11 @@ template <bool is_oriented, typename VertexId, typename VertexType>
 Graph<is_oriented, VertexId, VertexType, void>::~Graph() {
     adjacency_list.clear();
     resources.clear();
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType>
+bool tmn_graph::Graph<is_oriented, VertexId, VertexType, void>::oriented() const noexcept {
+    return is_oriented;
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType>
@@ -374,33 +386,31 @@ void Graph<is_oriented, VertexId, VertexType, void>::clear() {
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType>
-tmn::Pair<ArraySequence<ArraySequence<int>>, ArraySequence<VertexId>> 
-    Graph<is_oriented, VertexId, VertexType, void>::basic_adjacency_list() const noexcept {
-        auto vertices = adjacency_list.keys();
-        ArraySequence<ArraySequence<int>> matrix(vertices.size());
+tmn::Pair<ArraySequence<ArraySequence<int>>, ArraySequence<VertexId>>
+Graph<is_oriented, VertexId, VertexType, void>::basic_adjacency_list() const noexcept {
+    auto vertices = adjacency_list.keys();
+    IntMatrix matrix(vertices.size(), ArraySequence<int>(vertices.size(), 0)); 
 
-        std::size_t i = 0;
-        for (const auto& vertix_id : vertices) {
-            std::size_t j = 0;
-            for (const auto& p : adjacency_list) {
-                bool found = p.second.contains(vertix_id);
-                if (is_oriented) {
-                    if (p.first == vertix_id) {
-                        matrix[i].push_back(1);
-                    } else if (found) {
-                        matrix[i].push_back(-1);
-                    } else {
-                        matrix[i].push_back(0);
-                    }
-                } else {
-                    matrix[i].push_back(found ? 1 : 0);
-                }
-                ++j;
+    std::map<VertexId, size_t> vertexIndex;
+    for (size_t i = 0; i < vertices.size(); ++i) {
+        vertexIndex[vertices[i]] = i;
+
+    }
+
+    for (const auto& p : adjacency_list) {
+        VertexId from = p.first;
+        for (const auto& edge : p.second) {
+            VertexId to = edge;
+            size_t fromIndex = vertexIndex.at(from);
+            size_t toIndex = vertexIndex.at(to);
+            matrix[fromIndex][toIndex] = 1;
+            if (is_oriented) {
+                matrix[toIndex][fromIndex] = -1;
             }
-            ++i;
         }
+    }
 
-        return tmn::Pair<IntMatrix, ArraySequence<VertexId>>(matrix, vertices);
+    return tmn::Pair<IntMatrix, ArraySequence<VertexId>>(matrix, vertices);
 }
 
 }

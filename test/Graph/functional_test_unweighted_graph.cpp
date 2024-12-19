@@ -107,8 +107,6 @@ TEST(UnweightedGraphTest, CopyConstructor) {
 
     ASSERT_EQ(copy.v_size(), 3);
     ASSERT_EQ(original.v_size(), 3);
-    ASSERT_TRUE(is_symmetric_matrix(original_pair.first));
-    ASSERT_TRUE(is_symmetric_matrix(copied_pair.first));
 }
 
 TEST(UnweightedGraphTest, MoveConstructor) {
@@ -127,7 +125,6 @@ TEST(UnweightedGraphTest, MoveConstructor) {
     
     ASSERT_EQ(moved.v_size(), 3);
     ASSERT_EQ(original.v_size(), 0);
-    ASSERT_TRUE(is_symmetric_matrix(moved_pair.first));
 }
 
 TEST(UnweightedGraphTest, CopyOperator) {

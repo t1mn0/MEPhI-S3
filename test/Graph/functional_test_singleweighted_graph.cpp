@@ -28,109 +28,66 @@ TEST(SingleWeightedGraphTest, ArraySeqConstructor) {
     auto pair = graph.basic_adjacency_list();
     pretty_print_matrix(1, "FT SINGLEW-GRAPH", pair.first, pair.second);
     ASSERT_EQ(graph.v_size(), 6);
-
-    // Graph<true, char, char, void> graph2 = { EdgeChar('A', 'A'), EdgeChar('B', 'B'), EdgeChar('C', 'C') };
-    // auto pair2 = graph2.basic_adjacency_list();
-    // pretty_print_matrix(2, "FT SINGLEW-GRAPH", pair2.first, pair2.second);
-    // ASSERT_EQ(graph2.v_size(), 3);
-
-    // Graph<false, char, char, void> graph3 = { 
-    //     EdgeChar('A', 'B'), EdgeChar('A', 'C'), EdgeChar('A', 'D'), EdgeChar('A', 'E'), EdgeChar('A', 'F'), 
-    //     EdgeChar('A', 'G'), EdgeChar('A', 'H'), EdgeChar('A', 'I'), EdgeChar('A', 'J'), EdgeChar('A', 'K'), 
-    //     EdgeChar('A', 'L'), EdgeChar('A', 'M'), EdgeChar('A', 'N'), EdgeChar('A', 'O'), EdgeChar('A', 'P'), 
-    //     EdgeChar('A', 'Q'), EdgeChar('A', 'R'), EdgeChar('A', 'S'), EdgeChar('A', 'T'), EdgeChar('A', 'U'), 
-    //     EdgeChar('A', 'V'), EdgeChar('A', 'W'), EdgeChar('A', 'X'), EdgeChar('A', 'Y'), EdgeChar('A', 'Z') };
-    // ASSERT_EQ(graph3.v_size(), 26);
-    // auto pair3 = graph3.basic_adjacency_list();
-    // pretty_print_matrix(3, pair3.first, pair3.second);
-    // ASSERT_TRUE(is_symmetric_matrix(pair3.first));
-
-    // Graph<true, double, double, void> graph4 = {  };
-    // auto pair4 = graph4.basic_adjacency_list();
-    // pretty_print_matrix(4, pair4.first, pair4.second);
-    // ASSERT_EQ(graph4.v_size(), 0);
-
-    // Graph<false, int, double, void> graph5 = { EdgeInt(1, 2), EdgeInt(2, 3), EdgeInt(4, 5), EdgeInt(6, 7), EdgeInt(8, 9), EdgeInt(9, 0) };
-    // auto pair5 = graph5.basic_adjacency_list();
-    // pretty_print_matrix(5, pair5.first, pair5.second);
-    // ASSERT_EQ(graph5.v_size(), 10);
-    // ASSERT_TRUE(is_symmetric_matrix(pair5.first));
+    ASSERT_FALSE(graph.pass_weight('A', 'A').has_value());
+    ASSERT_FALSE(graph.pass_weight('F', 'E').has_value());
+    ASSERT_EQ(graph.v_size(), 6);
+    ASSERT_EQ(graph.pass_weight('A', 'B').value().abs(), 1.0);
+    ASSERT_EQ(graph.pass_weight('A', 'D').value().abs(), 13.0);
+    ASSERT_EQ(graph.pass_weight('D', 'A').value().abs(), 0.0);
 }
 
-// TEST(SingleWeightedGraphTest, InitializerList2) {
+TEST(SingleWeightedGraphTest, CopyConstructor) {
     
-//     Graph<true, char, char, void> graph1 = { 
-//         {'A', {'B', 'G', 'D'}},
-//         {'B', {'C', 'D'}},
-//         {'C', {'B', 'A'}},
-//         {'D', {'G'}}
-//     };
-//     //          _______
-//     //         V      \           A B C D G
-//     // G <--- D <--   |         A     1      
-//     // ^   ______/    |         B 1   1
-//     // |  /   ________|   =>    C   1
-//     // | /   /                  D 1 1       
-//     // A -> B <-> С --\         G 1     1
-//     // ^              | 
-//     //  \_____________|
+    tmn_sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
+        { {'A', 'B'}, 256 }, 
+        { {'A', 'C'}, 512 },
+        { {'A', 'D'}, 1024 },
+        { {'B', 'C'}, 2048 }, 
+        { {'B', 'D'}, 4096 }, 
+        { {'C', 'D'}, 8192 },
+    };
 
-//     auto pair1 = graph1.basic_adjacency_list();
-//     pretty_print_matrix(6, pair1.first, pair1.second);
-//     ASSERT_EQ(graph1.v_size(), 5);
+    Graph<false, char, char, int> original(seq);
+    Graph copy(original);
 
+    ASSERT_FALSE(copy.oriented());
+    ASSERT_FALSE(original.oriented());
 
+    auto original_pair = original.basic_adjacency_list();
+    auto copied_pair = copy.basic_adjacency_list();
+    pretty_print_matrix(2, "FT SINGLEW-GRAPH", original_pair.first, original_pair.second);
+    pretty_print_matrix(3, "FT SINGLEW-GRAPH", copied_pair.first, copied_pair.second);
 
-//     Graph<false, int, double, void> graph2 = { 
-//         {1, {2, 3, 4}},
-//         {2, {3, 4}},
-//         {3, {1}}
-//     };
+    ASSERT_EQ(copy.v_size(), 4);
+    ASSERT_EQ(original.v_size(), 4);
+    ASSERT_TRUE(is_symmetric_matrix(original_pair.first));
+    ASSERT_TRUE(is_symmetric_matrix(copied_pair.first));
+}
 
-//     auto pair2 = graph2.basic_adjacency_list();
-//     pretty_print_matrix(7, pair2.first, pair2.second);
-//     ASSERT_EQ(graph2.v_size(), 4);
-//     ASSERT_TRUE(is_symmetric_matrix(pair2.first));
-// }
+TEST(SingleWeightedGraphTest, MoveConstructor) {
+    tmn_sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
+        { {'A', 'B'}, 256 }, 
+        { {'A', 'C'}, 512 },
+        { {'A', 'D'}, 1024 },
+        { {'B', 'C'}, 2048 }, 
+        { {'B', 'D'}, 4096 }, 
+        { {'C', 'D'}, 8192 },
+    };
 
-// TEST(SingleWeightedGraphTest, CopyConstructor) {
-//     Graph<true, char, char, void> original = { 
-//         {'A', {'B', 'C'}},
-//         {'B', {'A', 'C'}},
-//         {'C', {'A', 'B'}}
-//     };
+    Graph<true, char, char, int> original(seq);
+    Graph moved(std::move(original));
 
-//     Graph<true, char, char, void> copy(original);
+    ASSERT_TRUE(moved.oriented());
 
-//     auto original_pair = original.basic_adjacency_list();
-//     auto copied_pair = copy.basic_adjacency_list();
-//     pretty_print_matrix(8, original_pair.first, original_pair.second);
-//     pretty_print_matrix(9, copied_pair.first, copied_pair.second);
+    auto original_pair = original.basic_adjacency_list();
+    auto moved_pair = moved.basic_adjacency_list();
+    pretty_print_matrix(4, "FT SINGLEW-GRAPH", original_pair.first, original_pair.second);
+    pretty_print_matrix(5, "FT SINGLEW-GRAPH", moved_pair.first, moved_pair.second);
 
-//     ASSERT_EQ(copy.v_size(), 3);
-//     ASSERT_EQ(original.v_size(), 3);
-//     ASSERT_TRUE(is_symmetric_matrix(original_pair.first));
-//     ASSERT_TRUE(is_symmetric_matrix(copied_pair.first));
-// }
-
-// TEST(SingleWeightedGraphTest, MoveConstructor) {
-//     Graph<true, char, char, void> original = { 
-//         {'A', {'B', 'C'}},
-//         {'B', {'A', 'C'}},
-//         {'C', {'A', 'B'}}
-//     };
-
-//     Graph<true, char, char, void> moved(std::move(original));
-
-//     auto original_pair = original.basic_adjacency_list();
-//     auto moved_pair = moved.basic_adjacency_list();
-//     pretty_print_matrix(10, original_pair.first, original_pair.second);
-//     pretty_print_matrix(11, moved_pair.first, moved_pair.second);
-    
-//     ASSERT_EQ(moved.v_size(), 3);
-//     ASSERT_EQ(original.v_size(), 0);
-//     ASSERT_TRUE(is_symmetric_matrix(moved_pair.first));
-// }
+    ASSERT_EQ(moved.v_size(), 4);
+    ASSERT_EQ(original.v_size(), 0);
+    ASSERT_FALSE(is_symmetric_matrix(moved_pair.first));
+}
 
 // TEST(SingleWeightedGraphTest, CopyOperator) {
 //     Graph<false, int, char, void> graph1 = { 
