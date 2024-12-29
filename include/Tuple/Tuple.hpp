@@ -4,7 +4,7 @@
 
 #include "../Optional/Optional.hpp"
 
-namespace tmn_tuple {
+namespace tmn {
 
 template <typename HeadType, typename... TailTypes>
 class Tuple {

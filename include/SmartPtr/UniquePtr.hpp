@@ -6,7 +6,8 @@
 
 
 
-namespace tmn_smart_ptr {
+namespace tmn {
+namespace smart_ptr {
 
 //                                      GENERAL REALIZATION :
 
@@ -92,7 +93,6 @@ public:
 };
 
 }
-
-
+}
 
 #include "../../src/SmartPtr/UniquePtr.tpp"

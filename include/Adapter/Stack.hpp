@@ -4,9 +4,10 @@
 
 
 
-namespace tmn_adapter {
+namespace tmn {
+namespace adapter {
 
-template< typename T, class Container = tmn_sequence::ArraySequence<T>>
+template< typename T, class Container = tmn::sequence::ArraySequence<T>>
 class Stack {
 private:
 	Container container;
@@ -45,7 +46,7 @@ public:
 };
 
 }
-
+}
 
 
 #include "../../src/Adapter/Stack.tpp"

@@ -1,7 +1,8 @@
 #include "../../include/Sequence/ListSequence.hpp"
 #include "../../include/Exceptions/LogicException.hpp"
 
-namespace tmn_sequence{
+namespace tmn {
+namespace sequence {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Iterator implementation :
@@ -229,7 +230,7 @@ ListSequence<T, Allocator>& ListSequence<T, Allocator>::pop_front() {
         --_size;
     }
     else{
-        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+        throw tmn::LogicException("Attempt to delete from an empty list sequence");
     }
     return *this; 
 }
@@ -244,7 +245,7 @@ ListSequence<T, Allocator>& ListSequence<T, Allocator>::pop_back() {
         --_size;
     }
     else{
-        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+        throw tmn::LogicException("Attempt to delete from an empty list sequence");
     }
     return *this; 
 }
@@ -256,7 +257,7 @@ ListSequence<T, Allocator>& ListSequence<T, Allocator>::pop_back() {
 template <typename T, class Allocator>
 const T& ListSequence<T, Allocator>::front() const {
     if (_size == 0){
-        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+        throw tmn::LogicException("Attempt to delete from an empty list sequence");
     }
     return dummy_node->next->value;
 }
@@ -264,7 +265,7 @@ const T& ListSequence<T, Allocator>::front() const {
 template <typename T, class Allocator>
 T& ListSequence<T, Allocator>::front() {
     if (_size == 0){
-        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+        throw tmn::LogicException("Attempt to delete from an empty list sequence");
     }
     return dummy_node->next->value;
 }
@@ -272,7 +273,7 @@ T& ListSequence<T, Allocator>::front() {
 template <typename T, class Allocator>
 const T& ListSequence<T, Allocator>::back() const {
     if (_size == 0){
-        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+        throw tmn::LogicException("Attempt to delete from an empty list sequence");
     }
     return dummy_node->prev->value;
 }
@@ -280,7 +281,7 @@ const T& ListSequence<T, Allocator>::back() const {
 template <typename T, class Allocator>
 T& ListSequence<T, Allocator>::back() {
     if (_size == 0){
-        throw tmn_exception::LogicException("Attempt to delete from an empty list sequence");
+        throw tmn::LogicException("Attempt to delete from an empty list sequence");
     }
     return dummy_node->prev->value;
 }
@@ -288,7 +289,7 @@ T& ListSequence<T, Allocator>::back() {
 template <typename T, class Allocator>
 ListSequence<T, Allocator>& ListSequence<T, Allocator>::set(std::size_t index, const T& item) {
     if (index >= _size) {
-        throw tmn_exception::LogicException("Accessing an element by out of range index in list sequence");
+        throw tmn::LogicException("Accessing an element by out of range index in list sequence");
     }
 
     Node* current = dummy_node->next;
@@ -303,7 +304,7 @@ ListSequence<T, Allocator>& ListSequence<T, Allocator>::set(std::size_t index, c
 template <typename T, class Allocator>
 T& ListSequence<T, Allocator>::get(std::size_t index) {
     if (index >= _size) {
-        throw tmn_exception::LogicException("Accessing an element by out of range index in list sequence");
+        throw tmn::LogicException("Accessing an element by out of range index in list sequence");
     }
 
     Node* current = dummy_node->next;
@@ -316,7 +317,7 @@ T& ListSequence<T, Allocator>::get(std::size_t index) {
 template <typename T, class Allocator>
 const T& ListSequence<T, Allocator>::get(std::size_t index) const {
     if (index >= _size) {
-        throw tmn_exception::LogicException("Accessing an element by out of range index in list sequence");
+        throw tmn::LogicException("Accessing an element by out of range index in list sequence");
     }
     
     Node* current = dummy_node->next;
@@ -370,15 +371,15 @@ typename ListSequence<T, Allocator>::const_iterator ListSequence<T, Allocator>::
 }
 
 template <typename T, class Allocator>
-typename tmn_iterator::reverse_iterator<typename ListSequence<T, Allocator>::iterator> ListSequence<T, Allocator>::rbegin() noexcept {
+typename tmn::reverse_iterator<typename ListSequence<T, Allocator>::iterator> ListSequence<T, Allocator>::rbegin() noexcept {
     iterator iter(dummy_node);
-    return tmn_iterator::reverse_iterator<iterator>(iter);
+    return tmn::reverse_iterator<iterator>(iter);
 }
 
 template <typename T, class Allocator>
-typename tmn_iterator::reverse_iterator<typename ListSequence<T, Allocator>::iterator> ListSequence<T, Allocator>::rend() noexcept {
+typename tmn::reverse_iterator<typename ListSequence<T, Allocator>::iterator> ListSequence<T, Allocator>::rend() noexcept {
     iterator iter(dummy_node->next);
-    return tmn_iterator::reverse_iterator<iterator>(iter);   
+    return tmn::reverse_iterator<iterator>(iter);   
 }
 
 template <typename T, class Allocator>
@@ -420,7 +421,7 @@ typename ListSequence<T, Allocator>::iterator ListSequence<T, Allocator>::insert
 template <typename T, class Allocator>
 typename ListSequence<T, Allocator>::iterator ListSequence<T, Allocator>::erase(iterator pos) {
     if (pos == end()) {
-        throw tmn_exception::LogicException("Accessing an element by out of range index in list sequence");
+        throw tmn::LogicException("Accessing an element by out of range index in list sequence");
     }
     
     Node* node_to_delete = pos.ptr;
@@ -445,4 +446,5 @@ void ListSequence<T, Allocator>::merge(ListSequence<T, Allocator>& other) {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
+}
 }

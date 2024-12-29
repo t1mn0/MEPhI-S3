@@ -2,7 +2,8 @@
 
 
 
-namespace tmn_adapter{
+namespace tmn {
+namespace adapter {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Constructors & assignment & conversion :
@@ -70,4 +71,5 @@ T Stack<T, Container>::top() {
     return container.back();
 }
 
+}
 }

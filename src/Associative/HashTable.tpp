@@ -6,7 +6,8 @@
 
 
 
-namespace tmn_associative {
+namespace tmn {
+namespace associative {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Node implementation :
@@ -449,7 +450,7 @@ const Value& HashTable<Key, Value>::operator[](const Key& key) const {
         }
     }
 
-    throw tmn_exception::LogicException("Element with stated key in the table is missing [const HashTable<Key, Value>::operator[]]");
+    throw tmn::LogicException("Element with stated key in the table is missing [const HashTable<Key, Value>::operator[]]");
 }
 
 template <class Key, class Value>
@@ -495,8 +496,8 @@ bool HashTable<Key, Value>::contains(const Key& key) const {
 }
 
 template <class Key, class Value>
-tmn_sequence::ArraySequence<Key> HashTable<Key, Value>::keys() const {
-    tmn_sequence::ArraySequence<Key> keys;
+tmn::sequence::ArraySequence<Key> HashTable<Key, Value>::keys() const {
+    tmn::sequence::ArraySequence<Key> keys;
 
     Node* current = _head;
     while (current) {
@@ -508,8 +509,8 @@ tmn_sequence::ArraySequence<Key> HashTable<Key, Value>::keys() const {
 }
 
 template <class Key, class Value>
-tmn_sequence::ArraySequence<Value> HashTable<Key, Value>::values() const {
-    tmn_sequence::ArraySequence<Value> values;
+tmn::sequence::ArraySequence<Value> HashTable<Key, Value>::values() const {
+    tmn::sequence::ArraySequence<Value> values;
 
     Node* current = _head;
     while (current) {
@@ -620,4 +621,5 @@ std::size_t HashTable<Key, Value>::bucket_size(std::size_t index) const {
     return res;
 }
 
+}
 }

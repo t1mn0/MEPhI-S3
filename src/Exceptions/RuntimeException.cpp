@@ -1,8 +1,7 @@
 #include "../../include/Exceptions/RuntimeException.hpp"
 
-
-
-namespace tmn_exception{
+namespace tmn {
+namespace exception {
 
 RuntimeException::RuntimeException() noexcept = default;
 RuntimeException::RuntimeException(const Exception& other) noexcept: what_arg(other.what()) {}
@@ -11,4 +10,5 @@ RuntimeException::RuntimeException(const char* what_arg) noexcept: what_arg(what
 
 std::string RuntimeException::what() const noexcept { return what_arg; }
 
+}
 }

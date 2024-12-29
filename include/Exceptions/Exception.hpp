@@ -4,7 +4,8 @@
 
 
 
-namespace tmn_exception {
+namespace tmn {
+namespace exception {
 
 class Exception{
 private:
@@ -19,4 +20,5 @@ public:
     std::string what() const noexcept;
 };
 
+}
 }

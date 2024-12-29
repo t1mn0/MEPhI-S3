@@ -2,7 +2,7 @@
 
 #include "SingleWeightGraph.hpp"
 
-namespace tmn_graph {
+namespace tmn {
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 struct Graph<is_oriented, VertexId, VertexType, Weight>::Edge{

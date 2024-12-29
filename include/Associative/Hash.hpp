@@ -7,7 +7,8 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // h: T (fixed set) -> uint32_t (0 - 4 294 967 295)
 
-namespace tmn_hash {
+namespace tmn {
+namespace hash {
 
 template <typename T>
 unsigned int Hash(const T& value) {
@@ -71,4 +72,5 @@ unsigned int inline Hash<double>(const double& value) {
     return static_cast<unsigned int>(temp);
 }
 
+}
 }

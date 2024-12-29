@@ -9,7 +9,7 @@
 // TEST Constructors & assignment :
 
 TEST(HashSetTest, DefaultConstructor) {
-    tmn_associative::HashSet<int> hset;
+    tmn::associative::HashSet<int> hset;
     ASSERT_EQ(hset.size(), 0);
     ASSERT_EQ(hset.buffer_size(), 32);
     ASSERT_EQ(hset.load_factor(), 0);
@@ -17,13 +17,13 @@ TEST(HashSetTest, DefaultConstructor) {
 }
 
 TEST(HashSetTest, CopyConstructor) {
-    tmn_associative::HashSet<int> hset1;
+    tmn::associative::HashSet<int> hset1;
 
     for (std::size_t i = 0; i < 26; ++i){
         hset1.insert(-(i * 101));
     }
 
-    tmn_associative::HashSet<int> hset2(hset1);
+    tmn::associative::HashSet<int> hset2(hset1);
 
     ASSERT_EQ(hset1.size(), 26);
     ASSERT_EQ(hset2.size(), 26);
@@ -32,13 +32,13 @@ TEST(HashSetTest, CopyConstructor) {
 }
 
 TEST(HashSetTest, MoveConstructor) {
-    tmn_associative::HashSet<int> hset1;
+    tmn::associative::HashSet<int> hset1;
 
     for (std::size_t i = 0; i < 26; ++i){
         hset1.insert(-(i * 101));
     }
 
-    tmn_associative::HashSet<int> hset2(std::move(hset1));
+    tmn::associative::HashSet<int> hset2(std::move(hset1));
 
     ASSERT_EQ(hset1.size(), 0);
     ASSERT_EQ(hset2.size(), 26);
@@ -47,15 +47,15 @@ TEST(HashSetTest, MoveConstructor) {
 }
 
 TEST(HashSetTest, InitializerListConstructor) {
-    tmn_associative::HashSet<char> hset = {'a', 'a', 'c', 'b', 'b', 'd', 'c', 'b'};
+    tmn::associative::HashSet<char> hset = {'a', 'a', 'c', 'b', 'b', 'd', 'c', 'b'};
 
     ASSERT_EQ(hset.size(), 4);
     ASSERT_EQ(hset.buffer_size(), 32);
 }
 
 TEST(HashSetTest, Swap) {
-    tmn_associative::HashSet<char> hset1;
-    tmn_associative::HashSet<char> hset2;
+    tmn::associative::HashSet<char> hset1;
+    tmn::associative::HashSet<char> hset2;
 
     for (std::size_t i = 0; i < 26; ++i){
         hset1.insert(char(97 + i));
@@ -80,8 +80,8 @@ TEST(HashSetTest, Swap) {
 }
 
 TEST(HashSetTest, CopyAssignment) {
-    tmn_associative::HashSet<char> hset1;
-    tmn_associative::HashSet<char> hset2;
+    tmn::associative::HashSet<char> hset1;
+    tmn::associative::HashSet<char> hset2;
 
     for (std::size_t i = 0; i < 26; ++i){
         hset1.insert(char(97 + i));
@@ -102,8 +102,8 @@ TEST(HashSetTest, CopyAssignment) {
 }
 
 TEST(HashSetTest, MoveAssignment) {
-    tmn_associative::HashSet<char> hset1;
-    tmn_associative::HashSet<char> hset2;
+    tmn::associative::HashSet<char> hset1;
+    tmn::associative::HashSet<char> hset2;
 
     for (std::size_t i = 0; i < 26; ++i){
         hset1.insert(char(97 + i));
@@ -120,7 +120,7 @@ TEST(HashSetTest, MoveAssignment) {
 }
 
 TEST(HashSetTest, GetFields) {
-    tmn_associative::HashSet<int> hset;
+    tmn::associative::HashSet<int> hset;
 
     for (std::size_t i = 0; i < 123; ++i){
         hset.insert(i);
@@ -135,7 +135,7 @@ TEST(HashSetTest, GetFields) {
 }
 
 TEST(HashSetTest, Insert) {
-    tmn_associative::HashSet<int> hset;
+    tmn::associative::HashSet<int> hset;
     for (std::size_t i = 1; i < 11; ++i){
         int k = i * i * i; 
         hset.insert(k);
@@ -151,7 +151,7 @@ TEST(HashSetTest, Insert) {
 }
 
 TEST(HashSetTest, Insert512) {
-    tmn_associative::HashSet<float> hset;
+    tmn::associative::HashSet<float> hset;
     for (std::size_t i = 0; i < 512; ++i){
         hset.insert(static_cast<float>(i) / 100);
     }
@@ -168,7 +168,7 @@ TEST(HashSetTest, Insert512) {
 }
 
 TEST(HashSetTest, EraseRvalue) {
-    tmn_associative::HashSet<char> hset;
+    tmn::associative::HashSet<char> hset;
     for (std::size_t i = 0; i < 26; ++i){
         char c = char(65 + i); 
         hset.insert(c);
@@ -184,7 +184,7 @@ TEST(HashSetTest, EraseRvalue) {
 }
 
 TEST(HashSetTest, Clear) {
-    tmn_associative::HashSet<char> hset = {'Q', 'W', 'E', 'R', 'T', 'Y' };
+    tmn::associative::HashSet<char> hset = {'Q', 'W', 'E', 'R', 'T', 'Y' };
 
     ASSERT_EQ(hset.size(), 6);
     ASSERT_EQ(hset.buffer_size(), 32);
@@ -194,7 +194,7 @@ TEST(HashSetTest, Clear) {
 }
 
 TEST(HashSetTest, Contains) {
-    tmn_associative::HashSet<char> hset = {'Q', 'W', 'E', 'R', 'T', 'Y' };
+    tmn::associative::HashSet<char> hset = {'Q', 'W', 'E', 'R', 'T', 'Y' };
     
     ASSERT_FALSE(hset.contains('A'));
     ASSERT_FALSE(hset.contains('@'));
@@ -205,9 +205,9 @@ TEST(HashSetTest, Contains) {
 }
 
 TEST(HashSetTest, ToSequence) {
-    tmn_associative::HashSet<char> hset = {'Q', 'W', 'E', 'R', 'T', 'Y',  '&', 'D', 'V', 'O', 'R', 'A', 'K'};
+    tmn::associative::HashSet<char> hset = {'Q', 'W', 'E', 'R', 'T', 'Y',  '&', 'D', 'V', 'O', 'R', 'A', 'K'};
 
-    tmn_sequence::ArraySequence<char> elements = hset.to_sequence();
+    tmn::sequence::ArraySequence<char> elements = hset.to_sequence();
     ASSERT_EQ(elements.size(), 12);
     
     std::cout << "\nELEMENTS:\n";
@@ -218,7 +218,7 @@ TEST(HashSetTest, ToSequence) {
 }
 
 TEST(HashSetTest, Reserve) {
-    tmn_associative::HashSet<int> hset;
+    tmn::associative::HashSet<int> hset;
     for (std::size_t i = 0; i < 10; ++i){
         hset.insert(50 + i);
     }

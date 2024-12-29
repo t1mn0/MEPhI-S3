@@ -1,9 +1,8 @@
 #include "../../include/Sequence/Array.hpp"
 #include "../../include/Exceptions/LogicException.hpp"
 
-
-
-namespace tmn_sequence{
+namespace tmn {
+namespace sequence {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Iterator implementation :
@@ -284,7 +283,7 @@ T& Array<T, N>::back() {
 template <typename T, std::size_t N>
 Array<T, N>& Array<T, N>::set(std::size_t index, const T& item) {
     if (index >= N) {
-        throw tmn_exception::LogicException("Accessing an element by out of range index in array sequence");
+        throw tmn::exception::LogicException("Accessing an element by out of range index in array sequence");
     }
     array[index] = item;
     return *this;
@@ -293,7 +292,7 @@ Array<T, N>& Array<T, N>::set(std::size_t index, const T& item) {
 template <typename T, std::size_t N>
 T& Array<T, N>::get(std::size_t index) {
     if (index >= N) {
-        throw tmn_exception::LogicException("Accessing an element by out of range index in array sequence");
+        throw tmn::exception::LogicException("Accessing an element by out of range index in array sequence");
     }
 
     return array[index];
@@ -302,7 +301,7 @@ T& Array<T, N>::get(std::size_t index) {
 template <typename T, std::size_t N>
 const T& Array<T, N>::get(std::size_t index) const {
     if (index >= N) {
-        throw tmn_exception::LogicException("Accessing an element by out of range index in array sequence");
+        throw tmn::exception::LogicException("Accessing an element by out of range index in array sequence");
     }
     
     return array[index];
@@ -363,4 +362,5 @@ typename Array<T, N>::const_iterator Array<T, N>::cend() const noexcept {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
+}
 }

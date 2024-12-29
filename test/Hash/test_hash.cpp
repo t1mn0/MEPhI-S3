@@ -25,7 +25,7 @@ void hash_string_test() {
     std::map<std::size_t, int> hash_collisions;
 
     for (const auto& str : test_strings) {
-        std::size_t hash_val = tmn_hash::Hash(str);
+        std::size_t hash_val = tmn::hash::Hash(str);
         ++hash_collisions[hash_val];
     }
 
@@ -53,7 +53,7 @@ void hash_test_int() {
     //int i = 0;
     std::map<size_t, int> hash_collisions;
     for (const auto& val : test_values) {
-        size_t hash_val = tmn_hash::Hash(val);
+        size_t hash_val = tmn::hash::Hash(val);
         ++hash_collisions[hash_val];
         
         // std::cout << i <<") meow!~ " << hash_val << std::endl;
@@ -83,7 +83,7 @@ void hash_test_long() {
 
     std::map<size_t, int> hash_collisions;
     for (const auto& val : test_values) {
-        size_t hash_val = tmn_hash::Hash(val);
+        size_t hash_val = tmn::hash::Hash(val);
         ++hash_collisions[hash_val];
     }
 
@@ -111,7 +111,7 @@ void hash_test_ulong() {
 
     std::map<size_t, int> hash_collisions;
     for (const auto& val : test_values) {
-        size_t hash_val = tmn_hash::Hash(val);
+        size_t hash_val = tmn::hash::Hash(val);
         ++hash_collisions[hash_val];
     }
 
@@ -140,7 +140,7 @@ void hash_test_double() {
 
     std::map<size_t, int> hash_collisions;
     for (const auto& val : test_values) {
-        size_t hash_val = tmn_hash::Hash(val);
+        size_t hash_val = tmn::hash::Hash(val);
         ++hash_collisions[hash_val];
     }
 
@@ -167,7 +167,7 @@ void hash_test_short() {
 
     std::map<size_t, int> hash_collisions;
     for (const auto& val : test_values) {
-        size_t hash_val = tmn_hash::Hash(val);
+        size_t hash_val = tmn::hash::Hash(val);
         ++hash_collisions[hash_val];
     }
 
@@ -195,7 +195,7 @@ void hash_test_char() {
 
     std::map<size_t, int> hash_collisions;
     for (const auto& val : test_values) {
-        size_t hash_val = tmn_hash::Hash(val);
+        size_t hash_val = tmn::hash::Hash(val);
         ++hash_collisions[hash_val];
     }
 
@@ -223,7 +223,7 @@ void hash_test_float() {
 
     std::map<size_t, int> hash_collisions;
     for (const auto& val : test_values) {
-        size_t hash_val = tmn_hash::Hash(val);
+        size_t hash_val = tmn::hash::Hash(val);
         ++hash_collisions[hash_val];
     }
 

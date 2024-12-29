@@ -9,7 +9,8 @@
 
 
 
-namespace tmn_sequence{
+namespace tmn {
+namespace sequence {
 
 template <typename T, std::size_t N>
 class Array{
@@ -21,7 +22,7 @@ private:
     public:
         using conditional_ptr = tmn::conditional_t<isConst, const T*, T*>;
         using conditional_ref = tmn::conditional_t<isConst, const T&, T&>;
-        using iterator_category	= tmn_iterator::contiguous_iterator_tag;
+        using iterator_category	= tmn::iterator::contiguous_iterator_tag;
         using value_type = T;
         using difference_type = std::size_t;
         using pointer = T*;
@@ -69,8 +70,8 @@ public:
     using size_type = std::size_t;
     using iterator = common_iterator<false>;
     using const_iterator = common_iterator<true>;
-    using reverse_iterator = tmn_iterator::reverse_iterator<iterator>;
-    using const_reverse_iterator = tmn_iterator::reverse_iterator<const_iterator>;
+    using reverse_iterator = tmn::iterator::reverse_iterator<iterator>;
+    using const_reverse_iterator = tmn::iterator::reverse_iterator<const_iterator>;
 
     // Constructors & assignment & conversion :
     Array();
@@ -112,6 +113,7 @@ public:
 
 };
 
+}
 }
 
 

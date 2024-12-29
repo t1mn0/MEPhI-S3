@@ -2,7 +2,7 @@
 
 #include "MultiWeightGraph.hpp"
 
-namespace tmn_graph {
+namespace tmn {
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename ResultWeight, typename ... WeightTypes>
 struct Graph<is_oriented, VertexId, VertexType, ResultWeight, WeightTypes...>::Edge{

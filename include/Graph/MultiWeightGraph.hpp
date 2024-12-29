@@ -10,12 +10,11 @@
 #include <type_traits>
 #include <concepts>
 
-namespace tmn_graph {
+namespace tmn {
+namespace graph {
 
-using namespace tmn_associative;
-using namespace tmn_sequence;
-using namespace tmn_smart_ptr;
-using namespace tmn_tuple;
+using namespace tmn::sequence;
+using namespace tmn::associative;
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename ResultWeight, typename ... WeightTypes>
 class Graph {
@@ -67,6 +66,7 @@ public:
     Graph kruskal_algorithm() const; // Spanning tree search
 };
 
+}
 }
 
 #include "MultiWeightGraphEdge.hpp"

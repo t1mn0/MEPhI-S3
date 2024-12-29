@@ -33,7 +33,7 @@ TEST(LoadTestSUniquePtr, Сreation100000){
         delete tester1;
 
         auto start_for_uniqueptr = std::chrono::high_resolution_clock::now();
-        tmn_smart_ptr::UniquePtr<std::string> tester2 = tmn_smart_ptr::make_unique<std::string>("string");
+        tmn::smart_ptr::UniquePtr<std::string> tester2 = tmn::smart_ptr::make_unique<std::string>("string");
         auto end_for_uniqueptr = std::chrono::high_resolution_clock::now();
         auto elapsed_for_uniqueptr = std::chrono::duration_cast<std::chrono::nanoseconds>(end_for_uniqueptr - start_for_uniqueptr);
         start_point_2 += elapsed_for_uniqueptr.count();

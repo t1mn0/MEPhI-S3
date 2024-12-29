@@ -6,7 +6,7 @@
 #include "SingleWeightGraph.hpp"
 #include "../Associative/HashSet.hpp"
 
-namespace tmn_graph {
+namespace tmn {
 
 template <bool is_oriented, typename VertexId, typename VertexType>
 class Graph<is_oriented, VertexId, VertexType, void> {
@@ -15,7 +15,7 @@ private:
     using ConnectedVerticesList = HashSet<VertexId>;
     using TwoConnectedVertices = tmn::Pair<VertexId, VertexId>;
     using GraphPath = ListSequence<VertexId>;
-    using IntMatrix = tmn_sequence::ArraySequence<tmn_sequence::ArraySequence<int>>;
+    using IntMatrix = tmn::sequence::ArraySequence<tmn::sequence::ArraySequence<int>>;
 
     HashTable<VertexId, ConnectedVerticesList> adjacency_list;
     HashTable<VertexId, VertexType> resources;

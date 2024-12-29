@@ -3,10 +3,10 @@
 
 #include "../../include/Sequence/ArraySequence.hpp"
 
-using Matrix = tmn_sequence::ArraySequence<tmn_sequence::ArraySequence<int>>;
+using Matrix = tmn::sequence::ArraySequence<tmn::sequence::ArraySequence<int>>;
 
 template <typename VertexId>
-void pretty_print_matrix(int num, const std::string& test_name, const Matrix& matrix, const tmn_sequence::ArraySequence<VertexId>& seq){
+void pretty_print_matrix(int num, const std::string& test_name, const Matrix& matrix, const tmn::sequence::ArraySequence<VertexId>& seq){
     std::cout << "["+ test_name + "] --- Graph" + std::to_string(num) + " ---" << std::endl << "   ";
     
     for (auto& id : seq) {

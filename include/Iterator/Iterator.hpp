@@ -1,6 +1,7 @@
 #pragma once
 
-namespace tmn_iterator {
+namespace tmn {
+namespace iterator {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -48,6 +49,7 @@ class reverse_iterator;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+}
 }
 
 #include "../../src/Iterator/Iterator.tpp"

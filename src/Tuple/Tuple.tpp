@@ -2,7 +2,7 @@
 
 #include <utility> // std::move
 
-namespace tmn_tuple {
+namespace tmn {
 
 template <typename Type>
 Tuple<Type>::Tuple(const Tuple<Type>& other) : head(other.head) { }

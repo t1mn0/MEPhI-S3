@@ -12,7 +12,8 @@
 
 
 
-namespace tmn_associative {
+namespace tmn {
+namespace associative {
 
 template <class Key>
 class HashSet {
@@ -33,7 +34,7 @@ private:
     public:
         using layer_ptr = const Node*;
 
-        using iterator_category	= tmn_iterator::forward_iterator_tag;
+        using iterator_category	= tmn::forward_iterator_tag;
         using value_type = const Key;
         using const_pointer = const Key*;
         using const_reference = const Key&;
@@ -108,7 +109,7 @@ public:
     // Element access methods :
     bool contains(const Key& key) const noexcept;
 
-    tmn_sequence::ArraySequence<Key> to_sequence() const;
+    tmn::sequence::ArraySequence<Key> to_sequence() const;
 
     // Iterator methods :
     const_iterator begin() const noexcept;
@@ -119,6 +120,7 @@ public:
 	void reserve(std::size_t new_buffer_size);
 };
 
+}
 }
 
 #include "../../src/Associative/HashSet.tpp"

@@ -4,7 +4,8 @@
 
 
 
-namespace tmn_exception {
+namespace tmn {
+namespace exception {
 
 class AllocException : public Exception::Exception {
 private:
@@ -18,4 +19,5 @@ public:
     std::string what() const noexcept;
 };
 
+}
 }

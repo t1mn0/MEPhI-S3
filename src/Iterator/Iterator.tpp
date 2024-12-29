@@ -1,6 +1,7 @@
 #include "../../include/Iterator/Iterator.hpp"
 
-namespace tmn_iterator {
+namespace tmn {
+namespace iterator {    
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -134,4 +135,5 @@ public:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+}
 }

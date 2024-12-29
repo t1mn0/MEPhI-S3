@@ -3,7 +3,8 @@
 
 
 
-namespace tmn_smart_ptr {
+namespace tmn {
+namespace smart_ptr {
 
 //                                      GENERAL REALIZATION :
 
@@ -186,7 +187,7 @@ UniquePtr<T> make_unique(Args&&... args) {
 template <typename T>
 UniquePtr<T> make_unique(std::size_t size) {
     if (size == 0){
-        throw tmn_exception::Exception("Bad size argument");
+        throw tmn::exception::Exception("Bad size argument");
     }
     T* ptr = new T[size];
     return UniquePtr<T[], std::default_delete<T[]>()>(ptr);
@@ -194,4 +195,5 @@ UniquePtr<T> make_unique(std::size_t size) {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
+}
 }

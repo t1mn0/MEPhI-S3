@@ -6,7 +6,8 @@
 
 
 
-namespace tmn_smart_ptr {
+namespace tmn {
+namespace smart_ptr {
 
 template <typename T>
 class SharedPtr {
@@ -43,7 +44,6 @@ public:
 };
 
 }
-
-
+}
 
 #include "../../src/SmartPtr/SharedPtr.tpp"

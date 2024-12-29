@@ -13,7 +13,8 @@
 
 
 
-namespace tmn_associative {
+namespace tmn {
+namespace associative {    
 
 template <class Key, class Value>
 class HashTable {
@@ -37,7 +38,7 @@ private:
         using conditional_ptr = tmn::conditional_t<isConst, const tmn::Pair<const Key, Value>*, tmn::Pair<const Key, Value>*>;
         using conditional_ref = tmn::conditional_t<isConst, const tmn::Pair<const Key, Value>&, tmn::Pair<const Key, Value>&>;
         
-        using iterator_category	= tmn_iterator::forward_iterator_tag;
+        using iterator_category	= tmn::forward_iterator_tag;
         using value_type = tmn::Pair<const Key, Value>;
         using pointer = tmn::Pair<const Key, Value>*;
         using const_pointer = const tmn::Pair<const Key, Value>*;
@@ -127,8 +128,8 @@ public:
 
     bool contains(const Key& key) const;
 
-    tmn_sequence::ArraySequence<Key> keys() const;
-    tmn_sequence::ArraySequence<Value> values() const;
+    tmn::sequence::ArraySequence<Key> keys() const;
+    tmn::sequence::ArraySequence<Value> values() const;
 
     // Iterator methods :
     iterator begin() noexcept;
@@ -146,6 +147,7 @@ public:
     std::size_t bucket_size(std::size_t index) const;
 };
 
+}
 }
 
 #include "../../src/Associative/HashTable.tpp"

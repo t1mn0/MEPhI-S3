@@ -3,7 +3,8 @@
 
 #include "../../include/Associative/HashSet.hpp"
 
-namespace tmn_associative {
+namespace tmn {
+namespace associative {
 
 // Node implementation :
 template <class Key>
@@ -192,7 +193,7 @@ HashSet<Key>& HashSet<Key>::insert(const Key& value){
         rehash(_buffer_size + 1);
     }
 
-    std::size_t hash_index = tmn_hash::Hash(value);
+    std::size_t hash_index = tmn::hash::Hash(value);
     
     Node* new_node = allocator_traits_node::allocate(_alloc_node, 1);
     allocator_traits_node::construct(_alloc_node, new_node, value, hash_index);
@@ -235,7 +236,7 @@ HashSet<Key>& HashSet<Key>::insert(Key&& value) {
         rehash(_buffer_size + 1);
     }
 
-    std::size_t hash_index = tmn_hash::Hash(value);
+    std::size_t hash_index = tmn::hash::Hash(value);
     
     Node* new_node = allocator_traits_node::allocate(_alloc_node, 1);
     allocator_traits_node::construct(_alloc_node, new_node, value, hash_index);
@@ -295,7 +296,7 @@ void HashSet<Key>::erase_node(Node* to_remove) {
 
 template <class Key>
 bool HashSet<Key>::erase(const Key& key){
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+    std::size_t hash_index = tmn::hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
         if (_storage[hash_index]->value == key){
@@ -320,7 +321,7 @@ bool HashSet<Key>::erase(const Key& key){
 
 template <class Key>
 bool HashSet<Key>::erase(Key&& key){
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+    std::size_t hash_index = tmn::hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
         if (_storage[hash_index]->value == key){
@@ -356,7 +357,7 @@ HashSet<Key>& HashSet<Key>::clear() noexcept {
 
 template <class Key>
 bool HashSet<Key>::contains(const Key& key) const noexcept {
-    std::size_t hash = tmn_hash::Hash(key);
+    std::size_t hash = tmn::hash::Hash(key);
 
     if (_storage[hash % _buffer_size]){
         if (_storage[hash % _buffer_size]->value == key){
@@ -377,8 +378,8 @@ bool HashSet<Key>::contains(const Key& key) const noexcept {
 }
 
 template <class Key>
-tmn_sequence::ArraySequence<Key> HashSet<Key>::to_sequence() const {
-    tmn_sequence::ArraySequence<Key> keys;
+tmn::sequence::ArraySequence<Key> HashSet<Key>::to_sequence() const {
+    tmn::sequence::ArraySequence<Key> keys;
 
     Node* current = _head;
     while (current) {
@@ -463,4 +464,5 @@ void HashSet<Key>::reserve(std::size_t new_buffer_size) {
     _buffer_size = new_buffer_size;
 }
 
+}
 }

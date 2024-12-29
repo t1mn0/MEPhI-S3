@@ -4,7 +4,7 @@
 #include "../../include/Graph/Graph.hpp"
 #include "graph_test_utils.hpp"
 
-using namespace tmn_graph;
+using namespace tmn::graph;
 
 TEST(UnweightedGraphTest, DefaultConstructor) {
     Graph<true, char, char, void> graph;
@@ -232,7 +232,7 @@ TEST(UnweightedGraphTest, RemoveVertex) {
         graph.remove_vertex(10);
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
     ASSERT_EQ(graph.v_size(), 10);
@@ -260,7 +260,7 @@ TEST(UnweightedGraphTest, RemoveVertex) {
         graph.get_resource(4);
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
 }
@@ -317,7 +317,7 @@ TEST(UnweightedGraphTest, ChangeVertexId) {
         graph.change_vertex_id(11, 15);
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
 
@@ -325,7 +325,7 @@ TEST(UnweightedGraphTest, ChangeVertexId) {
         graph.change_vertex_id(1, 5);
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
 
@@ -353,7 +353,7 @@ TEST(UnweightedGraphTest, ChangeVertexResource) {
         graph.change_vertex_resource(11, "string 11-11");
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
 
@@ -394,7 +394,7 @@ TEST(UnweightedGraphTest, AddEdge) {
         graph1.add_edge('!', 'A');
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
 
@@ -402,7 +402,7 @@ TEST(UnweightedGraphTest, AddEdge) {
         graph1.add_edge('A', '!');
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
 
@@ -437,7 +437,7 @@ TEST(UnweightedGraphTest, AddEdge) {
         graph2.add_edge(12, 3);
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
 
@@ -445,7 +445,7 @@ TEST(UnweightedGraphTest, AddEdge) {
         graph2.add_edge(5, 11);
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
 
@@ -474,7 +474,7 @@ TEST(UnweightedGraphTest, RemoveEdge) {
         graph.remove_edge(12, 3);
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
 
@@ -482,7 +482,7 @@ TEST(UnweightedGraphTest, RemoveEdge) {
         graph.remove_edge(5, 11);
         ASSERT_FALSE(true);
     }
-    catch(tmn_exception::LogicException& e){
+    catch(tmn::exception::LogicException& e){
         std::cout << e.what() << std::endl;
     }
 

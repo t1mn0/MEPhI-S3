@@ -7,7 +7,7 @@
 
 
 TEST(HashTableTest, DefaultConstructor) {
-    tmn_associative::HashTable<char, int> htable;
+    tmn::associative::HashTable<char, int> htable;
     ASSERT_EQ(htable.size(), 0);
     ASSERT_EQ(htable.buffer_size(), 256);
     ASSERT_EQ(htable.load_factor(), 0);
@@ -15,14 +15,14 @@ TEST(HashTableTest, DefaultConstructor) {
 }
 
 TEST(HashTableTest, CopyConstructor) {
-    tmn_associative::HashTable<char, int> htable1;
+    tmn::associative::HashTable<char, int> htable1;
 
     for (std::size_t i = 0; i < 26; ++i){
         tmn::Pair<const char, int> pair(97 + i, 97 + i); 
         htable1.insert(pair);
     }
 
-    tmn_associative::HashTable<char, int> htable2(htable1);
+    tmn::associative::HashTable<char, int> htable2(htable1);
 
     ASSERT_EQ(htable1.size(), 26);
     ASSERT_EQ(htable2.size(), 26);
@@ -35,14 +35,14 @@ TEST(HashTableTest, CopyConstructor) {
 }
 
 TEST(HashTableTest, MoveConstructor) {
-    tmn_associative::HashTable<char, int> htable1;
+    tmn::associative::HashTable<char, int> htable1;
 
     for (std::size_t i = 0; i < 26; ++i){
         tmn::Pair<const char, int> pair(97 + i, 97 + i); 
         htable1.insert(pair);
     }
 
-    tmn_associative::HashTable<char, int> htable2(std::move(htable1));
+    tmn::associative::HashTable<char, int> htable2(std::move(htable1));
 
     ASSERT_EQ(htable1.size(), 0);
     ASSERT_EQ(htable1.buffer_size(), 0);
@@ -51,15 +51,15 @@ TEST(HashTableTest, MoveConstructor) {
 }
 
 TEST(HashTableTest, InitializerListConstructor) {
-    tmn_associative::HashTable<char, float> htable = {{'a', 78.2}, {'f', 3.1415}, {'Q', 2.43}, {'W', 2.45}, {'Z', 0.41}};
+    tmn::associative::HashTable<char, float> htable = {{'a', 78.2}, {'f', 3.1415}, {'Q', 2.43}, {'W', 2.45}, {'Z', 0.41}};
 
     ASSERT_EQ(htable.size(), 5);
     ASSERT_EQ(htable.buffer_size(), 256);
 }
 
 TEST(HashTableTest, Swap) {
-    tmn_associative::HashTable<char, int> htable1;
-    tmn_associative::HashTable<char, int> htable2;
+    tmn::associative::HashTable<char, int> htable1;
+    tmn::associative::HashTable<char, int> htable2;
 
     for (std::size_t i = 0; i < 26; ++i){
         htable1.insert({char(97 + i), int(97 + i)});
@@ -84,8 +84,8 @@ TEST(HashTableTest, Swap) {
 }
 
 TEST(HashTableTest, CopyAssignment) {
-    tmn_associative::HashTable<char, int> htable1;
-    tmn_associative::HashTable<char, int> htable2;
+    tmn::associative::HashTable<char, int> htable1;
+    tmn::associative::HashTable<char, int> htable2;
 
     for (std::size_t i = 0; i < 26; ++i){
         htable1.insert({char(97 + i), int(97 + i)});
@@ -106,8 +106,8 @@ TEST(HashTableTest, CopyAssignment) {
 }
 
 TEST(HashTableTest, MoveAssignment) {
-    tmn_associative::HashTable<char, int> htable1;
-    tmn_associative::HashTable<char, int> htable2;
+    tmn::associative::HashTable<char, int> htable1;
+    tmn::associative::HashTable<char, int> htable2;
 
     for (std::size_t i = 0; i < 26; ++i){
         htable1.insert({char(97 + i), int(97 + i)});
@@ -124,7 +124,7 @@ TEST(HashTableTest, MoveAssignment) {
 }
 
 TEST(HashTableTest, GetFields) {
-    tmn_associative::HashTable<char, int> htable;
+    tmn::associative::HashTable<char, int> htable;
 
     for (std::size_t i = 0; i < 123; ++i){
         htable.insert({char(48 + i), int(48 + i)});
@@ -139,7 +139,7 @@ TEST(HashTableTest, GetFields) {
 }
 
 TEST(HashTableTest, Insert) {
-    tmn_associative::HashTable<char, int> htable;
+    tmn::associative::HashTable<char, int> htable;
     for (std::size_t i = 0; i < 10; ++i){
         tmn::Pair<const char, int> pair(65 + i, i); 
         htable.insert(pair);
@@ -150,7 +150,7 @@ TEST(HashTableTest, Insert) {
 }
 
 TEST(HashTableTest, Insert624) {
-    tmn_associative::HashTable<int, int> htable;
+    tmn::associative::HashTable<int, int> htable;
     for (std::size_t i = 0; i < 624; ++i){
         tmn::Pair<const int, int> pair(i, i * 100); 
         htable.insert(pair);
@@ -162,7 +162,7 @@ TEST(HashTableTest, Insert624) {
 }
 
 TEST(HashTableTest, InsertRvalue) {
-    tmn_associative::HashTable<int, int> htable;
+    tmn::associative::HashTable<int, int> htable;
     for (std::size_t i = 0; i < 111; ++i){
         tmn::Pair<const int, int> pair(i, i * 10); 
         htable.insert(std::move(pair));
@@ -173,7 +173,7 @@ TEST(HashTableTest, InsertRvalue) {
 }
 
 TEST(HashTableTest, EraseRvalue) {
-    tmn_associative::HashTable<char, int> htable;
+    tmn::associative::HashTable<char, int> htable;
     for (std::size_t i = 0; i < 26; ++i){
         tmn::Pair<const char, int> pair(65 + i, 65 + i); 
         htable.insert(pair);
@@ -189,7 +189,7 @@ TEST(HashTableTest, EraseRvalue) {
 }
 
 TEST(HashTableTest, Clear) {
-    tmn_associative::HashTable<char, float> htable = {
+    tmn::associative::HashTable<char, float> htable = {
         {'Q', 144}, 
         {'W', 0.169}, 
         {'E', 0.00025}, 
@@ -206,7 +206,7 @@ TEST(HashTableTest, Clear) {
 }
 
 TEST(HashTableTest, ArrayOperator) {
-    tmn_associative::HashTable<char, std::size_t> htable = {
+    tmn::associative::HashTable<char, std::size_t> htable = {
         {'Q', 1}, 
         {'W', 4}, 
         {'E', 9}, 
@@ -233,7 +233,7 @@ TEST(HashTableTest, ArrayOperator) {
 }
 
 TEST(HashTableTest, GetByKey) {
-    tmn_associative::HashTable<char, std::size_t> htable = {
+    tmn::associative::HashTable<char, std::size_t> htable = {
         {'Q', 1}, 
         {'W', 4}, 
         {'E', 9}, 
@@ -250,7 +250,7 @@ TEST(HashTableTest, GetByKey) {
 }
 
 TEST(HashTableTest, Contains) {
-    tmn_associative::HashTable<char, int> htable;
+    tmn::associative::HashTable<char, int> htable;
 
     for (std::size_t i = 0; i < 26; ++i){
         tmn::Pair<const char, int> pair(97 + i, 97 + i); 
@@ -265,14 +265,14 @@ TEST(HashTableTest, Contains) {
 }
 
 TEST(HashTableTest, Keys) {
-    tmn_associative::HashTable<char, int> htable;
+    tmn::associative::HashTable<char, int> htable;
 
     for (std::size_t i = 0; i < 26; ++i){
         tmn::Pair<const char, int> pair(97 + i, 97 + i); 
         htable.insert(pair);
     }
     
-    tmn_sequence::ArraySequence<char> keys = htable.keys();
+    tmn::sequence::ArraySequence<char> keys = htable.keys();
     ASSERT_EQ(keys.size(), 26);
     
     std::cout << "\nKEYS:\n";
@@ -283,14 +283,14 @@ TEST(HashTableTest, Keys) {
 }
 
 TEST(HashTableTest, Values) {
-    tmn_associative::HashTable<char, int> htable;
+    tmn::associative::HashTable<char, int> htable;
 
     for (std::size_t i = 0; i < 26; ++i){
         tmn::Pair<const char, int> pair(97 + i, (97 + i) * 10); 
         htable.insert(pair);
     }
     
-    tmn_sequence::ArraySequence<int> values = htable.values();
+    tmn::sequence::ArraySequence<int> values = htable.values();
     ASSERT_EQ(values.size(), 26);
 
     std::cout << "\nVALUES:\n";
@@ -301,7 +301,7 @@ TEST(HashTableTest, Values) {
 }
 
 TEST(HashTableTest, Reserve) {
-    tmn_associative::HashTable<char, int> htable;
+    tmn::associative::HashTable<char, int> htable;
     for (std::size_t i = 0; i < 10; ++i){
         tmn::Pair<const char, int> pair(48 + i, i); 
         htable.insert(pair);

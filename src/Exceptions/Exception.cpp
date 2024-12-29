@@ -1,8 +1,7 @@
 #include "../../include/Exceptions/Exception.hpp"
 
-
-
-namespace tmn_exception{
+namespace tmn{
+namespace exception {
 
 Exception::Exception() noexcept = default;
 Exception::Exception(const Exception& other) noexcept: what_arg(other.what_arg) {}
@@ -12,4 +11,5 @@ Exception::~Exception() = default;
 
 std::string Exception::what() const noexcept { return what_arg; }
 
+}
 }

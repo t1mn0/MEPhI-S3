@@ -116,7 +116,7 @@ public:
 template <typename T>
 T& any_cast(any& a){
     auto* p = dynamic_cast<any::Derived<std::remove_reference_t<T>>>(a.ptr);
-    if (!p) throw tmn_exception::Exception("Bad any cast");
+    if (!p) throw tmn::Exception("Bad any cast");
     return p->value;
 }
 

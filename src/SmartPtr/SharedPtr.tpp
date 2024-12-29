@@ -5,7 +5,8 @@
 
 
 
-namespace tmn_smart_ptr {
+namespace tmn {
+namespace smart_ptr {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Constructors & assignment & conversion & destructors :
@@ -150,4 +151,5 @@ bool SharedPtr<T>::unique() const noexcept {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+}
 }

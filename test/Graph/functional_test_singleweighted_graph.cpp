@@ -4,7 +4,7 @@
 #include "../../include/Graph/Graph.hpp"
 #include "graph_test_utils.hpp"
 
-using namespace tmn_graph;
+using namespace tmn::graph;
 
 TEST(SingleWeightedGraphTest, DefaultConstructor) {
     Graph<true, char, char, complex_num> graph;
@@ -13,7 +13,7 @@ TEST(SingleWeightedGraphTest, DefaultConstructor) {
 
 TEST(SingleWeightedGraphTest, ArraySeqConstructor) {
         
-    tmn_sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, complex_num>> seq = { 
+    tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, complex_num>> seq = { 
         { {'A', 'B'}, complex_num(0, 1) }, // abs = 1
         { {'A', 'C'}, complex_num(2, 2) }, // abs = sqrt(8)
         { {'A', 'D'}, complex_num(5, 12) }, // abs = 13
@@ -37,8 +37,7 @@ TEST(SingleWeightedGraphTest, ArraySeqConstructor) {
 }
 
 TEST(SingleWeightedGraphTest, CopyConstructor) {
-    
-    tmn_sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
+    tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
         { {'A', 'B'}, 256 }, 
         { {'A', 'C'}, 512 },
         { {'A', 'D'}, 1024 },
@@ -65,7 +64,7 @@ TEST(SingleWeightedGraphTest, CopyConstructor) {
 }
 
 TEST(SingleWeightedGraphTest, MoveConstructor) {
-    tmn_sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
+    tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
         { {'A', 'B'}, 256 }, 
         { {'A', 'C'}, 512 },
         { {'A', 'D'}, 1024 },
@@ -89,78 +88,94 @@ TEST(SingleWeightedGraphTest, MoveConstructor) {
     ASSERT_FALSE(is_symmetric_matrix(moved_pair.first));
 }
 
-// TEST(SingleWeightedGraphTest, CopyOperator) {
-//     Graph<false, int, char, void> graph1 = { 
-//         {1, {2, 3}},
-//         {2, {4}   },
-//         {3, {5, 4}},
-//         {6, {1, 2, 3, 4, 5}}
-//     };
-
-//     Graph<false, int, char, void> graph2 = { 
-//         {1, {2}   },
-//         {2, {3}   },
-//         {0, {1, 2} }
-//     };
-
-//     ASSERT_EQ(graph1.v_size(), 6);
-//     ASSERT_EQ(graph2.v_size(), 4);
+TEST(SingleWeightedGraphTest, CopyOperator)  {
     
-//     graph2 = graph1;
+    tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
+        { {'A', 'B'}, 256 }, 
+        { {'A', 'C'}, 512 },
+        { {'A', 'D'}, 1024 },
+        { {'B', 'C'}, 2048 }, 
+        { {'B', 'D'}, 4096 }, 
+        { {'C', 'D'}, 8192 },
+    };
 
-//     ASSERT_EQ(graph1.v_size(), 6);
-//     ASSERT_EQ(graph2.v_size(), 6);
-// }
+    Graph<false, char, char, int> original(seq);
+    Graph copy(original);
 
-// TEST(SingleWeightedGraphTest, MoveOperator) {
-//     Graph<false, int, char, void> graph1 = { 
-//         {1, {2, 3}},
-//         {2, {4}   },
-//         {3, {5, 4}},
-//         {6, {1, 2, 3, 4, 5}}
-//     };
+    ASSERT_FALSE(copy.oriented());
+    ASSERT_FALSE(original.oriented());
 
-//     Graph<false, int, char, void> graph2 = { 
-//         {1, {2}   },
-//         {2, {3}   },
-//         {0, {1, 3}}
-//     };
+    auto original_pair = original.basic_adjacency_list();
+    auto copied_pair = copy.basic_adjacency_list();
+    pretty_print_matrix(6, "FT SINGLEW-GRAPH", original_pair.first, original_pair.second);
+    pretty_print_matrix(7, "FT SINGLEW-GRAPH", copied_pair.first, copied_pair.second);
 
-//     ASSERT_EQ(graph1.v_size(), 6);
-//     ASSERT_EQ(graph2.v_size(), 4);
+    ASSERT_EQ(copy.v_size(), 4);
+    ASSERT_EQ(original.v_size(), 4);
+    ASSERT_TRUE(is_symmetric_matrix(original_pair.first));
+    ASSERT_TRUE(is_symmetric_matrix(copied_pair.first));
+}
+
+TEST(SingleWeightedGraphTest, MoveOperator) {
+    tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
+        { {'A', 'B'}, 256 }, 
+        { {'A', 'C'}, 512 },
+        { {'A', 'D'}, 1024 },
+        { {'B', 'C'}, 2048 }, 
+        { {'B', 'D'}, 4096 }, 
+        { {'C', 'D'}, 8192 },
+    };
+
+    Graph<true, char, char, int> original(seq);
+    Graph moved(std::move(original));
+
+    ASSERT_TRUE(moved.oriented());
+
+    auto original_pair = original.basic_adjacency_list();
+    auto moved_pair = moved.basic_adjacency_list();
+    pretty_print_matrix(4, "FT SINGLEW-GRAPH", original_pair.first, original_pair.second);
+    pretty_print_matrix(5, "FT SINGLEW-GRAPH", moved_pair.first, moved_pair.second);
+
+    ASSERT_EQ(moved.v_size(), 4);
+    ASSERT_EQ(original.v_size(), 0);
+    ASSERT_FALSE(is_symmetric_matrix(moved_pair.first));
+}
+
+TEST(SingleWeightedGraphTest, AddVertexWithoutResource) {
+    Graph<true, int, std::string, double> graph = { 
+        { {1, 0}, 256 }, 
+        { {1, 2}, 256 },
+        { {1, 3}, 256 },
+        { {1, 4}, 256 }, 
+        { {2, 0}, 512 }, 
+        { {2, 1}, 512 },
+        { {3, 1}, 1024 },
+        { {3, 4}, 1024 },
+        { {4, 4}, 2 },
+        { {4, 3}, 4 },
+        { {4, 2}, 8 },
+        { {4, 1}, 16 },
+        { {4, 0}, 32 },
+    };
+
+    ASSERT_EQ(graph.v_size(), 5);
     
-//     graph2 = std::move(graph1);
+    try{
+        graph.add_vertex(1);
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
 
-//     ASSERT_EQ(graph1.v_size(), 0);
-//     ASSERT_EQ(graph2.v_size(), 6);
-// }
+    ASSERT_EQ(graph.v_size(), 5);
 
-// TEST(SingleWeightedGraphTest, AddVertexWithoutResource) {
-//     Graph<true, int, std::string, void> graph = { 
-//         {1, {0, 2, 3, 4}},
-//         {2, {0, 1}   },
-//         {3, {1, 4}},
-//         {4, {1, 2, 3, 4, 0}}
-//     };
+    graph.add_vertex(5);
+    graph.add_vertex(6);
+    graph.add_vertex(7);
 
-//     ASSERT_EQ(graph.v_size(), 5);
-    
-//     try{
-//         graph.add_vertex(1);
-//         ASSERT_FALSE(true);
-//     }
-//     catch(tmn_exception::LogicException& e){
-//         std::cout << e.what() << std::endl;
-//     }
-
-//     ASSERT_EQ(graph.v_size(), 5);
-
-//     graph.add_vertex(5);
-//     graph.add_vertex(6);
-//     graph.add_vertex(7);
-
-//     ASSERT_EQ(graph.v_size(), 8);
-// }
+    ASSERT_EQ(graph.v_size(), 8);
+}
 
 // TEST(SingleWeightedGraphTest, AddVertexWithResource) {
 //     Graph<true, int, std::string, void> graph;

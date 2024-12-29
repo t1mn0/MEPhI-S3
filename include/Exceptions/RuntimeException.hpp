@@ -2,9 +2,8 @@
 
 #include "Exception.hpp"
 
-
-
-namespace tmn_exception {
+namespace tmn {
+namespace exception {
 
 class RuntimeException : public Exception::Exception {
 private:
@@ -18,4 +17,5 @@ public:
     std::string what() const noexcept;
 };
 
+}
 }

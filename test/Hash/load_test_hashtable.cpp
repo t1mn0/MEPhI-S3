@@ -14,7 +14,7 @@ TEST(LoadTestHashTable, Insert) {
     double timers[key_block / block_count];
     double start_point = 0;
 
-    tmn_associative::HashTable<int, float> htable;
+    tmn::associative::HashTable<int, float> htable;
 
     // For now, the path is absolute - it's all temporary
     const std::string filename = std::string(EXECUTABLE_PATH) + "/load_test_hashtable.txt";
