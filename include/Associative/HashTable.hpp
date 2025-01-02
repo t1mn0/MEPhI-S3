@@ -38,7 +38,7 @@ private:
         using conditional_ptr = tmn::conditional_t<isConst, const tmn::Pair<const Key, Value>*, tmn::Pair<const Key, Value>*>;
         using conditional_ref = tmn::conditional_t<isConst, const tmn::Pair<const Key, Value>&, tmn::Pair<const Key, Value>&>;
         
-        using iterator_category	= tmn::forward_iterator_tag;
+        using iterator_category	= tmn::iterator::forward_iterator_tag;
         using value_type = tmn::Pair<const Key, Value>;
         using pointer = tmn::Pair<const Key, Value>*;
         using const_pointer = const tmn::Pair<const Key, Value>*;

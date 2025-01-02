@@ -9,6 +9,7 @@ target_include_directories(Exceptions PUBLIC ../include/Exceptions)
 set(TESTS
   functional_test_unweighted_graph
   functional_test_singleweighted_graph
+  functional_test_multiweighted_graph
 )
 
 find_package(GTest REQUIRED)

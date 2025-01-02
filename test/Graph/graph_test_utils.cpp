@@ -33,3 +33,19 @@ bool complex_num::operator<=(const complex_num& other) const { return !(*this > 
 bool complex_num::operator>=(const complex_num& other) const { return !(*this < other); }
 bool complex_num::operator==(const complex_num& other) const { return real == other.real && imag == other.imag; }
 bool complex_num::operator!=(const complex_num& other) const { return !(*this == other); }
+
+std::string roadstatus_to_string(RoadStatus status) {
+    switch (status) {
+        case RoadStatus::Normal:
+            return "Normal";
+        case RoadStatus::Congested:
+            return "Congested";
+        case RoadStatus::UnderRepair:
+            return "Under Repair";
+        case RoadStatus::Closed:
+            return "Closed";
+        case RoadStatus::Unknown:
+        default:
+            return "Unknown";
+    }
+}

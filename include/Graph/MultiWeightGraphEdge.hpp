@@ -3,6 +3,7 @@
 #include "MultiWeightGraph.hpp"
 
 namespace tmn {
+namespace graph {
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename ResultWeight, typename ... WeightTypes>
 struct Graph<is_oriented, VertexId, VertexType, ResultWeight, WeightTypes...>::Edge{
@@ -13,7 +14,9 @@ private:
     Tuple<WeightTypes...> weights;
 
 public:
-    explicit Edge(VertexId from, VertexId to, WeightTypes... weights) noexcept : from(from), to(to), weights(weights...) {}
+    explicit Edge(VertexId from, VertexId to, const WeightTypes&... weights) noexcept : from(from), to(to), weights(weights...) {}
+    explicit Edge(VertexId from, VertexId to, WeightTypes&&... weights) noexcept : from(from), to(to), weights(std::forward<WeightTypes>(weights)...) {}
 };
 
+}
 }

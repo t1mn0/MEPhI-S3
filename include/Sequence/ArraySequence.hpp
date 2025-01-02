@@ -25,7 +25,7 @@ private:
     public:
         using conditional_ptr = tmn::conditional_t<isConst, const T*, T*>;
         using conditional_ref = tmn::conditional_t<isConst, const T&, T&>;
-        using iterator_category	= tmn::contiguous_iterator_tag;
+        using iterator_category	= tmn::iterator::contiguous_iterator_tag;
         using value_type = T;
         using difference_type = std::size_t;
         using pointer = T*;
@@ -73,8 +73,8 @@ public:
     using size_type = std::size_t;
     using iterator = common_iterator<false>;
     using const_iterator = common_iterator<true>;
-    using reverse_iterator = tmn::reverse_iterator<iterator>;
-    using const_reverse_iterator = tmn::reverse_iterator<const_iterator>;
+    using reverse_iterator = tmn::iterator::reverse_iterator<iterator>;
+    using const_reverse_iterator = tmn::iterator::reverse_iterator<const_iterator>;
     using allocator_traits = std::allocator_traits<Allocator>;
 
     // Constructors & assignment & conversion :
@@ -126,8 +126,8 @@ public:
     iterator end() noexcept;
     const_iterator end() const noexcept;
     const_iterator cend() const noexcept;  
-    tmn::reverse_iterator<iterator> rbegin() noexcept;
-    tmn::reverse_iterator<iterator> rend() noexcept;
+    tmn::iterator::reverse_iterator<iterator> rbegin() noexcept;
+    tmn::iterator::reverse_iterator<iterator> rend() noexcept;
 
     iterator insert(iterator pos, const T& value);
     iterator insert(iterator pos, size_type count, const T& value);

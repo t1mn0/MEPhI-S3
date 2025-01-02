@@ -9,6 +9,8 @@ if (NOT GTest_FOUND)
   message(FATAL_ERROR "GTest not found. Please install the required dependencies for this project to work")
 endif()
 
-add_executable(test_tuple functional_test_tuple.cpp)
-target_link_libraries(test_tuple GTest::gtest GTest::gtest_main)
-add_test(NAME test_tuple COMMAND test_tuple)
+target_include_directories(Exceptions PUBLIC ../include/Exceptions)
+
+add_executable(test_function functional_test_function.cpp)
+target_link_libraries(test_function GTest::gtest GTest::gtest_main Exceptions)
+add_test(NAME test_function COMMAND test_function)

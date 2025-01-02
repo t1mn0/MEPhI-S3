@@ -1,11 +1,10 @@
 #pragma once
 
-#include <concepts>
-
 #include "MultiWeightGraph.hpp"
 #include "../Associative/HashSet.hpp"
 
 namespace tmn {
+namespace graph {
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 class Graph<is_oriented, VertexId, VertexType, Weight> { 
@@ -18,7 +17,8 @@ public:
     using ConnectedVerticesList = HashTable<VertexId, Edge>;
     using TwoConnectedVertices = tmn::Pair<VertexId, VertexId>;
     using GraphPath = ListSequence<VertexId>;
-    using IntMatrix = tmn::sequence::ArraySequence<tmn::sequence::ArraySequence<int>>;
+    using IntMatrix = ArraySequence<ArraySequence<int>>;
+    using WeightMatrix = ArraySequence<ArraySequence<Weight>>;
 
     HashTable<VertexId, ConnectedVerticesList> adjacency_list;
     HashTable<VertexId, VertexType> resources;
@@ -46,13 +46,13 @@ public:
     std::size_t v_size() const noexcept; 
     tmn::Optional<std::size_t> connected_vertices_count(VertexId vertex_id) const noexcept;
     HashSet<VertexId> connected_vertices(VertexId vertex_id) const;
-    void change_vertex_id(VertexId old_vertex_id, VertexId new_vertex_id);
 
     const VertexType& get_resource(VertexId vertex_id) const;
     VertexType& get_resource(VertexId vertex_id);
     void change_vertex_resource(VertexId vertex_id, const VertexType& vertex_resource);
     void change_vertex_resource(VertexId vertex_id, VertexType&& vertex_resource);
 
+    bool add_edge(VertexId from, VertexId to, bool strict = true);
     bool add_edge(VertexId from, VertexId to, const Weight& weight, bool strict = true);
     bool add_edge(VertexId from, VertexId to, Weight&& weight, bool strict = true);
     bool remove_edge(VertexId from, VertexId to, bool strict = true);
@@ -63,8 +63,10 @@ public:
     void clear();
 
     tmn::Pair<IntMatrix, ArraySequence<VertexId>> basic_adjacency_list() const noexcept;
+    tmn::Pair<WeightMatrix, ArraySequence<VertexId>> weighted_adjacency_matrix() const noexcept;
 };
 
+}
 }
 
 #include "SingleWeightGraphEdge.hpp"

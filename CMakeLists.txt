@@ -11,6 +11,13 @@ add_subdirectory(include/Exceptions)
 
 target_include_directories(Exceptions INTERFACE ${INCLUDE_DIRS})
 
+
+# SFML for Graphs :
+#set(SFML_STATIC_LIBRARIES FALSE)
+#find_package(SFML COMPONENTS window graphics system)
+#add_executable(gui gui/L4/View/MainWindow.cpp)
+#target_link_libraries(gui sfml-graphics)
+
 # --- Tests (GTest) ---
 find_package(GTest REQUIRED)
 if(NOT GTEST_FOUND)
@@ -22,6 +29,7 @@ else()
     if(BUILD_TESTS)
         enable_testing()
         add_subdirectory(test/Tuple)
+        add_subdirectory(test/Function)
         add_subdirectory(test/Graph)
     endif()
 endif()

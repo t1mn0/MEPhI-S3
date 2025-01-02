@@ -18,6 +18,9 @@ private:
     T* ptr;
     [[no_unique_address]] Deleter deleter;
 
+    template <typename U, typename E>
+    friend class UniquePtr;
+
 public:
 // Using's :
     using Pointer = T*;

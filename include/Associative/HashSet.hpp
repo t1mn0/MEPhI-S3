@@ -34,7 +34,7 @@ private:
     public:
         using layer_ptr = const Node*;
 
-        using iterator_category	= tmn::forward_iterator_tag;
+        using iterator_category	= tmn::iterator::forward_iterator_tag;
         using value_type = const Key;
         using const_pointer = const Key*;
         using const_reference = const Key&;

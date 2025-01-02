@@ -142,31 +142,27 @@ TEST(SingleWeightedGraphTest, MoveOperator) {
 }
 
 TEST(SingleWeightedGraphTest, AddVertexWithoutResource) {
-    Graph<true, int, std::string, double> graph = { 
-        { {1, 0}, 256 }, 
-        { {1, 2}, 256 },
-        { {1, 3}, 256 },
-        { {1, 4}, 256 }, 
-        { {2, 0}, 512 }, 
-        { {2, 1}, 512 },
-        { {3, 1}, 1024 },
-        { {3, 4}, 1024 },
-        { {4, 4}, 2 },
-        { {4, 3}, 4 },
-        { {4, 2}, 8 },
-        { {4, 1}, 16 },
-        { {4, 0}, 32 },
+    ArraySequence<tmn::Pair<tmn::Pair<int, int>, float>> seq = { 
+        { {1, 0}, 0.256 }, 
+        { {1, 2}, 0.256 },
+        { {1, 3}, 0.256 },
+        { {1, 4}, 0.256 }, 
+        { {2, 0}, 0.512 }, 
+        { {2, 1}, 0.512 },
+        { {3, 1}, 1.024 },
+        { {3, 4}, 1.024 },
+        { {4, 4}, 0.02 },
+        { {4, 3}, 0.04 },
+        { {4, 2}, 0.08 },
+        { {4, 1}, 0.16 },
+        { {4, 0}, 0.32 },
     };
+
+    Graph<true, int, int, float> graph(seq);
 
     ASSERT_EQ(graph.v_size(), 5);
     
-    try{
-        graph.add_vertex(1);
-        ASSERT_FALSE(true);
-    }
-    catch(tmn::LogicException& e){
-        std::cout << e.what() << std::endl;
-    }
+    graph.add_vertex(1);
 
     ASSERT_EQ(graph.v_size(), 5);
 
@@ -177,73 +173,299 @@ TEST(SingleWeightedGraphTest, AddVertexWithoutResource) {
     ASSERT_EQ(graph.v_size(), 8);
 }
 
-// TEST(SingleWeightedGraphTest, AddVertexWithResource) {
-//     Graph<true, int, std::string, void> graph;
-//     graph.add_vertex(0, "string 0");
-//     graph.add_vertex(1, "string 1");
-//     graph.add_vertex(2, "string 2");
-//     graph.add_vertex(3, "string 3");
-//     graph.add_vertex(4, "string 4");
-//     graph.add_vertex(5, "string 5");
-//     graph.add_vertex(6, "string 6");
-//     graph.add_vertex(7, "string 7");
-//     graph.add_vertex(8, "string 8");
-//     graph.add_vertex(9, "string 9");
-//     ASSERT_EQ(graph.v_size(), 10);
+TEST(SingleWeightedGraphTest, AddVertexWithResource) {
+    Graph<true, int, std::string, complex_num> graph;
+    graph.add_vertex(1, "string 1");
+    graph.add_vertex(2, "string 2");
+    graph.add_vertex(3, "string 3");
+    graph.add_vertex(4, "string 4");
+    graph.add_vertex(5, "string 5");
+    ASSERT_EQ(graph.v_size(), 5);
 
-//     ASSERT_EQ(graph.get_resource(0), std::string("string 0"));
-//     ASSERT_EQ(graph.get_resource(3), std::string("string 3"));
-//     ASSERT_EQ(graph.get_resource(6), std::string("string 6"));
-//     ASSERT_EQ(graph.get_resource(8), std::string("string 8"));
-//     ASSERT_EQ(graph.get_resource(9), std::string("string 9"));
-// }
+    try {
+        graph.add_vertex(3, "new string!");
+        ASSERT_TRUE(false);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
 
-// TEST(SingleWeightedGraphTest, RemoveVertex) {
-//     Graph<true, int, std::string, void> graph;
-//     graph.add_vertex(0, "string 0");
-//     graph.add_vertex(1, "string 1");
-//     graph.add_vertex(2, "string 2");
-//     graph.add_vertex(3, "string 3");
-//     graph.add_vertex(4, "string 4");
-//     graph.add_vertex(5, "string 5");
-//     graph.add_vertex(6, "string 6");
-//     graph.add_vertex(7, "string 7");
-//     graph.add_vertex(8, "string 8");
-//     graph.add_vertex(9, "string 9");
+    ASSERT_FALSE(graph.add_vertex(3, "new string!", false));
 
-//     try {
-//         graph.remove_vertex(10);
-//         ASSERT_FALSE(true);
-//     }
-//     catch(tmn_exception::LogicException& e){
-//         std::cout << e.what() << std::endl;
-//     }
-//     ASSERT_EQ(graph.v_size(), 10);
+    try {
+        ASSERT_EQ(graph.get_resource(0), std::string("string 0"));
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
 
-//     graph.remove_vertex(0);
-//     graph.remove_vertex(2);
-//     graph.remove_vertex(4);
-//     graph.remove_vertex(6);
-//     graph.remove_vertex(8);
-//     ASSERT_EQ(graph.v_size(), 5);
+    ASSERT_EQ(graph.get_resource(1), std::string("string 1"));
+    ASSERT_EQ(graph.get_resource(2), std::string("string 2"));
+    ASSERT_EQ(graph.get_resource(3), std::string("string 3"));
+    ASSERT_EQ(graph.get_resource(4), std::string("string 4"));
+    ASSERT_EQ(graph.get_resource(5), std::string("string 5"));
+}
 
-//     ASSERT_EQ(graph.get_resource(1), std::string("string 1"));
-//     ASSERT_EQ(graph.get_resource(3), std::string("string 3"));
-//     ASSERT_EQ(graph.get_resource(5), std::string("string 5"));
-//     ASSERT_EQ(graph.get_resource(7), std::string("string 7"));
-//     ASSERT_EQ(graph.get_resource(9), std::string("string 9"));
+TEST(SingleWeightedGraphTest, RemoveVertex) {
+    Graph<true, int, std::string, complex_num> graph;
+    graph.add_vertex(1, "string 1");
+    graph.add_vertex(2, "string 2");
+    graph.add_vertex(3, "string 3");
+    graph.add_vertex(4, "string 4");
+    graph.add_vertex(5, "string 5");
 
-//     ASSERT_FALSE(graph.vertex_in_graph(0));
-//     ASSERT_FALSE(graph.vertex_in_graph(2));
-//     ASSERT_FALSE(graph.vertex_in_graph(4));
-//     ASSERT_FALSE(graph.vertex_in_graph(6));
-//     ASSERT_FALSE(graph.vertex_in_graph(8));
+    try {
+        graph.remove_vertex(10);
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
 
-//     try {
-//         graph.get_resource(4);
-//         ASSERT_FALSE(true);
-//     }
-//     catch(tmn_exception::LogicException& e){
-//         std::cout << e.what() << std::endl;
-//     }
-// }
+    ASSERT_EQ(graph.v_size(), 5);
+    ASSERT_FALSE(graph.remove_vertex(10, false));
+
+    graph.remove_vertex(2);
+    graph.remove_vertex(4);
+    ASSERT_EQ(graph.v_size(), 3);
+
+    ASSERT_EQ(graph.get_resource(1), std::string("string 1"));
+    ASSERT_EQ(graph.get_resource(3), std::string("string 3"));
+    ASSERT_EQ(graph.get_resource(5), std::string("string 5"));
+
+    ASSERT_FALSE(graph.vertex_in_graph(2));
+    ASSERT_FALSE(graph.vertex_in_graph(4));
+    ASSERT_TRUE(graph.vertex_in_graph(1));
+    ASSERT_TRUE(graph.vertex_in_graph(3));
+    ASSERT_TRUE(graph.vertex_in_graph(5));
+
+    try {
+        graph.get_resource(2);
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        graph.get_resource(4);
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+}
+
+TEST(SingleWeightedGraphTest, ConnectedVertices) {
+    ArraySequence<tmn::Pair<tmn::Pair<int, int>, std::string>> seq = { 
+        { {0, 2}, "light weight bby" }, 
+        { {0, 4}, "false" },
+        { {0, 6}, "hello world" },
+        { {1, 3}, "char[]&*" }, 
+        { {1, 5}, "dinner" }, 
+        { {2, 1}, "face to face" },
+        { {2, 3}, "qwerty" },
+        { {2, 4}, "youtube" },
+        { {2, 5}, "bash" },
+        { {2, 6}, "filesystem" },
+        { {3, 4}, "east" },
+        { {4, 5}, "3543698744444444443945" },
+        { {5, 1}, "string" },
+        { {5, 2}, "int" },
+        { {5, 3}, "float" },
+        { {5, 4}, "smart" },
+        { {5, 0}, "kolobok!" },
+    };
+
+    Graph<true, int, int, std::string> graph(seq);
+
+    ASSERT_TRUE(graph.connected_vertices_count(0).has_value());
+    ASSERT_TRUE(graph.connected_vertices_count(1).has_value());
+    ASSERT_TRUE(graph.connected_vertices_count(2).has_value());
+    ASSERT_TRUE(graph.connected_vertices_count(3).has_value());
+    ASSERT_TRUE(graph.connected_vertices_count(4).has_value());
+    ASSERT_TRUE(graph.connected_vertices_count(5).has_value());
+    ASSERT_TRUE(graph.connected_vertices_count(6).has_value());
+
+    ASSERT_EQ(graph.connected_vertices_count(0).value(), 3);
+    ASSERT_EQ(graph.connected_vertices_count(1).value(), 2);
+    ASSERT_EQ(graph.connected_vertices_count(2).value(), 5);
+    ASSERT_EQ(graph.connected_vertices_count(3).value(), 1);
+    ASSERT_EQ(graph.connected_vertices_count(4).value(), 1);
+    ASSERT_EQ(graph.connected_vertices_count(5).value(), 5);
+    ASSERT_EQ(graph.connected_vertices_count(6).value(), 0);
+
+    auto connected_v_0 = graph.connected_vertices(0);
+    auto connected_v_2 = graph.connected_vertices(2);
+    auto connected_v_3 = graph.connected_vertices(3);
+
+    ASSERT_EQ(connected_v_0.size(), 3);
+    ASSERT_TRUE(connected_v_0.contains(2) && connected_v_0.contains(4) && connected_v_0.contains(6));
+
+    ASSERT_EQ(connected_v_2.size(), 5);
+    ASSERT_TRUE(connected_v_2.contains(1) && connected_v_2.contains(3) && connected_v_2.contains(4) && connected_v_2.contains(5) && connected_v_2.contains(6));
+
+    ASSERT_EQ(connected_v_3.size(), 1);
+    ASSERT_TRUE(connected_v_3.contains(4));
+}
+
+TEST(SingleWeightedGraphTest, ChangeVertexResource) {
+    Graph<true, int, std::string, complex_num> graph;
+    graph.add_vertex(0, "string 0");
+    graph.add_vertex(1, "string 1");
+    graph.add_vertex(2, "string 2");
+    graph.add_vertex(3, "string 3");
+    graph.add_vertex(4, "string 4");
+    graph.add_vertex(5, "string 5");
+    graph.add_vertex(6, "string 6");
+    graph.add_vertex(7, "string 7");
+    graph.add_vertex(8, "string 8");
+    graph.add_vertex(9, "string 9");
+
+    try{
+        graph.change_vertex_resource(11, "string 11-11");
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    graph.change_vertex_resource(7, "string 777");
+    graph.change_vertex_resource(7, "string 77");
+    ASSERT_EQ(graph.get_resource(7), std::string("string 77"));
+}
+
+TEST(SingleWeightedGraphTest, AllVertices) {
+    ArraySequence<tmn::Pair<tmn::Pair<int, int>, std::string>> seq = { 
+        { {0, 2}, "light weight bby" }, 
+        { {0, 4}, "false" },
+        { {0, 6}, "hello world" },
+        { {1, 3}, "char[]&*" }, 
+        { {1, 5}, "dinner" }, 
+        { {2, 1}, "face to face" },
+        { {2, 3}, "qwerty" },
+        { {2, 4}, "youtube" },
+        { {2, 5}, "bash" },
+        { {2, 6}, "filesystem" },
+        { {3, 4}, "east" },
+        { {4, 5}, "3543698744444444443945" },
+        { {5, 1}, "string" },
+        { {5, 2}, "int" },
+        { {5, 3}, "float" },
+        { {5, 4}, "smart" },
+        { {5, 0}, "kolobok!" },
+    };
+
+    Graph<true, int, int, std::string> graph(seq);
+
+    auto set = graph.all_vertices();
+    
+    for (auto& elem : set){
+        std::cout << elem << " ";
+    } 
+    std::cout << std::endl;
+}
+
+TEST(UnweightedGraphTest, AddEdge) {
+    tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
+        { {'A', 'B'}, 256 }, 
+        { {'A', 'C'}, 512 },
+        { {'A', 'D'}, 1024 },
+        { {'B', 'C'}, 2048 }, 
+        { {'B', 'D'}, 4096 }, 
+        { {'Q', 'W'}, 8192 },
+        { {'Q', 'R'}, 8192 },
+        { {'Q', 'T'}, 8192 },
+        { {'T', 'C'}, 8192 },
+        { {'T', 'A'}, 8192 },
+    };
+
+    Graph<false, char, int, int> graph(seq);
+
+    try {
+        graph.add_edge('!', 'A');
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        graph.add_edge('A', '!');
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    ASSERT_FALSE(graph.add_edge('A', '!', false));
+    ASSERT_FALSE(graph.add_edge('!', 'A', false));
+
+    graph.add_edge('R', 'A');
+    graph.add_edge('B', 'T', -1);
+    graph.add_edge('A', 'Q', -1011010110);
+
+    auto pair  = graph.weighted_adjacency_matrix();
+
+    pretty_print_matrix(6, "FT SINGLEW-GRAPH", pair.first, pair.second);
+    ASSERT_TRUE(is_symmetric_matrix(pair.first));
+    ASSERT_TRUE(graph.is_connected('R', 'A'));
+    ASSERT_TRUE(graph.is_connected('B', 'T'));
+    ASSERT_TRUE(graph.is_connected('A', 'Q'));
+
+    ASSERT_TRUE(graph.pass_weight('B', 'T').has_value());
+    ASSERT_TRUE(graph.pass_weight('A', 'B').has_value());
+    ASSERT_FALSE(graph.pass_weight('X', 'C').has_value());
+    ASSERT_FALSE(graph.pass_weight('J', 'K').has_value());
+
+    ASSERT_EQ(graph.pass_weight('B', 'C').value(), 2048);
+    ASSERT_EQ(graph.pass_weight('A', 'Q').value(), -1011010110);
+}
+
+TEST(UnweightedGraphTest, RemoveEdge) {
+    tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
+        { {'A', 'B'}, 256 }, 
+        { {'A', 'C'}, 512 },
+        { {'A', 'D'}, 1024 },
+        { {'B', 'C'}, 2048 }, 
+        { {'B', 'D'}, 4096 }, 
+        { {'Q', 'W'}, 8192 },
+        { {'Q', 'R'}, 8192 },
+        { {'Q', 'T'}, 8192 },
+        { {'T', 'C'}, 8192 },
+        { {'T', 'A'}, 8192 },
+    };
+
+    Graph<false, char, int, int> graph(seq);
+
+    try {
+        graph.remove_edge('!', 'A');
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        graph.remove_edge('A', '!');
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    ASSERT_FALSE(graph.remove_edge('A', '!', false));
+    ASSERT_FALSE(graph.remove_edge('!', 'A', false));
+
+    graph.remove_edge('Q', 'W');
+    graph.remove_edge('Q', 'R');
+    graph.remove_edge('Q', 'T');
+
+    auto pair  = graph.basic_adjacency_list();
+
+    pretty_print_matrix(7, "FT SINGLEW-GRAPH", pair.first, pair.second);
+    ASSERT_TRUE(is_symmetric_matrix(pair.first));
+    ASSERT_FALSE(graph.is_connected('Q', 'W'));
+    ASSERT_FALSE(graph.is_connected('Q', 'R'));
+    ASSERT_FALSE(graph.is_connected('Q', 'T'));
+}

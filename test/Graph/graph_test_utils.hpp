@@ -25,4 +25,14 @@ public:
   bool operator!=(const complex_num& other) const;
 };
 
+enum class RoadStatus {
+  Normal,       // Обычный статус
+  Congested,    // Загружена
+  UnderRepair,  // Ремонт
+  Closed,       // Закрыта
+  Unknown       // Неизвестный статус
+};
+
+std::string roadstatus_to_string(RoadStatus status);
+
 #include "graph_test_utils.tpp"

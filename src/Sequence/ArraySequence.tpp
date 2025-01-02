@@ -388,7 +388,7 @@ ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::push_back(T&& value){
 
 template <typename T, class Allocator>
 ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::pop_back(){
-    if (_size == 0) throw tmn::LogicException("Attempt to delete from an empty dynamic array sequence");
+    if (_size == 0) throw tmn::exception::LogicException("Attempt to delete from an empty dynamic array sequence");
 
     // (array + _size - 1)->~T();
     allocator_traits::destroy(_alloc, array + _size - 1);
@@ -444,7 +444,7 @@ T& ArraySequence<T, Allocator>::back() {
 template <typename T, class Allocator>
 ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::set(std::size_t index, const T& item) {
     if (index >= _size) {
-        throw tmn::LogicException("Accessing an element by out of range index in dynamic array sequence");
+        throw tmn::exception::LogicException("Accessing an element by out of range index in dynamic array sequence");
     }
     array[index] = item;
     return *this;
@@ -453,7 +453,7 @@ ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::set(std::size_t index,
 template <typename T, class Allocator>
 T& ArraySequence<T, Allocator>::get(std::size_t index) {
     if (index >= _size) {
-        throw tmn::LogicException("Accessing an element by out of range index in dynamic array sequence");
+        throw tmn::exception::LogicException("Accessing an element by out of range index in dynamic array sequence");
     }
 
     return array[index];
@@ -462,7 +462,7 @@ T& ArraySequence<T, Allocator>::get(std::size_t index) {
 template <typename T, class Allocator>
 const T& ArraySequence<T, Allocator>::get(std::size_t index) const {
     if (index >= _size) {
-        throw tmn::LogicException("Accessing an element by out of range index in dynamic array sequence");
+        throw tmn::exception::LogicException("Accessing an element by out of range index in dynamic array sequence");
     }
     
     return array[index];
@@ -522,15 +522,15 @@ typename ArraySequence<T, Allocator>::const_iterator ArraySequence<T, Allocator>
 }
 
 template <typename T, class Allocator>
-typename tmn::reverse_iterator<typename ArraySequence<T, Allocator>::iterator> ArraySequence<T, Allocator>::rbegin() noexcept {
+typename tmn::iterator::reverse_iterator<typename ArraySequence<T, Allocator>::iterator> ArraySequence<T, Allocator>::rbegin() noexcept {
     iterator iter(array + _size);
-    return tmn::reverse_iterator<iterator>(iter);
+    return tmn::iterator::reverse_iterator<iterator>(iter);
 }
 
 template <typename T, class Allocator>
-typename tmn::reverse_iterator<typename ArraySequence<T, Allocator>::iterator> ArraySequence<T, Allocator>::rend() noexcept {
+typename tmn::iterator::reverse_iterator<typename ArraySequence<T, Allocator>::iterator> ArraySequence<T, Allocator>::rend() noexcept {
     iterator iter(array);
-    return tmn::reverse_iterator<iterator>(iter);
+    return tmn::iterator::reverse_iterator<iterator>(iter);
 }
 
 template <typename T, class Allocator>

@@ -69,31 +69,31 @@ const T&& Optional<T>::operator*() const && {
 
 template <typename T>
 T& Optional<T>::value() & {
-    if (!initialized) throw tmn::Exception("Bad optional access");
+    if (!initialized) throw tmn::exception::Exception("Bad optional access");
     return reinterpret_cast<T&>(*_value);
 }
 
 template <typename T>
 const T& Optional<T>::value() const & {
-    if (!initialized) throw tmn::Exception("Bad optional access");
+    if (!initialized) throw tmn::exception::Exception("Bad optional access");
     return reinterpret_cast<const T&>(*_value);
 }
 
 template <typename T>
 T&& Optional<T>::value() && {
-    if (!initialized) throw tmn::Exception("Bad optional access");
+    if (!initialized) throw tmn::exception::Exception("Bad optional access");
     return reinterpret_cast<T&&>(*_value);
 }
 
 template <typename T>
 const T&& Optional<T>::value() const && {
-    if (!initialized) throw tmn::Exception("Bad optional access");
+    if (!initialized) throw tmn::exception::Exception("Bad optional access");
     return reinterpret_cast<const T&&>(*_value);
 }
 
 // Since C++23
 // decltype(auto) value(this auto&& self) {
-//     if constexpr (!initialized) throw tmn::Exception("Bad optional access");
+//     if constexpr (!initialized) throw tmn::exception::Exception("Bad optional access");
 //     return reinterpret_cast<decltype(std::forward_like<decltype(self)>(std::declval<T>()))>(self._value);
 // }
 

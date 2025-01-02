@@ -7,6 +7,7 @@
 #include "../Associative/HashSet.hpp"
 
 namespace tmn {
+namespace graph {
 
 template <bool is_oriented, typename VertexId, typename VertexType>
 class Graph<is_oriented, VertexId, VertexType, void> {
@@ -75,6 +76,7 @@ public:
     Graph kruskal_algorithm() const; // Spanning tree search
 };
 
+}
 }
 
 #include "../../src/Graph/UnweightedGraph.tpp"

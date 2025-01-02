@@ -215,7 +215,7 @@ bool HashTable<Key, Value>::insert(const tmn::Pair<const Key, Value>& pair){
         rehash(_buffer_size + 1);
     }
 
-    std::size_t hash_index = tmn_hash::Hash(pair.first);
+    std::size_t hash_index = tmn::hash::Hash(pair.first);
     
     Node* new_node = allocator_traits_node::allocate(_alloc_node, 1);
     allocator_traits_node::construct(_alloc_node, new_node, pair, hash_index);
@@ -267,7 +267,7 @@ bool HashTable<Key, Value>::insert(tmn::Pair<const Key, Value>&& pair) {
         rehash(_buffer_size + 1);
     }
 
-    std::size_t hash_index = tmn_hash::Hash(pair.first);
+    std::size_t hash_index = tmn::hash::Hash(pair.first);
     
     Node* new_node = allocator_traits_node::allocate(_alloc_node, 1);
     allocator_traits_node::construct(_alloc_node, new_node, pair, hash_index);
@@ -334,7 +334,7 @@ void HashTable<Key, Value>::erase_node(Node* to_remove) {
 
 template <class Key, class Value>
 bool HashTable<Key, Value>::erase(const Key& key){
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+    std::size_t hash_index = tmn::hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
         if (_storage[hash_index]->pair.first == key){
@@ -358,7 +358,7 @@ bool HashTable<Key, Value>::erase(const Key& key){
 
 template <class Key, class Value>
 bool HashTable<Key, Value>::erase(Key&& key){
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+    std::size_t hash_index = tmn::hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
         if (_storage[hash_index]->pair.first == key){
@@ -393,7 +393,7 @@ HashTable<Key, Value>& HashTable<Key, Value>::clear() noexcept {
 
 template <class Key, class Value>
 tmn::Optional<Value> HashTable<Key, Value>::get(const Key& key) const noexcept {
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+    std::size_t hash_index = tmn::hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
         if (_storage[hash_index]->pair.first == key){
@@ -414,7 +414,7 @@ tmn::Optional<Value> HashTable<Key, Value>::get(const Key& key) const noexcept {
 
 template <class Key, class Value>
 tmn::Optional<Value> HashTable<Key, Value>::get(Key&& key) const noexcept {
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+    std::size_t hash_index = tmn::hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
         if (_storage[hash_index]->pair.first == key){
@@ -435,7 +435,7 @@ tmn::Optional<Value> HashTable<Key, Value>::get(Key&& key) const noexcept {
 
 template <class Key, class Value>
 const Value& HashTable<Key, Value>::operator[](const Key& key) const {
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+    std::size_t hash_index = tmn::hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
         if (_storage[hash_index]->pair.first == key){
@@ -450,12 +450,12 @@ const Value& HashTable<Key, Value>::operator[](const Key& key) const {
         }
     }
 
-    throw tmn::LogicException("Element with stated key in the table is missing [const HashTable<Key, Value>::operator[]]");
+    throw tmn::exception::LogicException("Element with stated key in the table is missing [const HashTable<Key, Value>::operator[]]");
 }
 
 template <class Key, class Value>
 Value& HashTable<Key, Value>::operator[](const Key& key) {
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+    std::size_t hash_index = tmn::hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
         if (_storage[hash_index]->pair.first == key){
@@ -477,7 +477,7 @@ Value& HashTable<Key, Value>::operator[](const Key& key) {
 
 template <class Key, class Value>
 bool HashTable<Key, Value>::contains(const Key& key) const {
-    std::size_t hash_index = tmn_hash::Hash(key) % _buffer_size;
+    std::size_t hash_index = tmn::hash::Hash(key) % _buffer_size;
 
     if (_storage[hash_index]){
         if (_storage[hash_index]->pair.first == key){
