@@ -417,12 +417,12 @@ TEST(UnweightedGraphTest, AddEdge) {
 
     pretty_print_matrix(13, "FT UNW-GRAPH", pair1.first, pair1.second);
     ASSERT_TRUE(is_symmetric_matrix(pair1.first));
-    ASSERT_TRUE(graph1.is_connected('B', 'D'));
-    ASSERT_TRUE(graph1.is_connected('V', 'W'));
-    ASSERT_TRUE(graph1.is_connected('Q', 'X'));
-    ASSERT_TRUE(graph1.is_connected('W', 'Y'));
-    ASSERT_TRUE(graph1.is_connected('R', 'Z'));
-    ASSERT_TRUE(graph1.is_connected('T', 'T'));
+    ASSERT_TRUE(graph1.has_connected_vertices('B', 'D'));
+    ASSERT_TRUE(graph1.has_connected_vertices('V', 'W'));
+    ASSERT_TRUE(graph1.has_connected_vertices('Q', 'X'));
+    ASSERT_TRUE(graph1.has_connected_vertices('W', 'Y'));
+    ASSERT_TRUE(graph1.has_connected_vertices('R', 'Z'));
+    ASSERT_TRUE(graph1.has_connected_vertices('T', 'T'));
 
     Graph<false, int, char, void> graph2 = { 
         {0, {2, 4, 6}},

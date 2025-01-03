@@ -15,7 +15,7 @@ private:
 // Fields & aliases :
     using ConnectedVerticesList = HashSet<VertexId>;
     using TwoConnectedVertices = tmn::Pair<VertexId, VertexId>;
-    using GraphPath = ListSequence<VertexId>;
+    using GraphPath = ArraySequence<VertexId>;
     using IntMatrix = tmn::sequence::ArraySequence<tmn::sequence::ArraySequence<int>>;
 
     HashTable<VertexId, ConnectedVerticesList> adjacency_list;
@@ -37,6 +37,7 @@ public:
 
 // Basic methods:
     bool oriented() const noexcept;
+    bool weighted() const noexcept;
 
     bool add_vertex(VertexId vertex_id) noexcept;
     bool add_vertex(VertexId vertex_id, const VertexType& vertex_resource, bool strict = true);
@@ -49,6 +50,7 @@ public:
     HashSet<VertexId> connected_vertices(VertexId vertex_id) const;
     void change_vertex_id(VertexId old_vertex_id, VertexId new_vertex_id);
 
+    bool has_resource_at(VertexId vertex_id) const;
     const VertexType& get_resource(VertexId vertex_id) const;
     VertexType& get_resource(VertexId vertex_id);
     void change_vertex_resource(VertexId vertex_id, const VertexType& vertex_resource);
@@ -56,7 +58,9 @@ public:
 
     bool add_edge(VertexId from, VertexId to, bool strict = true);
     bool remove_edge(VertexId from, VertexId to, bool strict = true);
-    bool is_connected(VertexId from, VertexId to, bool strict = true) const;
+    bool has_connected_vertices(VertexId from, VertexId to, bool strict = true) const;
+
+    void add_connected_vertices(VertexId from, VertexId to);
 
     void reserve(std::size_t capacity); 
     void clear();
@@ -64,16 +68,15 @@ public:
     tmn::Pair<IntMatrix, ArraySequence<VertexId>> basic_adjacency_list() const noexcept;
 
 // Algorithms:
-    GraphPath dijkstra_shortest_path(VertexId from, VertexId to) const;
+    bool has_cycle() const;
+    bool is_connected_graph() const;
 
     GraphPath bfs() const;
+    GraphPath bfs(VertexId start_vertex) const;
     GraphPath dfs() const;
+    GraphPath dfs(VertexId start_vertex) const;
 
-    Graph connected_component() const;
-    Graph strongly_connected_component() const;
-
-    Graph prim_algorithm() const; // Spanning tree search
-    Graph kruskal_algorithm() const; // Spanning tree search
+    HashTable<VertexId, int> graph_coloring() const; // ColorTable: VertedId-ColorId
 };
 
 }

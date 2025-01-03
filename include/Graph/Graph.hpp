@@ -1,2 +1,2 @@
 #pragma once
-#include "MultiWeightGraph.hpp"
+#include "SingleWeightGraph.hpp"

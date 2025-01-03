@@ -10,9 +10,7 @@
 #include "Hash.hpp"
 #include "../tmn.hpp"
 
-
-
-namespace tmn {
+namespace tmn{
 namespace associative {
 
 template <class Key>
@@ -20,7 +18,7 @@ class HashSet {
 private:
     // Support structures and methods:
     struct Node {
-        const Key value;
+        Key value;
 
         Node* next = nullptr;
         Node* prev = nullptr;
@@ -30,32 +28,38 @@ private:
         Node(const Key& other_value, std::size_t cache) noexcept;
     };
 
-    struct const_iterator {
+    template <bool isConst>
+    struct common_iterator {
     public:
-        using layer_ptr = const Node*;
+        using conditional_layer_ptr = tmn::conditional_t<isConst, const Node*, Node*>;
+        using conditional_ptr = tmn::conditional_t<isConst, const Key*, Key*>;
+        using conditional_ref = tmn::conditional_t<isConst, const Key&, Key&>;
 
         using iterator_category	= tmn::iterator::forward_iterator_tag;
-        using value_type = const Key;
+        using value_type = Key;
+        using pointer = Key*;
         using const_pointer = const Key*;
+        using reference = Key&;
         using const_reference = const Key&;
 
     private:
-        layer_ptr ptr;
+        conditional_layer_ptr ptr;
 
     public:
-        const_iterator() : ptr(nullptr) {}
-        explicit const_iterator(const layer_ptr ptr) : ptr(ptr) {}
-        const_iterator(const const_iterator& other) : ptr(other.ptr) {}
+        common_iterator() : ptr(nullptr) {}
+        explicit common_iterator(const conditional_layer_ptr ptr) : ptr(ptr) {}
+        common_iterator(const common_iterator<isConst>& other) : ptr(other.ptr) {}
 
-        const_iterator& operator=(const const_iterator& other);
+        common_iterator<isConst>& operator=(const common_iterator<isConst>& other);
 
-        const Key& operator*() const;
+        conditional_ref operator*() const;
+        conditional_ptr operator->() const;
 
-        bool operator==(const const_iterator& other) const;
-        bool operator!=(const const_iterator& other) const;
+        bool operator==(const common_iterator<isConst>& other) const;
+        bool operator!=(const common_iterator<isConst>& other) const;
 
-        const_iterator& operator++();
-        const_iterator operator++(int);
+        common_iterator<isConst>& operator++();
+        common_iterator<isConst> operator++(int);
     };
 
     void erase_node(Node* to_remove);
@@ -68,14 +72,13 @@ private:
     std::size_t _buffer_size = 32;
     float _max_load_factor = 0.5;
 
-    std::allocator<Node> _alloc_node;
-
     Node* _head = nullptr;
 
 public:
     // Using's :
     using value_type = Key;
-    using allocator_traits_node = std::allocator_traits<std::allocator<Node>>;
+    using iterator = common_iterator<false>;
+    using const_iterator = common_iterator<true>;
 
     // Constructors & assignment & conversion :
     HashSet() noexcept;
@@ -112,8 +115,12 @@ public:
     tmn::sequence::ArraySequence<Key> to_sequence() const;
 
     // Iterator methods :
+    iterator begin() noexcept;
     const_iterator begin() const noexcept;
+    const_iterator cbegin() const noexcept;  
+    iterator end() noexcept;
     const_iterator end() const noexcept;
+    const_iterator cend() const noexcept;
 
     // Hash policy :
     void rehash(std::size_t new_buffer_size);

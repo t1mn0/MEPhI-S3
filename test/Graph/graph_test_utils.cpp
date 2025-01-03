@@ -1,4 +1,5 @@
 #include <cmath> // std::sqrt
+#include <random>
 
 #include "graph_test_utils.hpp"
 
@@ -40,12 +41,31 @@ std::string roadstatus_to_string(RoadStatus status) {
             return "Normal";
         case RoadStatus::Congested:
             return "Congested";
-        case RoadStatus::UnderRepair:
-            return "Under Repair";
         case RoadStatus::Closed:
             return "Closed";
-        case RoadStatus::Unknown:
         default:
             return "Unknown";
     }
+}
+
+
+const char* alph = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+std::string generate_small_string() {
+    
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    
+    std::uniform_int_distribution<> length_dist(3, 8);
+    
+    std::uniform_int_distribution<> char_dist(0, 61);
+    
+    int length = length_dist(gen);
+    std::string result;
+    
+    for (int i = 0; i < length; ++i) {
+        result += alph[char_dist(gen)];
+    }
+    
+    return result;
 }

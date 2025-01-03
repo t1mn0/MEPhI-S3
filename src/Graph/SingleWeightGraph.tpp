@@ -73,6 +73,11 @@ bool Graph<is_oriented, VertexId, VertexType, Weight>::oriented() const noexcept
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+bool Graph<is_oriented, VertexId, VertexType, Weight>::weighted() const noexcept {
+    return true;
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 bool Graph<is_oriented, VertexId, VertexType, Weight>::add_vertex(VertexId vertex_id) noexcept {
     if (adjacency_list.contains(vertex_id)){
         return false;
@@ -376,6 +381,29 @@ tmn::Optional<Weight> Graph<is_oriented, VertexId, VertexType, Weight>::pass_wei
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+void Graph<is_oriented, VertexId, VertexType, Weight>::add_connected_vertices(VertexId from, VertexId to, const Weight& weight) {
+    if (!adjacency_list.contains(from)){
+        adjacency_list.insert(from, ConnectedVerticesList());
+    }
+
+    if (!adjacency_list.contains(to)){
+        adjacency_list.insert(to, ConnectedVerticesList());
+    }
+
+    if (!adjacency_list[from].contains(to)){
+        Edge new_direct_edge(from, to, weight);
+        adjacency_list[from].insert({to, new_direct_edge});
+    }
+
+    if (!is_oriented){
+        if (!adjacency_list[to].contains(from)){
+            Edge new_back_edge(to, from, Weight{});
+            adjacency_list[to].insert({from, new_back_edge});
+        }
+    }
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 void Graph<is_oriented, VertexId, VertexType, Weight>::reserve(std::size_t capacity) {
     resources.reserve(capacity);
     adjacency_list.reserve(capacity);
@@ -455,3 +483,5 @@ tmn::Pair<ArraySequence<ArraySequence<Weight>>, ArraySequence<VertexId>>
 
 }
 }
+
+#include "Algorithms/SingleWeightedGraphAlgorithms.tpp"

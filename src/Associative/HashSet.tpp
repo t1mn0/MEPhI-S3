@@ -2,9 +2,9 @@
 #include <algorithm>
 
 #include "../../include/Associative/HashSet.hpp"
+#include "../../include/Exceptions/LogicException.hpp"
 
-namespace tmn {
-namespace associative {
+namespace tmn::associative {
 
 // Node implementation :
 template <class Key>
@@ -14,35 +14,51 @@ HashSet<Key>::Node::Node(const Key& value, std::size_t cache) noexcept : value(v
 // Iterator implementation :
 
 template <class Key>
-typename HashSet<Key>::const_iterator& HashSet<Key>::const_iterator::operator=(const const_iterator& other){
+template <bool isConst>
+HashSet<Key>::common_iterator<isConst>& 
+HashSet<Key>::common_iterator<isConst>::operator=(const common_iterator<isConst>& other){
     ptr = other.ptr;
     return *this;
 }
 
 template <class Key>
-const Key& HashSet<Key>::const_iterator::operator*() const {
+template <bool isConst>
+typename HashSet<Key>::common_iterator<isConst>::conditional_ref
+HashSet<Key>::common_iterator<isConst>::operator*() const {
     return ptr->value;
 }
 
 template <class Key>
-bool HashSet<Key>::const_iterator::operator==(const const_iterator& other) const {
+template <bool isConst>
+typename HashSet<Key>::common_iterator<isConst>::conditional_ptr
+HashSet<Key>::common_iterator<isConst>::operator->() const {
+    return &(ptr->value);
+}
+template <class Key>
+template <bool isConst>
+bool HashSet<Key>::common_iterator<isConst>::operator==(const common_iterator<isConst>& other) const {
     return ptr == other.ptr;
 }
 
 template <class Key>
-bool HashSet<Key>::const_iterator::operator!=(const const_iterator& other) const {
+template <bool isConst>
+bool HashSet<Key>::common_iterator<isConst>::operator!=(const common_iterator<isConst>& other) const {
     return ptr != other.ptr;
 }
 
 template <class Key>
-typename HashSet<Key>::const_iterator& HashSet<Key>::const_iterator::operator++() {
+template <bool isConst>
+HashSet<Key>::common_iterator<isConst>& 
+HashSet<Key>::common_iterator<isConst>::operator++() {
     ptr = ptr->next;
     return *this;
 }
 
 template <class Key>
-typename HashSet<Key>::const_iterator HashSet<Key>::const_iterator::operator++(int) {
-   typename HashSet<Key>::const_iterator tmp(*this);
+template <bool isConst>
+HashSet<Key>::common_iterator<isConst> 
+HashSet<Key>::common_iterator<isConst>::operator++(int) {
+   common_iterator<isConst> tmp(*this);
    ptr = ptr->next;
    return tmp;
 }
@@ -75,10 +91,9 @@ HashSet<Key>::HashSet(const HashSet<Key>& other) : _buffer_size(other._buffer_si
 
 template <class Key>
 HashSet<Key>::HashSet(HashSet<Key>&& other) : 
-    _storage(std::move(other._storage)),
+    _storage(other._storage),
     _size(other._size), 
     _buffer_size(other._buffer_size),
-    _alloc_node(other._alloc_node),
     _head(other._head)
 {
     other._size = 0;
@@ -100,7 +115,6 @@ void HashSet<Key>::swap(HashSet<Key>& other) {
     std::swap(_buffer_size, other._buffer_size);
     std::swap(_storage, other._storage);
     std::swap(_head, other._head);
-    std::swap(_alloc_node, other._alloc_node);
 }
 
 template <class Key>
@@ -123,7 +137,6 @@ HashSet<Key>& HashSet<Key>::operator=(const HashSet<Key>& other) {
     }
 
     _buffer_size = other._buffer_size;
-    _alloc_node = other._alloc_node;
 
     return *this;
 }
@@ -135,9 +148,8 @@ HashSet<Key>& HashSet<Key>::operator=(HashSet<Key>&& other) noexcept {
 
     _size = other._size;
     _buffer_size = other._buffer_size;
-    _storage = std::move(other._storage);
+    _storage = other._storage;
     _head = other._head;
-    _alloc_node = other._alloc_node;
 
     other._size = 0;
     other._buffer_size = 0;
@@ -186,95 +198,103 @@ float HashSet<Key>::max_load_factor() const {
 
 template <class Key>
 HashSet<Key>& HashSet<Key>::insert(const Key& value){
-    if (static_cast<float>(_size) / _buffer_size > _max_load_factor){
+    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
-    }
-    else if (_buffer_size == 0){
-        rehash(_buffer_size + 1);
     }
 
     std::size_t hash_index = tmn::hash::Hash(value);
-    
-    Node* new_node = allocator_traits_node::allocate(_alloc_node, 1);
-    allocator_traits_node::construct(_alloc_node, new_node, value, hash_index);
-    
+
+    Node* new_node = new Node(value, hash_index);
+
     hash_index %= _buffer_size;
-    std::size_t i = hash_index;
 
-    while (i < _buffer_size && _storage[i]){
-        if (_storage[i]->value == value){
-            allocator_traits_node::destroy(_alloc_node, new_node);
-            allocator_traits_node::deallocate(_alloc_node, new_node, 1);
-            return *this;
+    if (_storage[hash_index]){
+        Node* current = _storage[hash_index];
+        while (current && current->cache % _buffer_size == hash_index){
+            if (current->value == value){
+                delete new_node;
+                return *this;
+            }
+            current = current->next;
         }
-        ++i;
-    }
-    
-    _storage[i] = new_node;
-    new_node->next = _head;
-    if(_head){
-        _head->prev = new_node;
-    }
 
-    _head = new_node;
+        new_node->prev = _storage[hash_index];
+        new_node->next = _storage[hash_index]->next;
+        if(_storage[hash_index]->next){
+            _storage[hash_index]->next->prev = new_node;
+        }
+        _storage[hash_index]->next = new_node;
+    }
+    else{
+        _storage[hash_index] = new_node;
+        new_node->next = _head;
+        if(_head){
+            _head->prev = new_node;
+        }
+
+        _head = new_node;
+    }
 
     ++_size;
 
-    if (static_cast<float>(_size) / _buffer_size > _max_load_factor){
+    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
     }
-    
+
     return *this;
 }
 
 template <class Key>
 HashSet<Key>& HashSet<Key>::insert(Key&& value) {
-    if ((static_cast<float>(_size) / _buffer_size) > _max_load_factor){
+    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
-    }
-    else if (_buffer_size == 0){
-        rehash(_buffer_size + 1);
     }
 
     std::size_t hash_index = tmn::hash::Hash(value);
-    
-    Node* new_node = allocator_traits_node::allocate(_alloc_node, 1);
-    allocator_traits_node::construct(_alloc_node, new_node, value, hash_index);
-    
+
+    Node* new_node = new Node(value, hash_index);
+
     hash_index %= _buffer_size;
 
-    std::size_t i = hash_index;
-
-    while (i < _buffer_size - 1 && _storage[i] != nullptr){
-        if (_storage[i]->value == value){
-            allocator_traits_node::destroy(_alloc_node, new_node);
-            allocator_traits_node::deallocate(_alloc_node, new_node, 1);
-            return *this;
+    if (_storage[hash_index]){
+        Node* current = _storage[hash_index];
+        while (current && current->cache % _buffer_size == hash_index){
+            if (current->value == value){
+                delete new_node;
+                return *this;
+            }
+            current = current->next;
         }
-        ++i;
-    }
-    
-    _storage[i] = new_node;
-    new_node->next = _head;
-    if(_head){
-        _head->prev = new_node;
-    }
 
-    _head = new_node;
-        
+        new_node->prev = _storage[hash_index];
+        new_node->next = _storage[hash_index]->next;
+        if(_storage[hash_index]->next){
+            _storage[hash_index]->next->prev = new_node;
+        }
+        _storage[hash_index]->next = new_node;
+    }
+    else{
+        _storage[hash_index] = new_node;
+        new_node->next = _head;
+        if(_head){
+            _head->prev = new_node;
+        }
+
+        _head = new_node;
+    }
 
     ++_size;
 
-    if (static_cast<float>(_size) / _buffer_size > _max_load_factor){
+    if (_buffer_size == 0 || static_cast<float>(_size) / _buffer_size > _max_load_factor){
         rehash(_buffer_size * 2);
     }
-    
+
     return *this;
 }
 
 template <class Key>
 void HashSet<Key>::erase_node(Node* to_remove) {
-    if (to_remove == nullptr) return;
+    if (!to_remove) return;
 
     if(to_remove->prev){
         to_remove->prev->next = to_remove->next;
@@ -286,12 +306,10 @@ void HashSet<Key>::erase_node(Node* to_remove) {
     if(to_remove->next){
         to_remove->next->prev = to_remove->prev;
     }
-    
-    allocator_traits_node::destroy(_alloc_node, to_remove);
-    allocator_traits_node::deallocate(_alloc_node, to_remove, 1);
+
+    delete to_remove;
 
     --_size;
-    to_remove = nullptr;
 }
 
 template <class Key>
@@ -304,15 +322,14 @@ bool HashSet<Key>::erase(const Key& key){
             _storage[hash_index] = nullptr;
             return true;
         }
-        
-        std::size_t i = hash_index;
-        while(_storage[i]){
-            ++i;
-            if (_storage[i]->value == key){
-                erase_node(_storage[i]);
-                _storage[hash_index] = nullptr;
-                return true;
+
+        Node* current = _storage[hash_index]->next;
+        while (current && current->cache % _buffer_size == hash_index){
+            if (current->value == key){
+                erase_node(current);
+                break;
             }
+            current = current->next;
         }
     }
 
@@ -330,13 +347,13 @@ bool HashSet<Key>::erase(Key&& key){
             return true;
         }
 
-        std::size_t i = hash_index;
-        while(_storage[i]){
-            ++i;
-            if (_storage[i]->value == key){
-                erase_node(_storage[i]);
-                return true;
+        Node* current = _storage[hash_index]->next;
+        while (current && current->cache % _buffer_size == hash_index){
+            if (current->value == key){
+                erase_node(current);
+                break;
             }
+            current = current->next;
         }
     }
 
@@ -345,10 +362,9 @@ bool HashSet<Key>::erase(Key&& key){
 
 template <class Key>
 HashSet<Key>& HashSet<Key>::clear() noexcept {
-    while (_size > 0) {
+    while (_head) {
         erase_node(_head);
     }
-    _head = nullptr;
     return *this;
 }
 
@@ -357,23 +373,21 @@ HashSet<Key>& HashSet<Key>::clear() noexcept {
 
 template <class Key>
 bool HashSet<Key>::contains(const Key& key) const noexcept {
-    std::size_t hash = tmn::hash::Hash(key);
+    std::size_t hash_index = tmn::hash::Hash(key) % _buffer_size;
 
-    if (_storage[hash % _buffer_size]){
-        if (_storage[hash % _buffer_size]->value == key){
+    if (_storage[hash_index] != nullptr){
+        if (_storage[hash_index]->value == key){
             return true;
         }
-        else{
-            std::size_t i = hash % _buffer_size;
-            while(_storage[i]){
-                ++i;
-                if (_storage[hash % _buffer_size]->value == key){
-                    return true;
-                }
+        Node* current = _storage[hash_index]->next;
+        while (current && current->cache % _buffer_size == hash_index){
+            if (current->value == key){
+                return true;
             }
+            current = current->next;
         }
     }
-    
+
     return false;
 }
 
@@ -394,16 +408,32 @@ tmn::sequence::ArraySequence<Key> HashSet<Key>::to_sequence() const {
 // Iterator methods :
 
 template <class Key>
+typename HashSet<Key>::iterator HashSet<Key>::begin() noexcept {
+    return iterator(_head);
+}
+template <class Key>
 typename HashSet<Key>::const_iterator HashSet<Key>::begin() const noexcept {
     return const_iterator(_head);
 }
 
+template <class Key>
+typename HashSet<Key>::const_iterator HashSet<Key>::cbegin() const noexcept {
+    return const_iterator(_head);
+}
+template <class Key>
+typename HashSet<Key>::iterator HashSet<Key>::end() noexcept {
+    return iterator(nullptr);
+}
 
 template <class Key>
 typename HashSet<Key>::const_iterator HashSet<Key>::end() const noexcept {
     return const_iterator(nullptr);
 }
 
+template <class Key>
+typename HashSet<Key>::const_iterator HashSet<Key>::cend() const noexcept {
+    return const_iterator(nullptr);
+}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Hash policy :
 
@@ -419,13 +449,6 @@ void HashSet<Key>::rehash(std::size_t new_buffer_size) {
         while (current){
             if (!new_storage[current->cache % new_buffer_size]){
                 new_storage[current->cache % new_buffer_size] = current;
-            }
-            else{
-                int i = current->cache % new_buffer_size + 1;
-                while (new_storage[i] && i < new_buffer_size){
-                    ++i;
-                }
-                new_storage[i] = current;
             }
 
             current = current->next;
@@ -446,12 +469,12 @@ void HashSet<Key>::reserve(std::size_t new_buffer_size) {
     if (new_buffer_size <= _buffer_size){ return; }
 
     Node** new_storage = reinterpret_cast<Node**>(new int8_t[new_buffer_size * sizeof(Node*)]);
-    std::fill(_storage, _storage + _buffer_size, nullptr);
+    std::fill(new_storage, new_storage + new_buffer_size, nullptr);
 
     std::size_t i = 0;
     try{
         for (; i < _size; ++i){
-            new_storage[i] = *(_storage + i);
+            new_storage[i] = _storage[i];
         }
     }
     catch(...){
@@ -464,5 +487,4 @@ void HashSet<Key>::reserve(std::size_t new_buffer_size) {
     _buffer_size = new_buffer_size;
 }
 
-}
 }

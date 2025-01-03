@@ -1,13 +1,23 @@
 #pragma once
 
-#include "MultiWeightGraph.hpp"
+#include "../Associative/HashTable.hpp"
 #include "../Associative/HashSet.hpp"
+#include "../Sequence/ArraySequence.hpp"
+#include "../Sequence/ListSequence.hpp"
+#include "../Adapter/Queue.hpp"
+#include "../Adapter/Stack.hpp"
+#include "../Function/Function.hpp"
+#include "../tmn.hpp"
 
 namespace tmn {
 namespace graph {
 
+using namespace tmn::sequence;
+using namespace tmn::associative;
+using namespace tmn::adapter;
+
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
-class Graph<is_oriented, VertexId, VertexType, Weight> { 
+class Graph { 
 private:
 // Support structures :
     struct Edge;
@@ -16,7 +26,7 @@ public:
 // Fields & aliases :
     using ConnectedVerticesList = HashTable<VertexId, Edge>;
     using TwoConnectedVertices = tmn::Pair<VertexId, VertexId>;
-    using GraphPath = ListSequence<VertexId>;
+    using GraphPath = ArraySequence<VertexId>;
     using IntMatrix = ArraySequence<ArraySequence<int>>;
     using WeightMatrix = ArraySequence<ArraySequence<Weight>>;
 
@@ -36,6 +46,7 @@ public:
 
 // Basic methods:
     bool oriented() const noexcept;
+    bool weighted() const noexcept;
 
     bool add_vertex(VertexId vertex_id) noexcept;
     bool add_vertex(VertexId vertex_id, const VertexType& vertex_resource, bool strict = true);
@@ -59,15 +70,29 @@ public:
     bool is_connected(VertexId from, VertexId to, bool strict = true) const;
     tmn::Optional<Weight> pass_weight(VertexId from, VertexId to) const noexcept;
 
+    void add_connected_vertices(VertexId from, VertexId to, const Weight& weight);
+
     void reserve(std::size_t capacity); 
     void clear();
 
     tmn::Pair<IntMatrix, ArraySequence<VertexId>> basic_adjacency_list() const noexcept;
     tmn::Pair<WeightMatrix, ArraySequence<VertexId>> weighted_adjacency_matrix() const noexcept;
+
+// Algorithms:
+    bool has_cycle() const;
+    bool is_connected_graph() const;
+
+    GraphPath bfs() const;
+    GraphPath bfs(VertexId start_vertex) const;
+    GraphPath dfs() const;
+    GraphPath dfs(VertexId start_vertex) const;
+
+    HashTable<VertexId, int> graph_coloring() const; // ColorTable: VertedId-ColorId
 };
 
 }
 }
 
 #include "SingleWeightGraphEdge.hpp"
+#include "UnweightedGraph.hpp"
 #include "../../src/Graph/SingleWeightGraph.tpp"

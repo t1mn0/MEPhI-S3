@@ -1,7 +1,5 @@
 #include "../../include/Adapter/Stack.hpp"
 
-
-
 namespace tmn {
 namespace adapter {
 
@@ -62,12 +60,12 @@ Stack<T, Container>& Stack<T, Container>::clear() {
 // Element access methods :
 
 template <typename T, class Container>
-const T Stack<T, Container>::top() const {
+const T& Stack<T, Container>::top() const {
     return container.back();
 }
 
 template <typename T, class Container>
-T Stack<T, Container>::top() {
+T& Stack<T, Container>::top() {
     return container.back();
 }
 

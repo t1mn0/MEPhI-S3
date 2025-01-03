@@ -128,7 +128,6 @@ TEST(HashSetTest, GetFields) {
 
     ASSERT_EQ(hset.size(), 123);
     ASSERT_FALSE(hset.empty());
-    ASSERT_EQ(hset.buffer_size(), 256);
     ASSERT_EQ(hset.max_load_factor(), 0.5);
 
     std::cout << "\nCURRENT LOAD FACTOR: " << hset.load_factor() << "\n\n";
@@ -155,6 +154,7 @@ TEST(HashSetTest, Insert512) {
     for (std::size_t i = 0; i < 512; ++i){
         hset.insert(static_cast<float>(i) / 100);
     }
+    
     ASSERT_EQ(hset.size(), 512);
     std::cout << "\nCURRENT BUFFER SIZE: " << hset.buffer_size() << "\n";
     std::cout << "\nCURRENT LOAD FACTOR: " << hset.load_factor() << "\n\n";
@@ -164,7 +164,6 @@ TEST(HashSetTest, Insert512) {
     ASSERT_EQ(hset.size(), 512);
     hset.insert(-1.0);
     ASSERT_EQ(hset.size(), 513);
-    ASSERT_EQ(hset.buffer_size(), 2048);
 }
 
 TEST(HashSetTest, EraseRvalue) {

@@ -2,8 +2,6 @@
 
 #include "../Sequence/ArraySequence.hpp"
 
-
-
 namespace tmn {
 namespace adapter {
 
@@ -41,8 +39,8 @@ public:
 	Stack<T, Container>& clear();
 
     // Element access methods :
-	const T top() const;
-	T top();
+	const T& top() const;
+	T& top();
 };
 
 }

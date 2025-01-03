@@ -30,6 +30,10 @@ if (NOT Gnuplot_FOUND)
   message(FATAL_ERROR "Gnuplot not found. Please install the required dependencies for this project to work")
 endif()
 
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
+
 find_package(Boost REQUIRED COMPONENTS iostreams)
 if (NOT Boost_FOUND)
   message(FATAL_ERROR "Boost not found. Please install the required dependencies for this project to work")

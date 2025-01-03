@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include "../SmartPtr/UniquePtr.hpp"
 #include "../Exceptions/LogicException.hpp"
 
@@ -66,7 +64,7 @@ public:
 
     ~Function();
 
-    Function& operator=(const Function& other_function) = 0;
+    Function& operator=(const Function& other_function) = delete;
     Function& operator=(Function&& other_function);
 
     void swap(Function& other_function) noexcept;

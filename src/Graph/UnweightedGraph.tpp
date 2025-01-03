@@ -130,6 +130,11 @@ bool Graph<is_oriented, VertexId, VertexType, void>::oriented() const noexcept {
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType>
+bool Graph<is_oriented, VertexId, VertexType, void>::weighted() const noexcept {
+    return false;
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType>
 bool Graph<is_oriented, VertexId, VertexType, void>::add_vertex(VertexId vertex_id) noexcept {
     if (adjacency_list.contains(vertex_id)){
         return false;
@@ -256,6 +261,15 @@ void Graph<is_oriented, VertexId, VertexType, void>::change_vertex_id(VertexId o
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType>
+bool Graph<is_oriented, VertexId, VertexType, void>::has_resource_at(VertexId vertex_id) const {
+    if (!adjacency_list.contains(vertex_id)){
+        throw tmn::exception::LogicException("Error(has_resource_at) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));
+    }
+
+    return resources.contains(vertex_id);
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType>
 const VertexType& Graph<is_oriented, VertexId, VertexType, void>::get_resource(VertexId vertex_id) const {
     if (!adjacency_list.contains(vertex_id)){
         throw tmn::exception::LogicException("Error(get_resource) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));
@@ -356,22 +370,43 @@ bool Graph<is_oriented, VertexId, VertexType, void>::remove_edge(VertexId from, 
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType>
-bool Graph<is_oriented, VertexId, VertexType, void>::is_connected(VertexId from, VertexId to, bool strict) const {
+bool Graph<is_oriented, VertexId, VertexType, void>::has_connected_vertices(VertexId from, VertexId to, bool strict) const {
     if (strict && !adjacency_list.contains(from)){
-        throw tmn::exception::LogicException("Error(is_connected) : vertex with such a VertexId is not in the graph: " + std::to_string(from));
+        throw tmn::exception::LogicException("Error(has_connected_vertices) : vertex with such a VertexId is not in the graph: " + std::to_string(from));
     }
     else if (!adjacency_list.contains(from)){
         return false;
     }
 
     if (strict && !adjacency_list.contains(to)){
-        throw tmn::exception::LogicException("Error(is_connected) : vertex with such a VertexId is not in the graph: " + std::to_string(to));
+        throw tmn::exception::LogicException("Error(has_connected_vertices) : vertex with such a VertexId is not in the graph: " + std::to_string(to));
     }
     else if (!adjacency_list.contains(from)){
         return false;
     }
 
     return adjacency_list[from].contains(to);
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType>
+void Graph<is_oriented, VertexId, VertexType, void>::add_connected_vertices(VertexId from, VertexId to) {
+    if (!adjacency_list.contains(from)){
+        adjacency_list.insert(from, ConnectedVerticesList());
+    }
+
+    if (!adjacency_list.contains(to)){
+        adjacency_list.insert(to, ConnectedVerticesList());
+    }
+
+    if (!adjacency_list[from].contains(to)){
+        adjacency_list[from].insert(to);
+    }
+
+    if (!is_oriented){
+        if (!adjacency_list[to].contains(from)){
+            adjacency_list[to].insert(from);
+        }
+    }
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType>
@@ -416,3 +451,5 @@ Graph<is_oriented, VertexId, VertexType, void>::basic_adjacency_list() const noe
 
 }
 }
+
+#include "Algorithms/UnweightedGraphAlgorithms.tpp"

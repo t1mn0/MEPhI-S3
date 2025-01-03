@@ -160,6 +160,7 @@ ListSequence<T, Allocator>& ListSequence<T, Allocator>::operator=(const ListSequ
 template <typename T, class Allocator>
 ListSequence<T, Allocator>::~ListSequence() {
     clear();
+    delete dummy_node;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
