@@ -55,6 +55,6 @@ output_load_test_unorderedmap.txt
 load_test_bfs_unweighted_graph.txt
 load_test_coloring_unweighted_graph.txt
 load_test_dfs_unweighted_graph.txt
-load_test_bfs_singleweighted_graph.txt
-load_test_coloring_singleweighted_graph.txt
-load_test_dfs_singleweighted_graph.txt
+load_test_bfs_weighted_graph.txt
+load_test_coloring_weighted_graph.txt
+load_test_dfs_weighted_graph.txt
