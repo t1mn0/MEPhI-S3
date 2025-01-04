@@ -12,7 +12,7 @@
 
 using namespace tmn::graph;
 
-TEST(SingleWeightedGraphLoadTest, DFSTEST) {
+TEST(WeightedGraphLoadTest, DFSTEST) {
     const int key_block = 10'000;
     const int block_count = 100;
 
@@ -24,7 +24,7 @@ TEST(SingleWeightedGraphLoadTest, DFSTEST) {
 
     Graph<true, int, std::string, complex_num> graph;
 
-    const std::string filename = std::string(EXECUTABLE_PATH) + "/load_test_dfs_singleweighted_graph.txt";
+    const std::string filename = std::string(EXECUTABLE_PATH) + "/LoadTestResults/load_test_dfs_weighted_graph.txt";
 
     if (std::filesystem::exists(filename)) {
         std::filesystem::remove(filename);

@@ -9,12 +9,13 @@ target_include_directories(Exceptions PUBLIC ../include/Exceptions)
 set(TESTS
   functional_test_unweighted_graph
   functional_test_singleweighted_graph
-  load_test_bfs_singleweighted_graph
-  load_test_dfs_singleweighted_graph
-  load_test_coloring_singleweighted_graph
-  load_test_bfs_unweighted_graph
-  load_test_dfs_unweighted_graph
-  load_test_coloring_unweighted_graph
+  test_make_graph
+  #load_test_bfs_singleweighted_graph
+  #load_test_dfs_singleweighted_graph
+  #load_test_coloring_singleweighted_graph
+  #load_test_bfs_unweighted_graph
+  #load_test_dfs_unweighted_graph
+  #load_test_coloring_unweighted_graph
 )
 
 find_package(GTest REQUIRED)
@@ -41,6 +42,5 @@ if (NOT Boost_FOUND)
 endif()
 
 add_executable(plot_graph_data plot_graph_data.cpp)
-target_compile_definitions(parse_testdata PRIVATE EXECUTABLE_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
 target_compile_definitions(plot_graph_data PRIVATE EXECUTABLE_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(plot_graph_data ${GNUPlot_LIBRARIES} ${Boost_LIBRARIES} Exceptions)

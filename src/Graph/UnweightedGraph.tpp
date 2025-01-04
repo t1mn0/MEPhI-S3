@@ -1,5 +1,4 @@
 #include <utility>
-#include <map>
 
 #include "../../include/Graph/UnweightedGraph.hpp"
 
@@ -261,9 +260,12 @@ void Graph<is_oriented, VertexId, VertexType, void>::change_vertex_id(VertexId o
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType>
-bool Graph<is_oriented, VertexId, VertexType, void>::has_resource_at(VertexId vertex_id) const {
-    if (!adjacency_list.contains(vertex_id)){
+bool Graph<is_oriented, VertexId, VertexType, void>::has_resource_at(VertexId vertex_id, bool strict) const {
+    if (strict && !adjacency_list.contains(vertex_id)){
         throw tmn::exception::LogicException("Error(has_resource_at) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));
+    }
+    else if (!adjacency_list.contains(vertex_id)){
+        return false;
     }
 
     return resources.contains(vertex_id);
@@ -453,3 +455,4 @@ Graph<is_oriented, VertexId, VertexType, void>::basic_adjacency_list() const noe
 }
 
 #include "Algorithms/UnweightedGraphAlgorithms.tpp"
+#include "MakeGraph/Conversion.tpp"

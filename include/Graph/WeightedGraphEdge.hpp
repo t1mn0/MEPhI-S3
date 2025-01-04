@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SingleWeightGraph.hpp"
+#include "WeightedGraph.hpp"
 
 namespace tmn {
 namespace graph {

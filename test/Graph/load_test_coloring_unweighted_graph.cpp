@@ -24,7 +24,7 @@ TEST(UnweightedGraphLoadTest, COLORINGTEST) {
 
     Graph<true, int, std::string, void> graph;
 
-    const std::string filename = std::string(EXECUTABLE_PATH) + "/load_test_coloring_unweighted_graph.txt";
+    const std::string filename = std::string(EXECUTABLE_PATH) + "/LoadTestResults/load_test_coloring_unweighted_graph.txt";
 
     if (std::filesystem::exists(filename)) {
         std::filesystem::remove(filename);

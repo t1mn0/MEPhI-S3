@@ -13,9 +13,10 @@ std::string generate_small_string();
 
 struct complex_num {
 public:
-  double real;
-  double imag;
+  double real = 0.0;
+  double imag = 0.0;
 
+  complex_num() = default;
   complex_num(double r, double i);
 
   double abs() const noexcept;

@@ -17,6 +17,15 @@ using namespace tmn::associative;
 using namespace tmn::adapter;
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+class Graph;
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename WeightType>
+auto make_weighted_graph(const Graph<is_oriented, VertexId, VertexType, void>& unweighted_graph, WeightType base_weight = WeightType())
+    -> Graph<is_oriented, VertexId, VertexType, WeightType>;
+
+
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 class Graph { 
 private:
 // Support structures :
@@ -32,7 +41,7 @@ public:
 
     HashTable<VertexId, ConnectedVerticesList> adjacency_list;
     HashTable<VertexId, VertexType> resources;
-
+    
 public:
 // Constructors & assignment & conversion & destructor:
     Graph() = default;
@@ -58,6 +67,10 @@ public:
     tmn::Optional<std::size_t> connected_vertices_count(VertexId vertex_id) const noexcept;
     HashSet<VertexId> connected_vertices(VertexId vertex_id) const;
 
+    std::size_t postitve_vertex_degree(VertexId v, bool strict = false) const noexcept; 
+    std::size_t negative_vertex_degree(VertexId v, bool strict = false) const noexcept;
+
+    bool has_resource_at(VertexId vertex_id, bool strict = false) const;
     const VertexType& get_resource(VertexId vertex_id) const;
     VertexType& get_resource(VertexId vertex_id);
     void change_vertex_resource(VertexId vertex_id, const VertexType& vertex_resource);
@@ -88,11 +101,17 @@ public:
     GraphPath dfs(VertexId start_vertex) const;
 
     HashTable<VertexId, int> graph_coloring() const; // ColorTable: VertedId-ColorId
+
+
+// Other:
+    template<bool is_oriented_, typename VertexId_, typename VertexType_, typename WeightType_>
+    friend Graph<is_oriented_, VertexId_, VertexType_, void> make_unweighted_graph(const Graph<is_oriented_, VertexId_, VertexType_, WeightType_>& weighted_graph);   
 };
 
 }
 }
 
-#include "SingleWeightGraphEdge.hpp"
+#include "WeightedGraphEdge.hpp"
 #include "UnweightedGraph.hpp"
-#include "../../src/Graph/SingleWeightGraph.tpp"
+#include "../../src/Graph/WeightedGraph.tpp"
+#include "../../src/Graph/MakeGraph/Conversion.tpp"

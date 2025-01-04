@@ -6,12 +6,12 @@
 
 using namespace tmn::graph;
 
-TEST(SingleWeightedGraphTest, DefaultConstructor) {
+TEST(WeightedGraphTest, DefaultConstructor) {
     Graph<true, char, char, complex_num> graph;
     ASSERT_EQ(graph.v_size(), 0);
 }
 
-TEST(SingleWeightedGraphTest, ArraySeqConstructor) {
+TEST(WeightedGraphTest, ArraySeqConstructor) {
         
     tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, complex_num>> seq = { 
         { {'A', 'B'}, complex_num(0, 1) }, // abs = 1
@@ -36,7 +36,7 @@ TEST(SingleWeightedGraphTest, ArraySeqConstructor) {
     ASSERT_EQ(graph.pass_weight('D', 'A').value().abs(), 0.0);
 }
 
-TEST(SingleWeightedGraphTest, CopyConstructor) {
+TEST(WeightedGraphTest, CopyConstructor) {
     tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
         { {'A', 'B'}, 256 }, 
         { {'A', 'C'}, 512 },
@@ -63,7 +63,7 @@ TEST(SingleWeightedGraphTest, CopyConstructor) {
     ASSERT_TRUE(is_symmetric_matrix(copied_pair.first));
 }
 
-TEST(SingleWeightedGraphTest, MoveConstructor) {
+TEST(WeightedGraphTest, MoveConstructor) {
     tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
         { {'A', 'B'}, 256 }, 
         { {'A', 'C'}, 512 },
@@ -88,7 +88,7 @@ TEST(SingleWeightedGraphTest, MoveConstructor) {
     ASSERT_FALSE(is_symmetric_matrix(moved_pair.first));
 }
 
-TEST(SingleWeightedGraphTest, CopyOperator)  {
+TEST(WeightedGraphTest, CopyOperator)  {
     
     tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
         { {'A', 'B'}, 256 }, 
@@ -116,7 +116,7 @@ TEST(SingleWeightedGraphTest, CopyOperator)  {
     ASSERT_TRUE(is_symmetric_matrix(copied_pair.first));
 }
 
-TEST(SingleWeightedGraphTest, MoveOperator) {
+TEST(WeightedGraphTest, MoveOperator) {
     tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
         { {'A', 'B'}, 256 }, 
         { {'A', 'C'}, 512 },
@@ -141,7 +141,7 @@ TEST(SingleWeightedGraphTest, MoveOperator) {
     ASSERT_FALSE(is_symmetric_matrix(moved_pair.first));
 }
 
-TEST(SingleWeightedGraphTest, AddVertexWithoutResource) {
+TEST(WeightedGraphTest, AddVertexWithoutResource) {
     ArraySequence<tmn::Pair<tmn::Pair<int, int>, float>> seq = { 
         { {1, 0}, 0.256 }, 
         { {1, 2}, 0.256 },
@@ -173,7 +173,7 @@ TEST(SingleWeightedGraphTest, AddVertexWithoutResource) {
     ASSERT_EQ(graph.v_size(), 8);
 }
 
-TEST(SingleWeightedGraphTest, AddVertexWithResource) {
+TEST(WeightedGraphTest, AddVertexWithResource) {
     Graph<true, int, std::string, complex_num> graph;
     graph.add_vertex(1, "string 1");
     graph.add_vertex(2, "string 2");
@@ -206,7 +206,7 @@ TEST(SingleWeightedGraphTest, AddVertexWithResource) {
     ASSERT_EQ(graph.get_resource(5), std::string("string 5"));
 }
 
-TEST(SingleWeightedGraphTest, RemoveVertex) {
+TEST(WeightedGraphTest, RemoveVertex) {
     Graph<true, int, std::string, complex_num> graph;
     graph.add_vertex(1, "string 1");
     graph.add_vertex(2, "string 2");
@@ -256,7 +256,7 @@ TEST(SingleWeightedGraphTest, RemoveVertex) {
     }
 }
 
-TEST(SingleWeightedGraphTest, ConnectedVertices) {
+TEST(WeightedGraphTest, ConnectedVertices) {
     ArraySequence<tmn::Pair<tmn::Pair<int, int>, std::string>> seq = { 
         { {0, 2}, "light weight bby" }, 
         { {0, 4}, "false" },
@@ -309,7 +309,7 @@ TEST(SingleWeightedGraphTest, ConnectedVertices) {
     ASSERT_TRUE(connected_v_3.contains(4));
 }
 
-TEST(SingleWeightedGraphTest, ChangeVertexResource) {
+TEST(WeightedGraphTest, ChangeVertexResource) {
     Graph<true, int, std::string, complex_num> graph;
     graph.add_vertex(0, "string 0");
     graph.add_vertex(1, "string 1");
@@ -335,7 +335,7 @@ TEST(SingleWeightedGraphTest, ChangeVertexResource) {
     ASSERT_EQ(graph.get_resource(7), std::string("string 77"));
 }
 
-TEST(SingleWeightedGraphTest, AllVertices) {
+TEST(WeightedGraphTest, AllVertices) {
     ArraySequence<tmn::Pair<tmn::Pair<int, int>, std::string>> seq = { 
         { {0, 2}, "light weight bby" }, 
         { {0, 4}, "false" },

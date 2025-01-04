@@ -3,11 +3,16 @@
 #include <initializer_list>
 #include <cstdint>
 
-#include "SingleWeightGraph.hpp"
+#include "WeightedGraph.hpp"
 #include "../Associative/HashSet.hpp"
 
 namespace tmn {
 namespace graph {
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename WeightType>
+auto make_unweighted_graph(const Graph<is_oriented, VertexId, VertexType, WeightType>& weighted_graph)
+    -> Graph<is_oriented, VertexId, VertexType, void>;
+
 
 template <bool is_oriented, typename VertexId, typename VertexType>
 class Graph<is_oriented, VertexId, VertexType, void> {
@@ -50,7 +55,10 @@ public:
     HashSet<VertexId> connected_vertices(VertexId vertex_id) const;
     void change_vertex_id(VertexId old_vertex_id, VertexId new_vertex_id);
 
-    bool has_resource_at(VertexId vertex_id) const;
+    std::size_t postitve_vertex_degree(VertexId v, bool strict = false) const noexcept; 
+    std::size_t negative_vertex_degree(VertexId v, bool strict = false) const noexcept;
+
+    bool has_resource_at(VertexId vertex_id, bool strict = false) const;
     const VertexType& get_resource(VertexId vertex_id) const;
     VertexType& get_resource(VertexId vertex_id);
     void change_vertex_resource(VertexId vertex_id, const VertexType& vertex_resource);
@@ -77,6 +85,10 @@ public:
     GraphPath dfs(VertexId start_vertex) const;
 
     HashTable<VertexId, int> graph_coloring() const; // ColorTable: VertedId-ColorId
+
+// Other:
+    template<bool is_oriented_, typename VertexId_, typename VertexType_, typename WeightType_>
+    friend Graph<is_oriented_, VertexId_, VertexType_, WeightType_> make_weighted_graph(const Graph<is_oriented_, VertexId_, VertexType_, void>& unweighted_graph, WeightType_ base_weight);
 };
 
 }

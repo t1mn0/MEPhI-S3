@@ -1,4 +1,4 @@
-#include "../../../include/Graph/SingleWeightGraph.hpp"
+#include "../../../include/Graph/WeightedGraph.hpp"
 
 namespace tmn {
 namespace graph {

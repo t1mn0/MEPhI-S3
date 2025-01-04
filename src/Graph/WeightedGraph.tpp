@@ -1,6 +1,6 @@
 #include <utility>
 
-#include "../../include/Graph/SingleWeightGraph.hpp"
+#include "../../include/Graph/WeightedGraph.hpp"
 
 namespace tmn {
 namespace graph {
@@ -181,6 +181,18 @@ HashSet<VertexId> Graph<is_oriented, VertexId, VertexType, Weight>::connected_ve
         vertices.insert(vertex_id.first);
     }
     return vertices;
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+bool Graph<is_oriented, VertexId, VertexType, Weight>::has_resource_at(VertexId vertex_id, bool strict) const {
+    if (strict && !adjacency_list.contains(vertex_id)){
+        throw tmn::exception::LogicException("Error(has_resource_at) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));
+    }
+    else if (!adjacency_list.contains(vertex_id)){
+        return false;
+    }
+
+    return resources.contains(vertex_id);
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
@@ -383,11 +395,11 @@ tmn::Optional<Weight> Graph<is_oriented, VertexId, VertexType, Weight>::pass_wei
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 void Graph<is_oriented, VertexId, VertexType, Weight>::add_connected_vertices(VertexId from, VertexId to, const Weight& weight) {
     if (!adjacency_list.contains(from)){
-        adjacency_list.insert(from, ConnectedVerticesList());
+        adjacency_list.insert({from, ConnectedVerticesList()});
     }
 
     if (!adjacency_list.contains(to)){
-        adjacency_list.insert(to, ConnectedVerticesList());
+        adjacency_list.insert({to, ConnectedVerticesList()});
     }
 
     if (!adjacency_list[from].contains(to)){
@@ -484,4 +496,5 @@ tmn::Pair<ArraySequence<ArraySequence<Weight>>, ArraySequence<VertexId>>
 }
 }
 
-#include "Algorithms/SingleWeightedGraphAlgorithms.tpp"
+#include "Algorithms/WeightedGraphAlgorithms.tpp"
+#include "MakeGraph/Conversion.tpp"
