@@ -55,7 +55,7 @@ public:
     HashSet<VertexId> connected_vertices(VertexId vertex_id) const;
     void change_vertex_id(VertexId old_vertex_id, VertexId new_vertex_id);
 
-    std::size_t postitve_vertex_degree(VertexId v, bool strict = false) const noexcept; 
+    std::size_t posititve_vertex_degree(VertexId v, bool strict = false) const noexcept; 
     std::size_t negative_vertex_degree(VertexId v, bool strict = false) const noexcept;
 
     bool has_resource_at(VertexId vertex_id, bool strict = false) const;
@@ -85,6 +85,8 @@ public:
     GraphPath dfs(VertexId start_vertex) const;
 
     HashTable<VertexId, int> graph_coloring() const; // ColorTable: VertedId-ColorId
+
+    GraphPath find_shortest_path(VertexId start, VertexId end) const;
 
 // Other:
     template<bool is_oriented_, typename VertexId_, typename VertexType_, typename WeightType_>

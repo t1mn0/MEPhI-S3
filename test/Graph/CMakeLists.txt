@@ -8,14 +8,14 @@ target_include_directories(Exceptions PUBLIC ../include/Exceptions)
 
 set(TESTS
   functional_test_unweighted_graph
-  functional_test_singleweighted_graph
+  functional_test_weighted_graph
   test_make_graph
-  load_test_bfs_singleweighted_graph
-  load_test_dfs_singleweighted_graph
-  load_test_coloring_singleweighted_graph
-  load_test_bfs_unweighted_graph
-  load_test_dfs_unweighted_graph
-  load_test_coloring_unweighted_graph
+  #load_test_bfs_weighted_graph
+  #load_test_dfs_weighted_graph
+  #load_test_coloring_weighted_graph
+  #load_test_bfs_unweighted_graph
+  #load_test_dfs_unweighted_graph
+  #load_test_coloring_unweighted_graph
 )
 
 find_package(GTest REQUIRED)

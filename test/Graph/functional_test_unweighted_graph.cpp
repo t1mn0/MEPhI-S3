@@ -494,3 +494,37 @@ TEST(UnweightedGraphTest, RemoveEdge) {
     auto pair = graph.basic_adjacency_list();
     pretty_print_matrix(15, "FT UNW-GRAPH", pair.first, pair.second);
 }
+
+TEST(UnweightedGraphTest, FindPath) {
+    Graph<true, int, char, void> graph = { 
+        {0, {2, 4, 6}},
+        {1, {3, 5}   },
+        {2, {1, 3, 4, 5, 6}},
+        {3, {4}},
+        {4, {5}},
+        {5, {1, 2, 3, 4, 0}}
+    };
+
+    try {
+        graph.find_shortest_path(12, 3);
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        graph.find_shortest_path(5, 11);
+        ASSERT_FALSE(true);
+    }
+    catch(tmn::exception::LogicException& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    const auto& seq = graph.find_shortest_path(3, 1);
+
+    for (const auto& element : seq){
+        std::cout << element << " ";
+    }
+    std::cout << std::endl;
+}

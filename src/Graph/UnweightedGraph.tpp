@@ -260,6 +260,42 @@ void Graph<is_oriented, VertexId, VertexType, void>::change_vertex_id(VertexId o
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType>
+std::size_t Graph<is_oriented, VertexId, VertexType, void>::posititve_vertex_degree(VertexId vertex_id, bool strict) const noexcept {
+    if (strict && !adjacency_list.contains(vertex_id)){
+        throw tmn::exception::LogicException("Error(postitve_vertex_degree) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));
+    }
+    else if (!adjacency_list.contains(vertex_id)){
+        return 0;
+    }
+
+    return adjacency_list[vertex_id].size();
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType>
+std::size_t Graph<is_oriented, VertexId, VertexType, void>::negative_vertex_degree(VertexId vertex_id, bool strict) const noexcept {
+    if (strict && !adjacency_list.contains(vertex_id)){
+        throw tmn::exception::LogicException("Error(negative_vertex_degree) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));
+    }
+    else if (!adjacency_list.contains(vertex_id)){
+        return 0;
+    }
+
+    if (!is_oriented){
+        return adjacency_list[vertex_id].size();
+    }
+    
+    size_t res = 0;
+
+    for (const auto& pair : adjacency_list){
+        if (pair.second.contains(vertex_id)){
+            ++res;
+        }
+    }
+
+    return res;
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType>
 bool Graph<is_oriented, VertexId, VertexType, void>::has_resource_at(VertexId vertex_id, bool strict) const {
     if (strict && !adjacency_list.contains(vertex_id)){
         throw tmn::exception::LogicException("Error(has_resource_at) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));

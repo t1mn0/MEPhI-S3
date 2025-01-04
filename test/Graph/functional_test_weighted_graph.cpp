@@ -469,3 +469,29 @@ TEST(UnweightedGraphTest, RemoveEdge) {
     ASSERT_FALSE(graph.is_connected('Q', 'R'));
     ASSERT_FALSE(graph.is_connected('Q', 'T'));
 }
+
+TEST(UnweightedGraphTest, FindPath) {
+    tmn::sequence::ArraySequence<tmn::Pair<tmn::Pair<char, char>, int>> seq = { 
+        { {'A', 'B'}, 256 }, 
+        { {'A', 'C'}, 512 },
+        { {'A', 'R'}, 22556 }, 
+        { {'A', 'D'}, 1024 },
+        { {'B', 'C'}, 2048 }, 
+        { {'B', 'D'}, 4096 }, 
+        { {'B', 'Q'}, 2048 }, 
+        { {'Q', 'W'}, 8192 },
+        { {'Q', 'R'}, 8192 },
+        { {'Q', 'T'}, 8192 },
+        { {'T', 'C'}, 8192 },
+        { {'T', 'A'}, 8192 },
+    };
+
+    Graph<true, char, int, int> graph(seq);
+
+    auto res = graph.find_shortest_path('A', 'R');  
+
+    for (const auto& element : res){
+        std::cout << element << " ";
+    }
+    std::cout << std::endl;   
+}

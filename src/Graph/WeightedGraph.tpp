@@ -27,13 +27,10 @@ Graph<is_oriented, VertexId, VertexType, Weight>::Graph(const ArraySequence<tmn:
             adjacency_list.insert({edge.first.second, ConnectedVerticesList()});
         }
 
-        Edge new_direct_edge(edge.first.first, edge.first.second, edge.second);
-
-        adjacency_list[edge.first.first].insert({edge.first.second, new_direct_edge});
+        adjacency_list[edge.first.first].insert({edge.first.second, edge.second});
 
         if (!is_oriented){
-            Edge new_back_edge(edge.first.second, edge.first.first, edge.second);
-            adjacency_list[edge.first.second].insert({edge.first.first, new_back_edge});
+            adjacency_list[edge.first.second].insert({edge.first.first, edge.second});
         }
     }
 }
@@ -184,6 +181,43 @@ HashSet<VertexId> Graph<is_oriented, VertexId, VertexType, Weight>::connected_ve
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+std::size_t Graph<is_oriented, VertexId, VertexType, Weight>::posititve_vertex_degree(VertexId vertex_id, bool strict) const noexcept {
+    if (strict && !adjacency_list.contains(vertex_id)){
+        throw tmn::exception::LogicException("Error(postitve_vertex_degree) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));
+    }
+    else if (!adjacency_list.contains(vertex_id)){
+        return 0;
+    }
+
+    return adjacency_list[vertex_id].size();
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+std::size_t Graph<is_oriented, VertexId, VertexType, Weight>::negative_vertex_degree(VertexId vertex_id, bool strict) const noexcept {
+    if (strict && !adjacency_list.contains(vertex_id)){
+        throw tmn::exception::LogicException("Error(negative_vertex_degree) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));
+    }
+    else if (!adjacency_list.contains(vertex_id)){
+        return 0;
+    }
+
+    if (!is_oriented){
+        return adjacency_list[vertex_id].size();
+    }
+    
+    size_t res = 0;
+
+    for (const auto& pair : adjacency_list){
+        if (pair.second.contains(vertex_id)){
+            ++res;
+        }
+    }
+
+    return res;
+}
+
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 bool Graph<is_oriented, VertexId, VertexType, Weight>::has_resource_at(VertexId vertex_id, bool strict) const {
     if (strict && !adjacency_list.contains(vertex_id)){
         throw tmn::exception::LogicException("Error(has_resource_at) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));
@@ -255,13 +289,10 @@ bool Graph<is_oriented, VertexId, VertexType, Weight>::add_edge(VertexId from, V
         return false;
     }
 
-    Edge new_direct_edge(from, to, Weight{});
-
-    adjacency_list[from].insert({to, new_direct_edge});
+    adjacency_list[from].insert({to, Weight()});
 
     if (!is_oriented){
-        Edge new_back_edge(to, from, Weight{});
-        adjacency_list[to].insert({from, new_back_edge});
+        adjacency_list[to].insert({from, Weight()});
     }
 
     return true;
@@ -283,13 +314,10 @@ bool Graph<is_oriented, VertexId, VertexType, Weight>::add_edge(VertexId from, V
         return false;
     }
 
-    Edge new_direct_edge(from, to, weight);
-
-    adjacency_list[from].insert({to, new_direct_edge});
+    adjacency_list[from].insert({to, weight});
 
     if (!is_oriented){
-        Edge new_back_edge(to, from, weight);
-        adjacency_list[to].insert({from, new_back_edge});
+        adjacency_list[to].insert({from, weight});
     }
 
     return true;
@@ -311,13 +339,10 @@ bool Graph<is_oriented, VertexId, VertexType, Weight>::add_edge(VertexId from, V
         return false;
     }
 
-    Edge new_direct_edge(from, to, std::move(weight));
-
-    adjacency_list[from].insert({to, new_direct_edge});
+    adjacency_list[from].insert({to, std::move(weight)});
 
     if (!is_oriented){
-        Edge new_back_edge(to, from, new_direct_edge.weight);
-        adjacency_list[to].insert({from, new_back_edge});
+        adjacency_list[to].insert({from, std::move(weight)});
     }
 
     return true;
@@ -389,7 +414,7 @@ tmn::Optional<Weight> Graph<is_oriented, VertexId, VertexType, Weight>::pass_wei
         return tmn::Optional<Weight>();
     }
 
-    return tmn::Optional<Weight>(adjacency_list[from][to].weight);
+    return tmn::Optional<Weight>(adjacency_list[from][to]);
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
@@ -403,14 +428,12 @@ void Graph<is_oriented, VertexId, VertexType, Weight>::add_connected_vertices(Ve
     }
 
     if (!adjacency_list[from].contains(to)){
-        Edge new_direct_edge(from, to, weight);
-        adjacency_list[from].insert({to, new_direct_edge});
+        adjacency_list[from].insert({to, weight});
     }
 
     if (!is_oriented){
         if (!adjacency_list[to].contains(from)){
-            Edge new_back_edge(to, from, Weight{});
-            adjacency_list[to].insert({from, new_back_edge});
+            adjacency_list[to].insert({from, weight});
         }
     }
 }
@@ -479,13 +502,12 @@ tmn::Pair<ArraySequence<ArraySequence<Weight>>, ArraySequence<VertexId>>
 
         for (const auto& edge_pair : connected_vertices) {
             VertexId v = edge_pair.first;
-            const Edge& edge = edge_pair.second;
             size_t v_index = vertex_index[v];
 
-            matrix[u_index][v_index] = edge.weight;
+            matrix[u_index][v_index] = edge_pair.second;
 
             if (!is_oriented) {
-                matrix[v_index][u_index] = edge.weight;
+                matrix[v_index][u_index] = edge_pair.second;
             }
         }
     }

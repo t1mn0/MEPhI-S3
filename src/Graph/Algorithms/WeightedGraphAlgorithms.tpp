@@ -1,5 +1,7 @@
 #include "../../../include/Graph/WeightedGraph.hpp"
 
+#include <limits>
+
 namespace tmn {
 namespace graph {
 
@@ -294,6 +296,74 @@ HashTable<VertexId, int> Graph<is_oriented, VertexId, VertexType, Weight>::graph
     }
 
     return vertex_colors;
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+ArraySequence<VertexId> Graph<is_oriented, VertexId, VertexType, Weight>::find_shortest_path(VertexId start, VertexId end) const {
+    ArraySequence<VertexId> path;
+    HashTable<VertexId, Weight> distances;
+    HashTable<VertexId, VertexId> previous;
+    HashSet<VertexId> unvisited;
+
+    if (!adjacency_list.contains(start)){
+        throw exception::LogicException("Error(find_shortest_path) : vertex with such a VertexId is not in the graph: " + std::to_string(start));
+    }
+
+    if (!adjacency_list.contains(end)){
+        throw exception::LogicException("Error(find_shortest_path) : vertex with such a VertexId is not in the graph: " + std::to_string(end));
+    }
+
+    for (const auto& pair : adjacency_list) {
+        distances[pair.first] = std::numeric_limits<Weight>::max();
+        previous[pair.first] = 0;
+        unvisited.insert(pair.first);
+    }
+
+    distances[start] = 0;
+
+    while (!unvisited.empty()) {
+        VertexId current = 0;
+        Weight min_distance = std::numeric_limits<Weight>::max();
+        for (const auto& vertex : unvisited) {
+            if (distances[vertex] < min_distance) {
+                min_distance = distances[vertex];
+                current = vertex;
+            }
+        }
+
+        if (current == 0) break;
+
+        unvisited.erase(current);
+        if (current == end) {
+            ArraySequence<VertexId> reversed_path;
+            VertexId trace = end;
+            while (trace != 0 && previous.contains(trace)) {
+                reversed_path.push_back(trace);
+                trace = previous[trace];
+            }
+            
+            for(int i = reversed_path.size() - 1; i >= 0; --i) {
+                path.push_back(reversed_path[i]);
+            }
+
+            return path;
+        }
+
+        if(adjacency_list.contains(current)){
+            for (const auto& neighbor_pair : adjacency_list[current]) {
+                VertexId neighbor = neighbor_pair.first;
+                Weight weight = neighbor_pair.second;
+                Weight new_distance = distances[current] + weight;
+                
+                if (new_distance < distances[neighbor]) {
+                    distances[neighbor] = new_distance;
+                    previous[neighbor] = current;
+                }
+            }
+        }
+    }
+
+    return path;
 }
 
 }

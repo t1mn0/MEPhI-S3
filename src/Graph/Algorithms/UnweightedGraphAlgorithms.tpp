@@ -297,5 +297,66 @@ HashTable<VertexId, int> Graph<is_oriented, VertexId, VertexType, void>::graph_c
     return vertex_colors;
 }
 
+template <bool is_oriented, typename VertexId, typename VertexType>
+ArraySequence<VertexId> Graph<is_oriented, VertexId, VertexType, void>::find_shortest_path(VertexId start, VertexId end) const {
+    ArraySequence<VertexId> path;
+    Queue<VertexId> queue;
+    HashSet<VertexId> visited;
+    HashTable<VertexId, VertexId> parent;
+
+    if (!adjacency_list.contains(start)){
+        throw exception::LogicException("Error(find_shortest_path) : vertex with such a VertexId is not in the graph: " + std::to_string(start));
+    }
+
+    if (!adjacency_list.contains(end)){
+        throw exception::LogicException("Error(find_shortest_path) : vertex with such a VertexId is not in the graph: " + std::to_string(end));
+    }
+
+    queue.push(start);
+    visited.insert(start);
+    parent.insert({start, start});
+
+    while (!queue.empty()) {
+        VertexId current = queue.front();
+        queue.pop();
+
+        if (current == end) {
+            VertexId trace = end;
+            while (parent.contains(trace) && trace != parent[trace]) {
+                path.push_back(trace);
+                trace = parent[trace];
+            }
+
+            path.push_back(start);
+            
+            ArraySequence<VertexId> reversed_path;
+            for (size_t i = path.size() - 1; i > 0; --i) {
+                reversed_path.push_back(path[i]);
+            }
+            reversed_path.push_back(path[0]);
+
+            return reversed_path;
+        }
+
+        if(adjacency_list.contains(current)){
+            for (const auto& neighbor : adjacency_list[current]) {
+                if (!visited.contains(neighbor)) {
+                    queue.push(neighbor);
+                    visited.insert(neighbor);
+                    parent[neighbor] = current;
+                }
+            }
+        }
+    }
+
+    ArraySequence<VertexId> reversed_path;
+    for (size_t i = path.size() - 1; i > 0; --i) {
+        reversed_path.push_back(path[i]);
+    }
+    reversed_path.push_back(path[0]);
+
+    return reversed_path;
+}
+
 }
 }
