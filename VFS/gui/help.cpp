@@ -3,7 +3,8 @@
 
 #include "View.hpp"
 
-namespace tmn_vfs {
+namespace tmn{
+namespace vfs {
 
 void View::global_help() const noexcept{
     std::cout << "These are common VFS commands used in various situations:" << std::endl;
@@ -336,4 +337,5 @@ void View::exit_help() const noexcept{
 	std::cout << "- - - - - - - - - -" << std::endl;
 }
 
+}
 }

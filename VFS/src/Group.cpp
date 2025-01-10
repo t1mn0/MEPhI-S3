@@ -3,7 +3,7 @@
 #include "../include/Group.hpp"
 #include "../include/Utils.hpp"
 
-namespace tmn_vfs {
+namespace tmn::vfs {
 
 Group::Group(const Group& other) noexcept :
     group_id(other.group_id),
@@ -48,7 +48,7 @@ Group& Group::operator=(Group&& other) noexcept {
     return *this;
 }
 
-tmn_vfs::Group::~Group(){
+tmn::vfs::Group::~Group(){
     members.clear();
 }
 

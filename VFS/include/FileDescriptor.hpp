@@ -6,7 +6,8 @@
 #include "../../include/Associative/HashSet.hpp"
 #include "vfs_constants.hpp"
 
-namespace tmn_vfs {
+namespace tmn {
+namespace vfs {
 
 class VirtualFileSystem;
 class View;
@@ -50,7 +51,7 @@ private:
   std::string descriptor_modification_time = "-";      
   FilePermissions file_permissions;
 
-  tmn_associative::HashSet<uint64_t> inner_files;
+  tmn::associative::HashSet<uint64_t> inner_files;
 
 public:
   FileDescriptor() : file_permissions(Permission::READWRITE, Permission::READWRITE, Permission::READ) {}
@@ -92,4 +93,5 @@ public:
   friend class View;
 };
 
+}
 }

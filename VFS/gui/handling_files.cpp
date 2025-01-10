@@ -5,7 +5,8 @@
 #include "../include/Utils.hpp"
 #include "../../include/Exceptions/RuntimeException.hpp"
 
-namespace tmn_vfs {
+namespace tmn {
+namespace vfs {
 
 void View::mkdir(const std::string& dirname, std::string path) noexcept {
     if(!is_good_filename(dirname)){
@@ -24,7 +25,7 @@ void View::mkdir(const std::string& dirname, std::string path) noexcept {
         try {
             vfs.add_file(fd);
         }
-        catch (tmn_exception::RuntimeException& e){
+        catch (tmn::exception::RuntimeException& e){
             --vfs.fd_id;
 
             std::cerr << e.what() << std::endl;
@@ -36,7 +37,7 @@ void View::mkdir(const std::string& dirname, std::string path) noexcept {
     try {
         vfs.go_to(path);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         --vfs.fd_id;
         
         std::cerr << e.what() << std::endl;
@@ -48,7 +49,7 @@ void View::mkdir(const std::string& dirname, std::string path) noexcept {
     try {
         vfs.add_file(fd);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         --vfs.fd_id;
 
         std::cerr << e.what() << std::endl;
@@ -89,7 +90,7 @@ void View::mkfile(const std::string& filename, std::filesystem::path ph_path, st
         try {
             vfs.add_file(fd);
         }
-        catch (tmn_exception::RuntimeException& e){
+        catch (tmn::exception::RuntimeException& e){
             vfs.recording_files.erase(vfs.rec_id);
 
             --vfs.rec_id;
@@ -104,7 +105,7 @@ void View::mkfile(const std::string& filename, std::filesystem::path ph_path, st
     try {
         vfs.go_to(path);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         
         vfs.recording_files.erase(vfs.rec_id);
         
@@ -121,7 +122,7 @@ void View::mkfile(const std::string& filename, std::filesystem::path ph_path, st
     try {
         vfs.add_file(fd);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         
         vfs.recording_files.erase(vfs.rec_id);
         
@@ -140,7 +141,7 @@ void View::addcontent(const std::string& filename, std::string content) noexcept
     try {
         vfs.add_file_content(filename, content);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
     }
 }
@@ -160,7 +161,7 @@ void View::setgroup(const std::string &filename, const std::string& groupname) n
         try {
             vfs.set_owner_group(inner_id, vfs.groupnames[groupname]);
         }
-        catch (tmn_exception::RuntimeException& e){
+        catch (tmn::exception::RuntimeException& e){
             std::cerr << e.what() << std::endl;
         }
     }
@@ -170,7 +171,7 @@ void View::chmod(const std::string& filename, unsigned int new_permissions) noex
     try{
         vfs.change_file_permissions(filename, new_permissions);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
     }
 }
@@ -184,7 +185,7 @@ void View::renamefile(const std::string& old_filename, const std::string& new_fi
     try {
         vfs.rename_file(old_filename, new_filename);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
     }
 }
@@ -193,7 +194,7 @@ void View::rmfile(const std::string& filename) noexcept {
     try{
         vfs.remove_file(filename);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
     }
 }
@@ -205,7 +206,7 @@ void View::cat(const std::string& filename, std::string path) noexcept {
         try{
             vfs.go_to(path);
         }
-        catch (tmn_exception::RuntimeException& e){
+        catch (tmn::exception::RuntimeException& e){
             std::cerr << e.what() << std::endl;
             return;
         }
@@ -216,7 +217,7 @@ void View::cat(const std::string& filename, std::string path) noexcept {
     try{
         content = vfs.get_file_content(filename);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
         return;
     }
@@ -260,13 +261,13 @@ void View::cd(std::string& path) noexcept {
     try{
         vfs.go_to(path);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
     }
 }
 
 void View::find(short filetype, bool where, const std::string& name_pattern) noexcept {
-    tmn_sequence::ArraySequence<unsigned long> result = vfs.find_file_by_name(name_pattern, where);
+    tmn::sequence::ArraySequence<unsigned long> result = vfs.find_file_by_name(name_pattern, where);
 
     if (result.empty()){
         std::cout << "No files found" << std::endl;
@@ -312,4 +313,5 @@ void View::find(short filetype, bool where, const std::string& name_pattern) noe
     }
 }
 
+}
 }

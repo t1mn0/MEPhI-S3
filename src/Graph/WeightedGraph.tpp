@@ -1,4 +1,5 @@
 #include <utility>
+#include <sstream>
 
 #include "../../include/Graph/WeightedGraph.hpp"
 
@@ -181,7 +182,7 @@ HashSet<VertexId> Graph<is_oriented, VertexId, VertexType, Weight>::connected_ve
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
-std::size_t Graph<is_oriented, VertexId, VertexType, Weight>::posititve_vertex_degree(VertexId vertex_id, bool strict) const noexcept {
+std::size_t Graph<is_oriented, VertexId, VertexType, Weight>::positive_vertex_degree(VertexId vertex_id, bool strict) const noexcept {
     if (strict && !adjacency_list.contains(vertex_id)){
         throw tmn::exception::LogicException("Error(postitve_vertex_degree) : vertex with such a VertexId is not in the graph: " + std::to_string(vertex_id));
     }
@@ -418,6 +419,68 @@ tmn::Optional<Weight> Graph<is_oriented, VertexId, VertexType, Weight>::pass_wei
 }
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+bool Graph<is_oriented, VertexId, VertexType, Weight>::change_weight(VertexId from, VertexId to, const Weight& weight, bool strict) noexcept {
+    if (strict && !adjacency_list.contains(from)){
+        throw tmn::exception::LogicException("Error(change_weight) : vertex with such a VertexId is not in the graph: " + std::to_string(from));
+    }
+    else if (!adjacency_list.contains(from)){
+        return false;
+    }
+
+    if (strict && !adjacency_list.contains(to)){
+        throw tmn::exception::LogicException("Error(change_weight) : vertex with such a VertexId is not in the graph: " + std::to_string(to));
+    }
+    else if (!adjacency_list.contains(from)){
+        return false;
+    }
+
+    if (strict && !is_connected(from, to)){
+        throw tmn::exception::LogicException("Error(change_weight) : the specified vertices are not connected in the graph"); 
+    }
+    else if (!is_connected(from, to)){
+        return false;
+    }
+
+    adjacency_list[from][to] = weight;
+    if (!is_oriented){
+        adjacency_list[to][from] = weight;
+    }
+
+    return true;
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+bool Graph<is_oriented, VertexId, VertexType, Weight>::change_weight(VertexId from, VertexId to, Weight&& weight, bool strict) noexcept {
+    if (strict && !adjacency_list.contains(from)){
+        throw tmn::exception::LogicException("Error(change_weight) : vertex with such a VertexId is not in the graph: " + std::to_string(from));
+    }
+    else if (!adjacency_list.contains(from)){
+        return false;
+    }
+
+    if (strict && !adjacency_list.contains(to)){
+        throw tmn::exception::LogicException("Error(change_weight) : vertex with such a VertexId is not in the graph: " + std::to_string(to));
+    }
+    else if (!adjacency_list.contains(from)){
+        return false;
+    }
+
+    if (strict && !is_connected(from, to)){
+        throw tmn::exception::LogicException("Error(change_weight) : the specified vertices are not connected in the graph"); 
+    }
+    else if (!is_connected(from, to)){
+        return false;
+    }
+
+    adjacency_list[from][to] = std::move(weight);
+    if (!is_oriented){
+        adjacency_list[to][from] = adjacency_list[from][to];
+    }
+
+    return true;
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 void Graph<is_oriented, VertexId, VertexType, Weight>::add_connected_vertices(VertexId from, VertexId to, const Weight& weight) {
     if (!adjacency_list.contains(from)){
         adjacency_list.insert({from, ConnectedVerticesList()});
@@ -513,6 +576,76 @@ tmn::Pair<ArraySequence<ArraySequence<Weight>>, ArraySequence<VertexId>>
     }
 
     return tmn::Pair<WeightMatrix, ArraySequence<VertexId>>(matrix, vertices);
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+std::string Graph<is_oriented, VertexId, VertexType, Weight>::to_dot() const {
+    std::stringstream dot_file;
+    dot_file << (is_oriented ? "digraph" : "graph") << " G {\n";
+    dot_file << "  node [shape=circle, style=\"filled\", fillcolor=lightblue, color=black, penwidth=1];\n";
+    dot_file << "  edge [penwidth=1];\n";
+
+    HashSet<VertexId> visited;
+
+    for(const auto& pair : adjacency_list) {
+        VertexId vertex_id = pair.first;
+        dot_file << "  " << vertex_id << " [label=\"" << vertex_id << "\"];\n";
+    }
+
+    for(const auto& pair : adjacency_list){
+        VertexId from = pair.first;
+        visited.insert(from);
+        for(const auto& to_pair : pair.second) {
+            if (!visited.contains(to_pair.first)){
+                VertexId to = to_pair.first;
+                Weight weight = to_pair.second;
+                dot_file << "  " << from << (is_oriented ? " -> " : " -- ") << to;
+                dot_file << " [label=\"" << weight << "\"]";
+                dot_file << ";\n";
+            }
+        }
+    }
+    dot_file << "}\n";
+    return dot_file.str();
+}
+
+template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
+std::string Graph<is_oriented, VertexId, VertexType, Weight>::to_dot(const HashTable<VertexId, int>& colors) const {
+    std::stringstream dot_file;
+    dot_file << (is_oriented ? "digraph" : "graph") << " G {\n";
+    dot_file << "  node [shape=circle, style=\"filled\", color=black, penwidth=1];\n";
+    dot_file << "  edge [penwidth=1];\n";
+
+    std::vector<std::string> color_palette = {
+        "lightblue", "lightgreen", "lightcoral", "lightpink", "lightyellow", "lightcyan", "lightsalmon", "lightseagreen", "lightskyblue", "lightgoldenrodyellow"
+    };
+
+    HashSet<VertexId> visited;
+
+    for(const auto& pair : adjacency_list) {
+        VertexId vertex_id = pair.first;
+        int color_id = 0;
+        if (colors.contains(vertex_id)) {
+            color_id = colors[vertex_id];
+        }
+        std::string fill_color = color_palette[color_id % color_palette.size()];
+        dot_file << "  " << vertex_id << " [label=\"" << vertex_id << "\", fillcolor=" << fill_color << "];\n";
+    }
+
+    for(const auto& pair : adjacency_list){
+        VertexId from = pair.first;
+        for(const auto& to_pair : pair.second) {
+            if (!visited.contains(to_pair.first)){
+                VertexId to = to_pair.first;
+                Weight weight = to_pair.second;
+                dot_file << "  " << from << (is_oriented ? " -> " : " -- ") << to;
+                dot_file << " [label=\"" << weight << "\"]";
+                dot_file << ";\n";
+            }
+        }
+    }
+    dot_file << "}\n";
+    return dot_file.str();
 }
 
 }

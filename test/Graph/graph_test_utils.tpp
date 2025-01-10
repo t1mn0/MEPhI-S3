@@ -29,4 +29,3 @@ void pretty_print_matrix(int num, const std::string& test_name, const Matrix& ma
         std::cout << std::endl;
     }
 }
-

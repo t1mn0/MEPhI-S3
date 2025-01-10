@@ -5,14 +5,14 @@
 #include "../include/VFS.hpp"
 #include "../../include/Exceptions/RuntimeException.hpp"
 
-namespace tmn_vfs {
+namespace tmn::vfs {
 
 void VirtualFileSystem::save_users() const {
     std::ofstream users_file(USERS_PATH);
 
     if (!users_file.is_open()) {
         std::string err_message = "Error(save_users): error with opening file";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     for (const auto& pair : users_table) {
@@ -25,7 +25,7 @@ void VirtualFileSystem::save_groups() const {
 
     if (!groups_file.is_open()) {
         std::string err_message = "Error(save_groups): error with opening file";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     for (const auto& pair : groups_table) {
@@ -38,7 +38,7 @@ void VirtualFileSystem::save_file_descriptors() const {
 
     if (!descriptors_file.is_open()) {
         std::string err_message = "Error(save_file_descriptors): error with opening file";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     for (const auto& pair : files) {
@@ -51,7 +51,7 @@ void VirtualFileSystem::save_config() const {
 
     if (!config_file.is_open()) {
         std::string err_message = "Error(save_config): error with opening file";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     for (const auto& path : recording_files) {

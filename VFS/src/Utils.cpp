@@ -11,7 +11,7 @@
 #include "../include/Utils.hpp"
 #include "../include/vfs_constants.hpp"
 
-namespace tmn_vfs{
+namespace tmn::vfs {
 
 std::string get_time_now() {
     auto now = std::chrono::system_clock::now();

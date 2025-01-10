@@ -4,7 +4,8 @@
 
 #include "../include/VFS.hpp"
 
-namespace tmn_vfs {
+namespace tmn {
+namespace vfs {
 
 class View {
 private:
@@ -82,4 +83,5 @@ public:
     void clear() const noexcept;
 };
 
+}
 }

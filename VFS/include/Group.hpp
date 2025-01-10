@@ -5,7 +5,8 @@
 
 #include "../../include/Associative/HashSet.hpp"
 
-namespace tmn_vfs {
+namespace tmn {
+namespace vfs {
 
 class VirtualFileSystem;
 class View;
@@ -17,7 +18,7 @@ private:
     uint64_t user_id = 0;
     std::string creation_time = "-";
     
-    tmn_associative::HashSet<uint64_t> members;
+    tmn::associative::HashSet<uint64_t> members;
 
 public:
     Group() = default;
@@ -41,4 +42,5 @@ public:
     friend class View;
 };
 
+}
 }

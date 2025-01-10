@@ -4,7 +4,7 @@
 #include "../include/FileDescriptor.hpp"
 #include "../include/Utils.hpp"
 
-namespace tmn_vfs {
+namespace tmn::vfs {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // FilePermissions :
@@ -143,7 +143,7 @@ FileDescriptor::FileDescriptor(FileDescriptor&& other) :
         other.creation_time = "";
         other.modification_time = "";
         other.descriptor_modification_time = "";
-        other.inner_files = tmn_associative::HashSet<uint64_t>();
+        other.inner_files = tmn::associative::HashSet<uint64_t>();
     }
 
 FileDescriptor& FileDescriptor::operator=(FileDescriptor&& other) noexcept {
@@ -171,7 +171,7 @@ FileDescriptor& FileDescriptor::operator=(FileDescriptor&& other) noexcept {
     other.creation_time = "";
     other.modification_time = "";
     other.descriptor_modification_time = "";
-    other.inner_files = tmn_associative::HashSet<uint64_t>();
+    other.inner_files = tmn::associative::HashSet<uint64_t>();
 
     return *this;
 }

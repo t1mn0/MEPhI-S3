@@ -3,7 +3,8 @@
 
 #include "View.hpp"
 
-namespace tmn_vfs {
+namespace tmn {
+namespace vfs {
 
 View::View() {
     vfs = VirtualFileSystem::init();
@@ -325,4 +326,5 @@ void View::clear() const noexcept {
     std::cout << "\x1B[2J\x1B[H" << std::endl;
 }
 
+}
 }

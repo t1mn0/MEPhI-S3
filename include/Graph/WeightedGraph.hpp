@@ -9,12 +9,12 @@
 #include "../Function/Function.hpp"
 #include "../tmn.hpp"
 
-namespace tmn {
-namespace graph {
-
 using namespace tmn::sequence;
 using namespace tmn::associative;
 using namespace tmn::adapter;
+
+namespace tmn {
+namespace graph {
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 class Graph;
@@ -27,7 +27,7 @@ auto make_weighted_graph(const Graph<is_oriented, VertexId, VertexType, void>& u
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 class Graph { 
-public:
+protected:
 // Fields & aliases :
     using ConnectedVerticesList = HashTable<VertexId, Weight>;
     using TwoConnectedVertices = tmn::Pair<VertexId, VertexId>;
@@ -50,45 +50,50 @@ public:
     ~Graph();
 
 // Basic methods:
-    bool oriented() const noexcept;
-    bool weighted() const noexcept;
+    virtual bool oriented() const noexcept;
+    virtual bool weighted() const noexcept;
 
-    bool add_vertex(VertexId vertex_id) noexcept;
-    bool add_vertex(VertexId vertex_id, const VertexType& vertex_resource, bool strict = true);
-    bool add_vertex(VertexId vertex_id, VertexType&& vertex_resource, bool strict = true);
-    bool remove_vertex(VertexId vertex_id, bool strict = true);
-    bool vertex_in_graph(VertexId vertex_id) const noexcept;
-    HashSet<VertexId> all_vertices() const noexcept;
-    std::size_t v_size() const noexcept; 
-    tmn::Optional<std::size_t> connected_vertices_count(VertexId vertex_id) const noexcept;
-    HashSet<VertexId> connected_vertices(VertexId vertex_id) const;
+    virtual bool add_vertex(VertexId vertex_id) noexcept;
+    virtual bool add_vertex(VertexId vertex_id, const VertexType& vertex_resource, bool strict = true);
+    virtual bool add_vertex(VertexId vertex_id, VertexType&& vertex_resource, bool strict = true);
+    virtual bool remove_vertex(VertexId vertex_id, bool strict = true);
+    virtual bool vertex_in_graph(VertexId vertex_id) const noexcept;
+    virtual HashSet<VertexId> all_vertices() const noexcept;
+    virtual std::size_t v_size() const noexcept; 
+    virtual tmn::Optional<std::size_t> connected_vertices_count(VertexId vertex_id) const noexcept;
+    virtual HashSet<VertexId> connected_vertices(VertexId vertex_id) const;
 
-    std::size_t posititve_vertex_degree(VertexId v, bool strict = false) const noexcept; 
-    std::size_t negative_vertex_degree(VertexId v, bool strict = false) const noexcept;
+    virtual std::size_t positive_vertex_degree(VertexId v, bool strict = false) const noexcept; 
+    virtual std::size_t negative_vertex_degree(VertexId v, bool strict = false) const noexcept;
 
-    bool has_resource_at(VertexId vertex_id, bool strict = false) const;
-    const VertexType& get_resource(VertexId vertex_id) const;
-    VertexType& get_resource(VertexId vertex_id);
-    void change_vertex_resource(VertexId vertex_id, const VertexType& vertex_resource);
-    void change_vertex_resource(VertexId vertex_id, VertexType&& vertex_resource);
+    virtual bool has_resource_at(VertexId vertex_id, bool strict = false) const;
+    virtual const VertexType& get_resource(VertexId vertex_id) const;
+    virtual VertexType& get_resource(VertexId vertex_id);
+    virtual void change_vertex_resource(VertexId vertex_id, const VertexType& vertex_resource);
+    virtual void change_vertex_resource(VertexId vertex_id, VertexType&& vertex_resource);
 
-    bool add_edge(VertexId from, VertexId to, bool strict = true);
-    bool add_edge(VertexId from, VertexId to, const Weight& weight, bool strict = true);
-    bool add_edge(VertexId from, VertexId to, Weight&& weight, bool strict = true);
-    bool remove_edge(VertexId from, VertexId to, bool strict = true);
-    bool is_connected(VertexId from, VertexId to, bool strict = true) const;
-    tmn::Optional<Weight> pass_weight(VertexId from, VertexId to) const noexcept;
+    virtual bool add_edge(VertexId from, VertexId to, bool strict = true);
+    virtual bool add_edge(VertexId from, VertexId to, const Weight& weight, bool strict = true);
+    virtual bool add_edge(VertexId from, VertexId to, Weight&& weight, bool strict = true);
+    virtual bool remove_edge(VertexId from, VertexId to, bool strict = true);
+    virtual bool is_connected(VertexId from, VertexId to, bool strict = true) const;
+    virtual tmn::Optional<Weight> pass_weight(VertexId from, VertexId to) const noexcept;
+    virtual bool change_weight(VertexId from, VertexId to, const Weight& weight, bool strict = true) noexcept;
+    virtual bool change_weight(VertexId from, VertexId to, Weight&& weight, bool strict = true) noexcept;
 
-    void add_connected_vertices(VertexId from, VertexId to, const Weight& weight);
+    virtual void add_connected_vertices(VertexId from, VertexId to, const Weight& weight);
 
-    void reserve(std::size_t capacity); 
-    void clear();
+    virtual void reserve(std::size_t capacity); 
+    virtual void clear();
 
     tmn::Pair<IntMatrix, ArraySequence<VertexId>> basic_adjacency_list() const noexcept;
     tmn::Pair<WeightMatrix, ArraySequence<VertexId>> weighted_adjacency_matrix() const noexcept;
 
+    std::string to_dot() const;
+    std::string to_dot(const HashTable<VertexId, int>& colors) const;
+
 // Algorithms:
-    bool has_cycle() const;
+    tmn::Optional<ArraySequence<VertexId>> has_cycle() const;
     bool is_connected_graph() const;
 
     GraphPath bfs() const;
@@ -96,7 +101,7 @@ public:
     GraphPath dfs() const;
     GraphPath dfs(VertexId start_vertex) const;
 
-    HashTable<VertexId, int> graph_coloring() const; // ColorTable: VertedId-ColorId
+    HashTable<VertexId, int> graph_coloring() const; // ColorTable: VertexId-ColorId
 
     GraphPath find_shortest_path(VertexId start, VertexId end) const;
 

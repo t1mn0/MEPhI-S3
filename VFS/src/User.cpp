@@ -3,7 +3,7 @@
 #include "../include/User.hpp"
 #include "../include/Utils.hpp"
 
-namespace tmn_vfs{
+namespace tmn::vfs{
 
 User::User(const User& other) noexcept :
     user_id(other.user_id),
@@ -76,7 +76,7 @@ User::User(uint64_t user_id,
     user_id(user_id), username(username), fullname(fullname), 
     creation_time(creation_time), password_hash(password_hash), status(status) {}
 
-tmn_vfs::User::~User(){
+tmn::vfs::User::~User(){
     groups.clear();
 }
 

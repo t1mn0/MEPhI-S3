@@ -60,8 +60,8 @@ auto make_bipartite_complete_graph(size_t count_vertices1, size_t count_vertices
         for (size_t j = 0; j < count_vertices2; ++j) {
             graph.add_edge(current_id1, current_id2, base_weight);
             
-            if (!is_oriented){
-                 graph.add_edge(current_id2, current_id1, base_weight);
+            if (is_oriented){
+                graph.add_edge(current_id2, current_id1, base_weight);
             }
              
             ++current_id2;

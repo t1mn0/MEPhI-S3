@@ -12,7 +12,8 @@
 #include "FileDescriptor.hpp"
 #include "vfs_constants.hpp"
 
-namespace tmn_vfs {
+namespace tmn {
+namespace vfs {
 
 class View;
 
@@ -45,12 +46,12 @@ private:
     uint64_t active_user;
     uint64_t current_directory = 0;
 
-    tmn_associative::HashTable<std::string, uint64_t> usernames;
-    tmn_associative::HashTable<std::string, uint64_t> groupnames;
-    tmn_associative::HashTable<uint64_t, std::string> recording_files;
-    tmn_associative::HashTable<uint64_t, FileDescriptor> files;
-    tmn_associative::HashTable<uint64_t, User> users_table;
-    tmn_associative::HashTable<uint64_t, Group> groups_table;
+    tmn::associative::HashTable<std::string, uint64_t> usernames;
+    tmn::associative::HashTable<std::string, uint64_t> groupnames;
+    tmn::associative::HashTable<uint64_t, std::string> recording_files;
+    tmn::associative::HashTable<uint64_t, FileDescriptor> files;
+    tmn::associative::HashTable<uint64_t, User> users_table;
+    tmn::associative::HashTable<uint64_t, Group> groups_table;
 
 public:
     ~VirtualFileSystem();
@@ -77,7 +78,7 @@ public:
     void remove_group(const std::string& groupname);
 
 // Actions with files :
-    tmn_associative::HashSet<std::string> current_dir_content() const noexcept;
+    tmn::associative::HashSet<std::string> current_dir_content() const noexcept;
     void add_file_content(const std::string& filename, const std::string& content);
     std::string get_file_content(const std::string& filename);
     void add_file(FileDescriptor);
@@ -93,11 +94,12 @@ public:
     
     void go_to(std::string& path);
     tmn::Optional<std::string> do_path(uint64_t) const noexcept;
-    tmn_sequence::ArraySequence<uint64_t> find_file_by_name(const std::string& filename, bool in_current_dir = true) const noexcept ;
+    tmn::sequence::ArraySequence<uint64_t> find_file_by_name(const std::string& filename, bool in_current_dir = true) const noexcept ;
     bool have_permission(uint64_t fd_id, uint64_t user_id, uint8_t perm) const;
     
 
     friend class View;
 };
     
+}
 }

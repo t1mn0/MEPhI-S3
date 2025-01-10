@@ -6,7 +6,7 @@
 #include "../include/Utils.hpp" // for GetTimeNow()
 #include "../../include/Exceptions/RuntimeException.hpp"
 
-namespace tmn_vfs {
+namespace tmn::vfs {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Check the validity of the existing virtual file system :
@@ -49,7 +49,7 @@ void VirtualFileSystem::create_helper_files() {
 
     if (!users_file.is_open() || !groups_file.is_open() || !descriptors_file.is_open() || !config_file.is_open()) {
         std::string err_message = "Error(create_helper_files): Could not create helper files";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 }
 
@@ -60,7 +60,7 @@ void VirtualFileSystem::init_users() {
     std::ifstream users_file(USERS_PATH);
     if (!users_file.is_open()) {
         std::string err_message = "Error(init_users): Could not open users file";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     std::string line;
@@ -75,7 +75,7 @@ void VirtualFileSystem::init_groups() {
     std::ifstream groups_file(GROUPS_PATH);
     if (!groups_file.is_open()) {
         std::string err_message = "Error(init_groups): Could not open groups file";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     std::string line;
@@ -90,7 +90,7 @@ void VirtualFileSystem::init_file_descriptors() {
     std::ifstream descriptors_file(FILE_DESCRIPTORS_PATH);
     if (!descriptors_file.is_open()) {
         std::string err_message = "Error(init_file_descriptors): Could not open descriptors file";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     std::string line;
@@ -104,7 +104,7 @@ void VirtualFileSystem::init_system_parameters(){
     std::ifstream config_file(VFS_CONFIG_PATH);
     if (!config_file.is_open()) {
         std::string err_message = "Error(init_system_parameters): Could not open config file";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     std::string line;

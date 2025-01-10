@@ -5,7 +5,8 @@
 
 #include "../../include/Associative/HashSet.hpp"
 
-namespace tmn_vfs {
+namespace tmn {
+namespace vfs {
 
 class VirtualFileSystem;
 class View;
@@ -26,7 +27,7 @@ private:
     
     UserStatus status = UserStatus::LOCAL;
 
-    tmn_associative::HashSet<uint64_t> groups;
+    tmn::associative::HashSet<uint64_t> groups;
     
 public:
     User() = default;
@@ -53,4 +54,5 @@ public:
     friend class View;
 };
 
+}
 }

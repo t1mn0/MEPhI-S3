@@ -4,22 +4,22 @@
 #include "../include/VFS.hpp"
 #include "../../include/Exceptions/RuntimeException.hpp"
 
-namespace tmn_vfs {
+namespace tmn::vfs {
 
 void VirtualFileSystem::add_user(User& user) {
     if(user_id == 1000){
         std::string err_message = "Error(add_user): VFS already contains the maximum number of users";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if(groupnames.contains(user.username)){
         std::string err_message = "Error(add_user): Cannot create default group for that user: group '" + user.username + "' already is in system";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if(usernames.contains(user.username) || users_table.contains(user.user_id)){
         std::string err_message = "Error(add_user): User with name '" + user.username + "' already is in system";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     // When a user is added, his or her group automatically appears in the system
@@ -33,7 +33,7 @@ void VirtualFileSystem::add_user(User& user) {
         users_table[user.user_id].groups.insert(default_group.group_id);
         usernames.insert(tmn::Pair<const std::string, uint64_t>(user.username, user.user_id));
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         throw e;
     }
 }
@@ -41,12 +41,12 @@ void VirtualFileSystem::add_user(User& user) {
 void VirtualFileSystem::login(const std::string& username, const std::string& password_hash) {
     if(!usernames.contains(username)){
         std::string err_message = "Error(login): User with name '" + username + "' is not in system";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
     
     if(users_table[usernames[username]].password_hash != password_hash){
         std::string err_message = "Error(login): Wrong password for user : " + username;
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     active_user = users_table[usernames[username]].user_id;
@@ -56,11 +56,11 @@ void VirtualFileSystem::login(const std::string& username, const std::string& pa
 void VirtualFileSystem::remove_user(const std::string& username){
     if(!usernames.contains(username)){
         std::string err_message = "Error(remove_user): User not found: " + username;
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
     else if (usernames[username] == active_user){
         std::string err_message = "Error(remove_user): User is active: " + username;
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     // Removing group from the group lists of all members of this group

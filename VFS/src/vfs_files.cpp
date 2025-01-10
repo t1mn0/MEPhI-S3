@@ -6,10 +6,10 @@
 #include "../include/Utils.hpp"
 #include "../../include/Exceptions/RuntimeException.hpp"
 
-namespace tmn_vfs {
+namespace tmn::vfs {
 
-tmn_associative::HashSet<std::string> VirtualFileSystem::current_dir_content() const noexcept {
-    tmn_associative::HashSet<std::string> set;
+tmn::associative::HashSet<std::string> VirtualFileSystem::current_dir_content() const noexcept {
+    tmn::associative::HashSet<std::string> set;
 
     for (auto& fid : files[current_directory].inner_files){
         set.insert(files[fid].filename);
@@ -25,7 +25,7 @@ void VirtualFileSystem::add_file_content(const std::string& filename, const std:
             fd_id = inner_file;
             if (files[inner_file].content_size != 0){
                 std::string err_message = "Error(add_file_content): For 1 virtual file there is 1 physical file";
-                throw tmn_exception::RuntimeException(err_message);
+                throw tmn::exception::RuntimeException(err_message);
             }
             break;
         }
@@ -33,17 +33,17 @@ void VirtualFileSystem::add_file_content(const std::string& filename, const std:
     
     if (fd_id == 0){
         std::string err_message = "Error(add_file_content): Bad filename: " + filename;
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if (files[fd_id].is_dir){
         std::string err_message = "Error(add_file_content): The specified file is not a regular file. Impossible to write content";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if (!have_permission(fd_id, active_user, 2)){
         std::string err_message = "Error(add_file_content): Permission denied";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     // std::stringstream ss;
@@ -54,7 +54,7 @@ void VirtualFileSystem::add_file_content(const std::string& filename, const std:
 
     if (!file.is_open()) {
         std::string err_message = "Error(add_file_content): Failed to open file: " + recording_files[files[fd_id].physical_file_id];
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     files[fd_id].content_offset = file.tellp();
@@ -67,13 +67,13 @@ void VirtualFileSystem::add_file_content(const std::string& filename, const std:
     file.close();
 }
 
-std::string tmn_vfs::VirtualFileSystem::get_file_content(const std::string& filename) {
+std::string tmn::vfs::VirtualFileSystem::get_file_content(const std::string& filename) {
     for (auto& inner_id : files[current_directory].inner_files){
         if (files[inner_id].filename == filename){
             
             if (!have_permission(inner_id, active_user, 1)){
                 std::string err_message = "Error(get_file_content): Permission denied";
-                throw tmn_exception::RuntimeException(err_message);
+                throw tmn::exception::RuntimeException(err_message);
             }
 
             if (!files[inner_id].is_dir){
@@ -81,7 +81,7 @@ std::string tmn_vfs::VirtualFileSystem::get_file_content(const std::string& file
 
                 if (!file.is_open()) {
                     std::string err_message = "Error(get_file_content): Could not open file (problem with std::fstream)";
-                    throw tmn_exception::RuntimeException(err_message);
+                    throw tmn::exception::RuntimeException(err_message);
                 }
 
                 file.seekg(0, std::ios::end);
@@ -102,11 +102,11 @@ std::string tmn_vfs::VirtualFileSystem::get_file_content(const std::string& file
                 return result;
             }
             std::string err_message = "Error(get_file_content): File '" + filename + "' is not regular file";
-            throw tmn_exception::RuntimeException(err_message);
+            throw tmn::exception::RuntimeException(err_message);
         }
     }
     std::string err_message = "Error(get_file_content): File '" + filename + "' not found in specified directory";
-    throw tmn_exception::RuntimeException(err_message);
+    throw tmn::exception::RuntimeException(err_message);
 }
 
 void VirtualFileSystem::change_file_permissions(const std::string& filename, uint64_t perm) {
@@ -122,27 +122,27 @@ void VirtualFileSystem::change_file_permissions(const std::string& filename, uin
 
     if(!flag){
         std::string err_message = "Error(change_file_permissions): File '" + filename + "' not found in current directory";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if (fd_id == 0) {
         std::string err_message = "Error(change_file_permissions): Unable to change root directory permissions";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if (active_user != files[fd_id].owner_user && active_user != 0){
         std::string err_message = "Error(change_file_permissions): Active user '" + users_table[active_user].username + "' is not the owner of this file/dir: " + filename;
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if (perm > 999) {
         std::string err_message = "Error(change_file_permissions): Permissions value must be a three-digit number";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if ((perm / 100 > 3) || ((perm / 10) % 10 > 3) || (perm % 10 > 3)){
         std::string err_message = "Error(change_file_permissions): Bad digit performance for permission" + std::to_string(perm);
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
     
     Permission user_perm = static_cast<Permission>(perm / 100);
@@ -161,13 +161,13 @@ void VirtualFileSystem::add_file(FileDescriptor fd) {
 
     if (!have_permission(current_directory, active_user, 2)){
         std::string err_message = "Error(add_file): permission denied";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     for (auto& inner_file : files[current_directory].inner_files){
         if (fd.filename == files[inner_file].filename){
             std::string err_message = "Error(add_file): File with this name already exists in this directory";
-            throw tmn_exception::RuntimeException(err_message);
+            throw tmn::exception::RuntimeException(err_message);
         }
     }
 
@@ -179,7 +179,7 @@ void VirtualFileSystem::rename_file(const std::string& old_filename, const std::
     for (auto& inner_file : files[current_directory].inner_files){
         if (files[inner_file].filename == new_filename){
             std::string err_message = "Error(rename_file): In current directory there is already a file with that name: " + new_filename;
-            throw tmn_exception::RuntimeException(err_message);
+            throw tmn::exception::RuntimeException(err_message);
         }
     }
 
@@ -187,7 +187,7 @@ void VirtualFileSystem::rename_file(const std::string& old_filename, const std::
         if (files[inner_file].filename == old_filename){
             if(files[inner_file].owner_user != active_user){
                 std::string err_message = "Error(rename_file): Active user '" + users_table[active_user].username + "' is not the owner of this file/dir: " + old_filename;
-                throw tmn_exception::RuntimeException(err_message);
+                throw tmn::exception::RuntimeException(err_message);
             }
             files[inner_file].filename = new_filename;
             files[inner_file].modificate_descriptor_now();
@@ -196,23 +196,23 @@ void VirtualFileSystem::rename_file(const std::string& old_filename, const std::
     }
 
     std::string err_message = "Error(rename_file): File '" + old_filename + "' not found in current directory";
-    throw tmn_exception::RuntimeException(err_message);
+    throw tmn::exception::RuntimeException(err_message);
 }
 
 void VirtualFileSystem::set_owner_group(uint64_t fd_id, uint64_t group_id) {
     if (!files.contains(fd_id)){
         std::string err_message = "Error(rename_file): File not found in current directory";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if (!groups_table.contains(group_id)){
         std::string err_message = "Error(set_owner_group): Group not found";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if(files[fd_id].owner_user != active_user){
         std::string err_message = "Error(set_owner_group): Active user '" + users_table[active_user].username + "' is not the owner of this file";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     files[fd_id].owner_group = group_id;
@@ -225,7 +225,7 @@ void VirtualFileSystem::remove_file_content(const std::string& filename) {
         if (files[inner_file].filename == filename){
             if (files[inner_file].is_dir){
                 std::string err_message = "Error(remove_file_content): File for removing content is not regular " + filename;
-                throw tmn_exception::RuntimeException(err_message);
+                throw tmn::exception::RuntimeException(err_message);
             }
             else{
                 id = inner_file;
@@ -237,7 +237,7 @@ void VirtualFileSystem::remove_file_content(const std::string& filename) {
     std::fstream file(recording_files[files[id].physical_file_id], std::ios::in | std::ios::out | std::ios::binary);
     if (!file.is_open()) {
         std::string err_message = "Error(remove_file_content): Failed to open file: " + recording_files[files[fd_id].physical_file_id];
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     file.seekg(0, std::ios::end);
@@ -246,7 +246,7 @@ void VirtualFileSystem::remove_file_content(const std::string& filename) {
     if (file_size < files[id].content_size) {
         file.close();
         std::string err_message = "Error(remove_file_content): File is smaller than the number of bytes to remove";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
     
     file.seekp(file_size - files[id].content_size);
@@ -265,13 +265,13 @@ void VirtualFileSystem::remove_file(const std::string& filename) {
                 try {
                     remove_file_content(filename);
                 }
-                catch(tmn_exception::RuntimeException& e){
+                catch(tmn::exception::RuntimeException& e){
                     throw e;
                 }
 
                 if(files[inner_file].owner_user != active_user){
                     std::string err_message = "Error(remove_file): Active user '" + users_table[active_user].username +"' is not the owner of this file: " + filename;
-                    throw tmn_exception::RuntimeException(err_message);
+                    throw tmn::exception::RuntimeException(err_message);
                 }
 
                 files[current_directory].inner_files.erase(inner_file);
@@ -280,13 +280,13 @@ void VirtualFileSystem::remove_file(const std::string& filename) {
             }
             else{
                 std::string err_message = "Error(remove_file): file '" + filename + "' is directory. Try to use remove_dir";
-                throw tmn_exception::RuntimeException(err_message);
+                throw tmn::exception::RuntimeException(err_message);
             }
         }
     }
     
     std::string err_message = "Error(remove_file): file '" + filename + "' not found in current directory";
-    throw tmn_exception::RuntimeException(err_message);
+    throw tmn::exception::RuntimeException(err_message);
 }
 
 void VirtualFileSystem::remove_dir(const std::string& filename, bool is_recursive){
@@ -296,7 +296,7 @@ void VirtualFileSystem::remove_dir(const std::string& filename, bool is_recursiv
             if (files[matched_file].is_dir){
                 if(files[matched_file].owner_user != active_user){
                     std::string err_message = "Error(remove_dir): Active user '" + users_table[active_user].username +"' is not the owner of this directory: " + filename;
-                    throw tmn_exception::RuntimeException(err_message);
+                    throw tmn::exception::RuntimeException(err_message);
                 }
 
                 if (!is_recursive) {
@@ -308,7 +308,7 @@ void VirtualFileSystem::remove_dir(const std::string& filename, bool is_recursiv
                                 filename + "/" + files[inner_fd_id].filename  + "'\n" +
                             "You can use flag 'recursive' to remove all internal content";
 
-                            throw tmn_exception::RuntimeException(err_message);
+                            throw tmn::exception::RuntimeException(err_message);
                         }
                     }
                     // Iteration with removing files :
@@ -327,7 +327,7 @@ void VirtualFileSystem::remove_dir(const std::string& filename, bool is_recursiv
                             try {
                                 remove_dir(files[inner_fd_id].filename, true);
                             }
-                            catch (tmn_exception::RuntimeException& e){
+                            catch (tmn::exception::RuntimeException& e){
                                 throw e;
                             }
                         }
@@ -339,13 +339,13 @@ void VirtualFileSystem::remove_dir(const std::string& filename, bool is_recursiv
             }
             else {
                 std::string err_message = "Error(remove_file): File '" + filename + "' is not directory";
-                throw tmn_exception::RuntimeException(err_message);
+                throw tmn::exception::RuntimeException(err_message);
             }
         }
     }
 
     std::string err_message = "Error(remove_file): File '" + filename + "' not found in current directory";
-    throw tmn_exception::RuntimeException(err_message);
+    throw tmn::exception::RuntimeException(err_message);
 }
 
 }

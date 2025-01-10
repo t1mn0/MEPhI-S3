@@ -5,7 +5,8 @@
 #include "../include/Utils.hpp"
 #include "../../include/Exceptions/RuntimeException.hpp"
 
-namespace tmn_vfs {
+namespace tmn{
+namespace vfs {
 
 void View::groups(bool v) const noexcept {
     if (!v) {
@@ -47,7 +48,7 @@ void View::newgroup(const std::string& groupname) noexcept {
             vfs.add_group(group);
             ++vfs.group_id;
         }
-        catch (tmn_exception::RuntimeException& e){
+        catch (tmn::exception::RuntimeException& e){
             std::cerr << e.what() << std::endl;
             return;
         }
@@ -62,7 +63,7 @@ void View::addtogroup(const std::string& username, const std::string& groupname)
     try{
         vfs.add_user_to_group(username, groupname);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
     }
 }
@@ -71,7 +72,7 @@ void View::rmmefromgroup(const std::string& groupname) noexcept {
     try{
         vfs.remove_user_from_group(vfs.users_table[vfs.active_user].username, groupname);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
     }
 }
@@ -80,9 +81,10 @@ void View::rmgroup(const std::string& groupname) noexcept {
     try{
         vfs.remove_group(groupname);
     }
-    catch (tmn_exception::RuntimeException& e){
+    catch (tmn::exception::RuntimeException& e){
         std::cerr << e.what() << std::endl;
     }
 }
 
+}
 }

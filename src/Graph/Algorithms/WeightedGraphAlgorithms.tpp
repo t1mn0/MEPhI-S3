@@ -6,9 +6,9 @@ namespace tmn {
 namespace graph {
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
-bool Graph<is_oriented, VertexId, VertexType, Weight>::has_cycle() const {
+tmn::Optional<ArraySequence<VertexId>> Graph<is_oriented, VertexId, VertexType, Weight>::has_cycle() const {
     HashSet<VertexId> visited;
-    HashSet<VertexId> recursion_stack;
+    HashTable<VertexId, VertexId> parent;
 
     for (const auto& pair : adjacency_list) {
         VertexId vertex = pair.first;
@@ -16,35 +16,44 @@ bool Graph<is_oriented, VertexId, VertexType, Weight>::has_cycle() const {
             Stack<VertexId> dfs_stack;
             dfs_stack.push(vertex);
             visited.insert(vertex);
-            recursion_stack.insert(vertex);
+            parent[vertex] = vertex;
 
             while(!dfs_stack.empty()) {
                 VertexId current_vertex = dfs_stack.top();
                 bool found_neighbor = false;
                 if (adjacency_list.contains(current_vertex)) {
-                    for (const auto& edge_pair : adjacency_list.at(current_vertex)) {
-                        if(recursion_stack.contains(edge_pair.second.to)) {
-                            return true;
+                    for (const auto& edge_pair : adjacency_list[current_vertex]) {
+                        VertexId neighbor = edge_pair.first;
+                        if (visited.contains(neighbor) && parent[current_vertex] != neighbor) {
+                                ArraySequence<VertexId> cycle_path;
+                                VertexId trace = current_vertex;
+                                while(trace != neighbor) {
+                                    cycle_path.push_back(trace);
+                                    trace = parent[trace];
+                                }
+                                cycle_path.push_back(neighbor);
+
+                            return tmn::Optional<ArraySequence<VertexId>>(cycle_path);
                         }
-                        if (!visited.contains(edge_pair.second.to)) {
-                            dfs_stack.push(edge_pair.second.to);
-                            visited.insert(edge_pair.second.to);
-                            recursion_stack.insert(edge_pair.second.to);
+
+                        if (!visited.contains(neighbor)) {
+                            dfs_stack.push(neighbor);
+                            visited.insert(neighbor);
+                            parent[neighbor] = current_vertex;
                             found_neighbor = true;
                             break;
                         }
                     }
                 }
                 if(!found_neighbor) {
-                   dfs_stack.pop();
-                   recursion_stack.erase(current_vertex);
+                    dfs_stack.pop();
                 }
             }
-          }
+        }
     }
-
-    return false;
+    return tmn::Optional<ArraySequence<VertexId>>();
 }
+
 
 template <bool is_oriented, typename VertexId, typename VertexType, typename Weight>
 bool Graph<is_oriented, VertexId, VertexType, Weight>::is_connected_graph() const {
@@ -62,10 +71,10 @@ bool Graph<is_oriented, VertexId, VertexType, Weight>::is_connected_graph() cons
         queue.pop();
 
         if (adjacency_list.contains(current_vertex)) {
-            for(const auto& edge_pair : adjacency_list.at(current_vertex)) {
-                if (!visited.contains(edge_pair.second.to)) {
-                    queue.push(edge_pair.second.to);
-                    visited.insert(edge_pair.second.to);
+            for(const auto& edge_pair : adjacency_list[current_vertex]) {
+                if (!visited.contains(edge_pair.first)) {
+                    queue.push(edge_pair.first);
+                    visited.insert(edge_pair.first);
                 }
             }
          }

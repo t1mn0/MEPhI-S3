@@ -2,7 +2,8 @@
 
 #include <string>
 
-namespace tmn_vfs {
+namespace tmn {
+namespace vfs {
 
 std::string get_time_now();
 
@@ -22,4 +23,5 @@ bool is_good_password(const std::string& password);
 
 bool is_regular_writable_binfile(const std::string& path);
 
+}
 }

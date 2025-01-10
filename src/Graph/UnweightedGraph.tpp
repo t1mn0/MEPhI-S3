@@ -429,11 +429,11 @@ bool Graph<is_oriented, VertexId, VertexType, void>::has_connected_vertices(Vert
 template <bool is_oriented, typename VertexId, typename VertexType>
 void Graph<is_oriented, VertexId, VertexType, void>::add_connected_vertices(VertexId from, VertexId to) {
     if (!adjacency_list.contains(from)){
-        adjacency_list.insert(from, ConnectedVerticesList());
+        adjacency_list.insert({from, ConnectedVerticesList()});
     }
 
     if (!adjacency_list.contains(to)){
-        adjacency_list.insert(to, ConnectedVerticesList());
+        adjacency_list.insert({to, ConnectedVerticesList()});
     }
 
     if (!adjacency_list[from].contains(to)){

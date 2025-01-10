@@ -10,7 +10,7 @@
 #include "../../include/Exceptions/RuntimeException.hpp"
 #include "../../include/Adapter/Stack.hpp"
 
-namespace tmn_vfs{
+namespace tmn::vfs {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Checkers :
@@ -18,7 +18,7 @@ namespace tmn_vfs{
 std::string VirtualFileSystem::pwd() const noexcept {
     if (current_directory == 0) return "/";
 
-    tmn_adapter::Stack<std::string> stack;
+    tmn::adapter::Stack<std::string> stack;
     uint64_t fid = current_directory; 
     stack.push(files[fid].filename);
 
@@ -61,7 +61,7 @@ tmn::Optional<std::size_t> VirtualFileSystem::count_members(const std::string& g
 void VirtualFileSystem::go_to(std::string& path) {
     if (path.empty()){
         std::string err_message = "Error(go_to): Path is invalid";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if (path == "/"){
@@ -73,7 +73,7 @@ void VirtualFileSystem::go_to(std::string& path) {
     uint64_t init_dir = current_directory;
     uint64_t iter_dir;
 
-    tmn_sequence::ArraySequence<std::string> components;
+    tmn::sequence::ArraySequence<std::string> components;
     size_t pos = 0;
     std::string token;
     while ((pos = path.find('/')) != std::string::npos) {
@@ -100,13 +100,13 @@ void VirtualFileSystem::go_to(std::string& path) {
                 else{
                     current_directory = init_dir;
                     std::string err_message = "Error(go_to): Path is invalid";
-                    throw tmn_exception::RuntimeException(err_message);
+                    throw tmn::exception::RuntimeException(err_message);
                 }
             }
             else{
                 current_directory = init_dir;
                 std::string err_message = "Error(go_to): Path is invalid";
-                throw tmn_exception::RuntimeException(err_message);
+                throw tmn::exception::RuntimeException(err_message);
             }
         }
         else{
@@ -116,7 +116,7 @@ void VirtualFileSystem::go_to(std::string& path) {
                     if (!have_permission(inner_fid, active_user, 1)){
                         current_directory = init_dir;
                         std::string err_message = "Error(GetContent): Permission denied";
-                        throw tmn_exception::RuntimeException(err_message);
+                        throw tmn::exception::RuntimeException(err_message);
                     }
                     
                     if (files[inner_fid].is_dir){
@@ -127,13 +127,13 @@ void VirtualFileSystem::go_to(std::string& path) {
                     else{
                         current_directory = init_dir;
                         std::string err_message = "Error(go_to): Path is invalid";
-                        throw tmn_exception::RuntimeException(err_message);
+                        throw tmn::exception::RuntimeException(err_message);
                     }
                 }
             }
             if (!flag) {
                 std::string err_message = "Error(go_to): Path is invalid";
-                throw tmn_exception::RuntimeException(err_message);
+                throw tmn::exception::RuntimeException(err_message);
             }
         }
     }
@@ -164,7 +164,7 @@ tmn::Optional<std::string> VirtualFileSystem::do_path(uint64_t id) const noexcep
     std::stringstream ss(path);
     std::string item;
     
-    tmn_sequence::ArraySequence<std::string> components;
+    tmn::sequence::ArraySequence<std::string> components;
 
     while (std::getline(ss, item, '/')) {
         components.push_back(item);
@@ -181,8 +181,8 @@ tmn::Optional<std::string> VirtualFileSystem::do_path(uint64_t id) const noexcep
     return tmn::Optional<std::string>(reversed_path.str());
 }
 
-tmn_sequence::ArraySequence<uint64_t> VirtualFileSystem::find_file_by_name(const std::string& filename, bool in_current_dir) const noexcept {
-    tmn_sequence::ArraySequence<uint64_t> result;
+tmn::sequence::ArraySequence<uint64_t> VirtualFileSystem::find_file_by_name(const std::string& filename, bool in_current_dir) const noexcept {
+    tmn::sequence::ArraySequence<uint64_t> result;
     
     if (in_current_dir){
         for (auto& inner_fd_id : files[current_directory].inner_files){
@@ -206,12 +206,12 @@ tmn_sequence::ArraySequence<uint64_t> VirtualFileSystem::find_file_by_name(const
 bool VirtualFileSystem::have_permission(uint64_t fd_id, uint64_t user_id, uint8_t perm) const {
     if (!files.contains(fd_id)){
         std::string err_message = "Error(have_permission): File not found in current directory";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if (!users_table.contains(user_id)){
         std::string err_message = "Error(have_permission): User not found";
-        throw tmn_exception::RuntimeException(err_message);
+        throw tmn::exception::RuntimeException(err_message);
     }
 
     if (user_id == 0){ // SUPER
