@@ -634,6 +634,7 @@ std::string Graph<is_oriented, VertexId, VertexType, Weight>::to_dot(const HashT
 
     for(const auto& pair : adjacency_list){
         VertexId from = pair.first;
+        visited.insert(from);
         for(const auto& to_pair : pair.second) {
             if (!visited.contains(to_pair.first)){
                 VertexId to = to_pair.first;

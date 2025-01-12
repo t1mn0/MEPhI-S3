@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <limits>
 
 #include "../Graph.hpp"
 #include "../../Function/Function.hpp"
@@ -71,13 +72,34 @@ public:
     double distance = 0;
     double base_cost = 0; // route can be paid (per minute)
     double max_speed = 40;
-    unsigned int traffic_level = 0; // [0; 10]
+    unsigned int traffic_level = 1; // [1; 10] 
 
     HashTable<TransportType, Optional<Schedule>> allowed_transport_types;
 
     Route() = default;
     Route(double dist, double cost, double max_speed) : distance(dist), base_cost(cost), max_speed(max_speed) {}
     ~Route() = default;
+};
+
+struct PathInfo {
+   double total_cost = std::numeric_limits<double>::max();
+   unsigned int total_time = std::numeric_limits<unsigned int>::max();
+   
+   ArraySequence<unsigned int> path;
+   
+   PathInfo() = default;
+   PathInfo(double cost, unsigned int time, const ArraySequence<unsigned int>& p) : total_cost(cost), total_time(time), path(p) {}
+
+   bool operator < (const PathInfo& other) const {
+      if (total_time < other.total_time) {
+        return true;
+      }
+      if (total_time == other.total_time && total_cost < other.total_cost) {
+        return true;
+      }
+      
+      return false;
+   }
 };
 
 }

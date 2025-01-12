@@ -50,8 +50,8 @@ public:
     ~Graph();
 
 // Basic methods:
-    virtual bool oriented() const noexcept;
-    virtual bool weighted() const noexcept;
+    bool oriented() const noexcept;
+    bool weighted() const noexcept;
 
     virtual bool add_vertex(VertexId vertex_id) noexcept;
     virtual bool add_vertex(VertexId vertex_id, const VertexType& vertex_resource, bool strict = true);

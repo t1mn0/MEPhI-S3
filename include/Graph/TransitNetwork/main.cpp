@@ -2,7 +2,9 @@
 
 #include <iostream>
 
-double cost_function(const Route& route, TransportType type, bool first_entry = true) {
+using namespace tmn::transit_network;
+
+double cost_function(const Route& route, TransportType type, bool first_entry) {
     double cost = route.base_cost;
 
     if(route.allowed_transport_types.contains(type)){
@@ -14,8 +16,16 @@ double cost_function(const Route& route, TransportType type, bool first_entry = 
     return cost;
 }
 
+unsigned int time_function(const Route& route, TransportType transport_type) {
+    unsigned int time = route.distance / (route.max_speed * (1 / route.traffic_level));
+
+    return time;
+}
+
 int main(){
-    tmn::transit_network::TransitNetwork object;
-    std::cout << object.v_size() << std::endl;
+    tmn::Function<double (const Route&, TransportType, bool)> first(cost_function);
+    tmn::Function<unsigned int (const Route&, TransportType)> second(time_function);
+    TransitNetwork object(first, second);
+    std::cout << object.size() << std::endl;
     return 0;
 }
