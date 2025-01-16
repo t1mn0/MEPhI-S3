@@ -14,18 +14,19 @@ template <typename T, typename Deleter>
 UniquePtr<T, Deleter>::UniquePtr() noexcept : ptr(nullptr) {}
     
 template <typename T, typename Deleter>
-UniquePtr<T, Deleter>::UniquePtr(Pointer ptr) noexcept : ptr(ptr), deleter(Deleter()) {}
+UniquePtr<T, Deleter>::UniquePtr(T* ptr) noexcept : ptr(ptr), deleter(Deleter()) {}
 
 template <typename T, typename Deleter>
-template <typename U, typename E>
-UniquePtr<T, Deleter>::UniquePtr(UniquePtr<U, E>&& rhs) noexcept 
-    : ptr(rhs.ptr), deleter(std::move(rhs.deleter)) {
+template <typename U>
+UniquePtr<T, Deleter>::UniquePtr(U* ptr) noexcept : ptr(ptr), deleter(Deleter()) {}
+
+template <typename T, typename Deleter>
+UniquePtr<T, Deleter>::UniquePtr(UniquePtr<T, Deleter>&& rhs) noexcept : ptr(rhs.ptr), deleter(std::move(rhs.deleter)) {
     rhs.ptr = nullptr;
 }
 
 template <typename T, typename Deleter>
-template <typename U, typename E>
-UniquePtr<T, Deleter>& UniquePtr<T, Deleter>::operator=(UniquePtr<U, E>&& rhs) noexcept {
+UniquePtr<T, Deleter>& UniquePtr<T, Deleter>::operator=(UniquePtr<T, Deleter>&& rhs) noexcept {
     ptr = rhs.ptr;
     deleter = std::move(rhs.deleter);
     rhs.ptr = nullptr;
@@ -41,16 +42,14 @@ UniquePtr<T, Deleter>::~UniquePtr() {
 // Modifiers :
 
 template <typename T, typename Deleter>
-auto UniquePtr<T, Deleter>::release() noexcept 
-    -> UniquePtr<T, Deleter>::Pointer 
-{
-    Pointer tmp = ptr;
+T* UniquePtr<T, Deleter>::release() noexcept {
+    T* tmp = ptr;
     ptr = nullptr;
     return tmp;
 }
 
 template <typename T, typename Deleter>
-void UniquePtr<T, Deleter>::reset(Pointer p) noexcept {
+void UniquePtr<T, Deleter>::reset(T* p) noexcept {
     deleter(ptr);
     ptr = p;
 }
@@ -65,7 +64,7 @@ void UniquePtr<T, Deleter>::swap(UniquePtr<T, Deleter>& rhs) noexcept {
 // Observers :
 
 template <typename T, typename Deleter>
-typename UniquePtr<T, Deleter>::Pointer  UniquePtr<T, Deleter>::get() const noexcept {
+T* UniquePtr<T, Deleter>::get() const noexcept {
     return ptr;
 }
 
@@ -85,9 +84,7 @@ tmn::Optional<T> UniquePtr<T, Deleter>::operator*() const {
 }
 
 template <typename T, typename Deleter>
-auto UniquePtr<T, Deleter>::operator->() const noexcept
-    -> UniquePtr<T, Deleter>::Pointer 
-{
+T* UniquePtr<T, Deleter>::operator->() const noexcept {
     return ptr;
 }
 
@@ -103,19 +100,16 @@ template <typename T>
 UniquePtr<T[], std::default_delete<T[]>>::UniquePtr() noexcept : ptr(nullptr) {}
     
 template <typename T>
-template <typename U>
-UniquePtr<T[], std::default_delete<T[]>>::UniquePtr(U* ptr) noexcept : ptr(static_cast<T*>(ptr)) {}
+UniquePtr<T[], std::default_delete<T[]>>::UniquePtr(T* ptr) noexcept : ptr(ptr) {}
 
 template <typename T>
-template <typename U, typename E>
-UniquePtr<T[], std::default_delete<T[]>>::UniquePtr(UniquePtr<U, E>&& rhs) noexcept 
+UniquePtr<T[], std::default_delete<T[]>>::UniquePtr(UniquePtr<T[]>&& rhs) noexcept 
     : ptr(rhs.ptr), deleter(std::move(rhs.deleter)) {
     rhs.ptr = nullptr;
 }
 
 template <typename T>
-template <typename U, typename E>
-auto UniquePtr<T[], std::default_delete<T[]>>::operator=(UniquePtr<U, E>&& rhs) noexcept 
+auto UniquePtr<T[], std::default_delete<T[]>>::operator=(UniquePtr<T[]>&& rhs) noexcept 
     -> UniquePtr<T[], std::default_delete<T[]>>&
 {
     ptr = rhs.ptr;
@@ -140,9 +134,8 @@ T* UniquePtr<T[], std::default_delete<T[]>>::release() noexcept {
 }
 
 template <typename T>
-template <typename U>
-void UniquePtr<T[], std::default_delete<T[]>>::reset(U p) noexcept {
-    T* tmp = static_cast<T*>(p);
+void UniquePtr<T[], std::default_delete<T[]>>::reset(T* p) noexcept {
+    T* tmp = p;
     deleter(ptr);
     ptr = tmp;
 }
@@ -157,7 +150,7 @@ void UniquePtr<T[], std::default_delete<T[]>>::swap(UniquePtr<T[], std::default_
 // Observers :
 
 template <typename T>
-const T* UniquePtr<T[], std::default_delete<T[]>>::get() const noexcept {
+T* UniquePtr<T[], std::default_delete<T[]>>::get() const noexcept {
     return ptr;
 }
 

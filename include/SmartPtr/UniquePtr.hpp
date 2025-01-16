@@ -4,12 +4,8 @@
 
 #include "../Optional/Optional.hpp"
 
-
-
 namespace tmn {
 namespace smart_ptr {
-
-//                                      GENERAL REALIZATION :
 
 template <typename T, typename Deleter = std::default_delete<T>>
 class UniquePtr {
@@ -22,40 +18,33 @@ private:
     friend class UniquePtr;
 
 public:
-// Using's :
-    using Pointer = T*;
-
-public:
 // Constructors & assignment & conversion & destructors :
     UniquePtr() noexcept;
-    explicit UniquePtr(Pointer ptr) noexcept;
+    UniquePtr(T* ptr) noexcept;
+
+    template <typename U>
+    explicit UniquePtr(U* ptr) noexcept;
 
     UniquePtr(const UniquePtr& other) = delete;
     UniquePtr& operator=(const UniquePtr& other) = delete;
 
-    template <typename U, typename E>
-    UniquePtr(UniquePtr<U, E>&& rhs) noexcept;
+    UniquePtr(UniquePtr<T, Deleter>&& rhs) noexcept;
 
-    template <typename U, typename E>
-    UniquePtr& operator=(UniquePtr<U, E>&& rhs) noexcept;
+    UniquePtr& operator=(UniquePtr<T, Deleter>&& rhs) noexcept;
 
     ~UniquePtr();
 
 // Modifiers :
-    Pointer release() noexcept;
-    void reset(Pointer p = Pointer()) noexcept;
+    T* release() noexcept;
+    void reset(T* p) noexcept;
     void swap(UniquePtr<T, Deleter>& other) noexcept;
 
 // Observers :
-    Pointer get() const noexcept;
+    T* get() const noexcept;
     explicit operator bool() const noexcept;
     tmn::Optional<T> operator*() const;
-    Pointer operator->() const noexcept;
+    T* operator->() const noexcept;
 };
-
-
-
-//                                      SPECIALIZATION TEMPLATE :
 
 template <typename T>
 class UniquePtr<T[], std::default_delete<T[]>> {
@@ -67,30 +56,25 @@ private:
 public:
 // Constructors & assignment & conversion & destructors :
     UniquePtr() noexcept;
-    template <typename U>
-    explicit UniquePtr(U* ptr) noexcept;
+    UniquePtr(T* ptr) noexcept;
 
     UniquePtr(const UniquePtr& other) = delete;
     UniquePtr& operator=(const UniquePtr& other) = delete;
 
-    template <typename U, typename E>
-    UniquePtr(UniquePtr<U, E>&& rhs) noexcept;
-
-    template <typename U, typename E>
-    UniquePtr& operator=(UniquePtr<U, E>&& rhs) noexcept;
+    UniquePtr(UniquePtr<T[]>&& rhs) noexcept;
+    UniquePtr<T[]>& operator=(UniquePtr<T[]>&& rhs) noexcept;
 
     ~UniquePtr();
 
 // Modifiers :
     T* release() noexcept;
 
-    template <typename U>
-    void reset(U p) noexcept;
+    void reset(T* p) noexcept;
 
     void swap(UniquePtr<T[], std::default_delete<T[]>>& other) noexcept;
 
 // Observers :
-    const T* get() const noexcept;
+    T* get() const noexcept;
     explicit operator bool() const noexcept;
     tmn::Optional<T> operator[](std::size_t i) const;
 };

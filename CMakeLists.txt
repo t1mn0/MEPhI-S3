@@ -10,8 +10,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-terminate")
 set(INCLUDE_DIRS include include/Exceptions)
 
 add_subdirectory(include/Exceptions)
-add_subdirectory(include/Graph/TransitNetwork)
-add_subdirectory(gui/L4)
 
 target_include_directories(Exceptions INTERFACE ${INCLUDE_DIRS})
 
@@ -25,9 +23,9 @@ else()
 
     if(BUILD_TESTS)
         enable_testing()
-        add_subdirectory(test/Tuple)
         add_subdirectory(test/Function)
-        add_subdirectory(test/TransitNetwork)
-        add_subdirectory(test/Graph)
+        add_subdirectory(test/SmartPtr)
+        add_subdirectory(test/SmartSequence)
+        add_subdirectory(test/Sort)
     endif()
 endif()

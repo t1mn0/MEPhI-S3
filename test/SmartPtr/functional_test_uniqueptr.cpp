@@ -5,9 +5,6 @@
 #include "../../include/SmartPtr/UniquePtr.hpp"
 
 
-
-// TEST Constructors & assignment for GENERAL REALIZATION :
-
 TEST(TestUniquePtrGeneral, DefaultConstructorByInt) {
   tmn::smart_ptr::UniquePtr<int> ptr;
   ASSERT_EQ(ptr.get(), nullptr);
@@ -60,14 +57,10 @@ TEST(TestUniquePtrGeneral, MoveAssignmentWithString) {
   ASSERT_EQ((*ptr_2).value(), "cplusplus");
 }
 
-
-
-// TEST Modifiers for GENERAL REALIZATION :
-
 TEST(TestUniquePtrGeneral, Release) {
   int* raw_ptr = new int(42);
   tmn::smart_ptr::UniquePtr<int> ptr(raw_ptr);
-  int* released_ptr = ptr.release();
+  const int* released_ptr = ptr.release();
   ASSERT_EQ(ptr.get(), nullptr);
   ASSERT_EQ(released_ptr, raw_ptr);
   delete released_ptr;
@@ -144,7 +137,7 @@ TEST(TestUniquePtrSpecial, MoveAssignment) {
 
 TEST(TestUniquePtrSpecial, Release) {
   tmn::smart_ptr::UniquePtr<int[]> ptr(new int[5]);
-  int* raw_ptr = ptr.release();
+  const int* raw_ptr = ptr.release();
   ASSERT_EQ(ptr.get(), nullptr);
   ASSERT_NE(raw_ptr, nullptr);
   delete raw_ptr;

@@ -6,14 +6,13 @@
 
 #include "../Iterator/Iterator.hpp"
 #include "../../include/tmn.hpp"
-
-
+#include "Sequence.hpp"
 
 namespace tmn {
 namespace sequence {
 
 template <typename T, std::size_t N>
-class Array{
+class Array /* : public Sequence */ {
 private:
     T* array = nullptr;
 
@@ -85,8 +84,8 @@ public:
     ~Array();
 
     // Capacity & size :
-    std::size_t size() const noexcept;
-    bool empty() const noexcept;
+    std::size_t size() const noexcept override;
+    bool empty() const noexcept override;
     
     void fill(const T& value);
 
@@ -96,10 +95,10 @@ public:
     const T& back() const;
     T& back();
     Array<T, N>& set(std::size_t index, const T& item);
-    T& get(std::size_t index);
-    const T& get(std::size_t index) const;
-    T& operator[](std::size_t index) noexcept;
-    const T& operator[](std::size_t index) const noexcept;
+    T& get(std::size_t index) override;
+    const T& get(std::size_t index) const override;
+    T& operator[](std::size_t index) noexcept override;
+    const T& operator[](std::size_t index) const noexcept override; 
     const T* data() const noexcept;
     T* data() noexcept;
 

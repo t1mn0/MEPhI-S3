@@ -26,7 +26,9 @@ void Function<ReturnType(Args...)>::FunctionWrapper<F>::small_copy(void* to) con
 template <typename ReturnType, typename... Args>
 template <typename F>
 smart_ptr::UniquePtr<typename Function<ReturnType(Args...)>::Wrapper> Function<ReturnType(Args...)>::FunctionWrapper<F>::full_copy() const{
-     return smart_ptr::make_unique<FunctionWrapper<F>>(f_object);
+    //return smart_ptr::make_unique<FunctionWrapper<F>>(f_object);
+    Wrapper* ptr = new FunctionWrapper<F>(f_object);
+    return smart_ptr::UniquePtr<Wrapper>(ptr);
 }
 
 template <typename ReturnType, typename... Args>

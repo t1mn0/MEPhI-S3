@@ -258,7 +258,7 @@ ArraySequence<T, Allocator>& ArraySequence<T, Allocator>::operator=(const ArrayS
     T* new_array = allocator_traits::allocate(new_alloc, other._capacity);
     std::size_t i = 0;
     try{
-        for (; i < _size; ++i){
+        for (; i < other._size; ++i){
             // new (new_array + i) T(other.get(i)); 
             allocator_traits::construct(new_alloc, new_array + i, other[i]);
         }

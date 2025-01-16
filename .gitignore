@@ -58,3 +58,9 @@ load_test_dfs_unweighted_graph.txt
 load_test_bfs_weighted_graph.txt
 load_test_coloring_weighted_graph.txt
 load_test_dfs_weighted_graph.txt
+heapsort_arrayseq.txt
+heapsort_smartseq.txt
+quicksort_arrayseq.txt
+quicksort_smartseq.txt
+shellsort_arrayseq.txt
+shellsort_smartseq.txt

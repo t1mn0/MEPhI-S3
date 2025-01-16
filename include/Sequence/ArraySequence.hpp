@@ -6,14 +6,13 @@
 
 #include "../Iterator/Iterator.hpp"
 #include "../../include/tmn.hpp"
-
-
+#include "Sequence.hpp"
 
 namespace tmn {
 namespace sequence {
 
 template <typename T, class Allocator = std::allocator<T>>
-class ArraySequence {
+class ArraySequence : public Sequence<T> {
 private:
     T* array = nullptr;
     std::size_t _size = 0;
@@ -91,9 +90,9 @@ public:
     ~ArraySequence();
 
     // Capacity & size :
-    std::size_t size() const noexcept;
+    std::size_t size() const noexcept override;
     std::size_t capacity() const noexcept;
-    bool empty() const noexcept;
+    bool empty() const noexcept override;
 
     void reserve(std::size_t new_capacity);
     void resize(std::size_t new_size, const T& value = T());
@@ -112,10 +111,10 @@ public:
     const T& back() const;
     T& back();
     ArraySequence<T, Allocator>& set(std::size_t index, const T& item);
-    T& get(std::size_t index);
-    const T& get(std::size_t index) const;
-    T& operator[](std::size_t index) noexcept;
-    const T& operator[](std::size_t index) const noexcept;
+    T& get(std::size_t index) override;
+    const T& get(std::size_t index) const override;
+    T& operator[](std::size_t index) noexcept override;
+    const T& operator[](std::size_t index) const noexcept override;
     const T* data() const noexcept;
     T* data() noexcept;
 
