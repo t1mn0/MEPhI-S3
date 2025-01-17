@@ -64,3 +64,5 @@ quicksort_arrayseq.txt
 quicksort_smartseq.txt
 shellsort_arrayseq.txt
 shellsort_smartseq.txt
+origin_data.txt
+sorted_data.txt

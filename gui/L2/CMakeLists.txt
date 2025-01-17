@@ -11,6 +11,7 @@ set(INCLUDE_DIRS include include/Exceptions)
 target_include_directories(Exceptions PUBLIC ../../include/Exceptions)
 
 find_package(SDL2 REQUIRED)
+
 include_directories(${SDL2_INCLUDE_DIRS})
 
 add_executable(cli main.cpp VisualSorters.cpp SortView.cpp Transaction.cpp Generator.cpp Comparators.cpp)

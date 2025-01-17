@@ -4,10 +4,14 @@
 #include "Transaction.hpp"
 #include "VisualSorters.hpp"
 
+#include <fstream>
+#include <filesystem>
+
 namespace tmn {
 namespace sort {
 
 inline int BAD_ATTEMPTS_COUNT = 5;
+inline int BLOCK_SIZE = 1000;
 
 int cmp_by_dates(const Transaction& a, const Transaction& b);
 int cmp_by_amount_date_location(const Transaction& a, const Transaction& b);
@@ -16,10 +20,10 @@ int cmp_by_payment_currency_amount_tax_items(const Transaction& a, const Transac
 class SortView {
 private: 
     mutable sequence::SmartSequence<int> sequence;
-    Function<int(const Transaction&, const Transaction&)> cmp_by_one = cmp_by_dates; // 0
-    Function<int(const Transaction&, const Transaction&)> cmp_by_three = cmp_by_amount_date_location; // 1
-    Function<int(const Transaction&, const Transaction&)> cmp_by_five = cmp_by_payment_currency_amount_tax_items; // 2
-    int selected_comparator = 0;
+    Function<int(const Transaction&, const Transaction&)> cmp_by_one = cmp_by_dates; // 1
+    Function<int(const Transaction&, const Transaction&)> cmp_by_three = cmp_by_amount_date_location; // 2
+    Function<int(const Transaction&, const Transaction&)> cmp_by_five = cmp_by_payment_currency_amount_tax_items; // 3
+    int selected_comparator = 1;
     sort::VisualHeapSort heapsort;
     sort::VisualQuickSort quicksort;
     sort::VisualShellSort shellsort;
@@ -42,11 +46,16 @@ private:
     void view_mode_fill_random() const noexcept;
     void visualize_sorting() const noexcept;
 
-    void huge_data_mode_warning() const noexcept;
+    bool huge_data_mode_warning() const noexcept;
     void huge_data_mode_generate_data() const noexcept;
-    void huge_data_mode_choosing_comparator() const noexcept;
-    void huge_data_mode_sort_data() const noexcept;
-};
+    void huge_data_mode_clear_data(std::string path) const noexcept;
+    int huge_data_mode_choosing_comparator() noexcept;
+
+    sequence::SmartSequence<Transaction> read_transaction_block(std::ifstream& input_file) const noexcept;
+    void write_transaction_block(std::ofstream& output_file, const sequence::SmartSequence<Transaction>& block) const noexcept;
+    void merge_sorted_files(const std::string& file_path_1, const std::string& file_path_2, const std::string& output_path) noexcept;
+    void huge_data_mode_sort_data(const std::string& input_file_path, const std::string& output_file_path) noexcept;
+};  
 
 }
 }

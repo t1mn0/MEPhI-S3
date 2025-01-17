@@ -42,4 +42,12 @@ Transaction from_string(const std::string& s) {
     std::getline(ss, t.currency, ',');
         
     return t;
-    }
+}
+
+bool Transaction::operator>(const Transaction& other) const {
+    return transaction_id > other.transaction_id;
+}
+
+bool Transaction::operator<(const Transaction& other) const {
+    return transaction_id < other.transaction_id;
+}

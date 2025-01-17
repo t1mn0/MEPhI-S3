@@ -166,8 +166,8 @@ void SmartSequence<T>::reserve(std::size_t new_capacity){
         (_array.get() + i)->~T();
     }
 
-    _array.~UniquePtr();
-    _array = smart_ptr::UniquePtr<T[]>(new_raw_array);
+    //_array.~UniquePtr();
+    _array = std::move(smart_ptr::UniquePtr<T[]>(new_raw_array));
     _capacity = new_capacity;
 }
 

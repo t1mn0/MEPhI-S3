@@ -7,7 +7,6 @@
 #include "Transaction.hpp"
 
 namespace tmn {
-namespace sequence{
 
 std::string generate_random_date() {
     std::mt19937 generator(std::random_device{}());
@@ -58,7 +57,7 @@ Transaction generate_random_transaction() {
     return t;
 }
 
-void generate_transactions_to_file(long long target_size_bytes, std::string filepath = std::string(EXECUTABLE_PATH) + "/Transactions/transactions.txt") {
+void generate_transactions_to_file(long long target_size_bytes, std::string filepath = std::string(EXECUTABLE_PATH) + "/Transactions/origin_transactions.txt") {
     std::ofstream file(filepath);
     if (!file.is_open()) {
     std::cerr << "Failed to open file for writing." << std::endl;
@@ -77,4 +76,4 @@ void generate_transactions_to_file(long long target_size_bytes, std::string file
 }
 
 }
-}
+
