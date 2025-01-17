@@ -10,6 +10,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-terminate")
 set(INCLUDE_DIRS include include/Exceptions)
 
 add_subdirectory(include/Exceptions)
+add_subdirectory(gui/L2)
 
 target_include_directories(Exceptions INTERFACE ${INCLUDE_DIRS})
 

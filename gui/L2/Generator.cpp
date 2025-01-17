@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <iomanip>
 
 #include "Transaction.hpp"
 
@@ -58,7 +59,7 @@ Transaction generate_random_transaction() {
 }
 
 void generate_transactions_to_file(long long target_size_bytes, std::string filepath = std::string(EXECUTABLE_PATH) + "/Transactions/transactions.txt") {
-    std::ofstream file(filename);
+    std::ofstream file(filepath);
     if (!file.is_open()) {
     std::cerr << "Failed to open file for writing." << std::endl;
         return;
@@ -66,7 +67,7 @@ void generate_transactions_to_file(long long target_size_bytes, std::string file
 
     long long current_size = 0;
     while (current_size < target_size_bytes) {
-        Transaction t = generateRandomTransaction();
+        Transaction t = generate_random_transaction();
         std::string s = to_string(t);
         file << s << "\n";
         current_size += s.size() + 1;

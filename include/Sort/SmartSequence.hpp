@@ -10,10 +10,10 @@
 #include "../Sequence/ArraySequence.hpp"
 #include "../../include/tmn.hpp"
 
-std::size_t BASE_CAPACITY = 4;
-
 namespace tmn {
 namespace sequence {
+
+inline std::size_t BASE_CAPACITY = 4;
 
 template <typename T>
 class SmartSequence : public Sequence<T> {
