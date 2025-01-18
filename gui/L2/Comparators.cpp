@@ -7,36 +7,6 @@
 namespace tmn {
 namespace sort {
 
-int cmp_dates(const std::string& date1, const std::string& date2) {
-    std::tm t1, t2;
-    std::istringstream iss1(date1);
-    std::istringstream iss2(date2);
-
-    iss1 >> std::get_time(&t1, "%d-%m-%Y");
-    iss2 >> std::get_time(&t2, "%d-%m-%Y");
-
-    if (iss1.fail() || iss2.fail()) {
-        return 0;
-    }
-
-    std::time_t time1 = mktime(&t1);
-    std::time_t time2 = mktime(&t2);
-
-    if (time1 < time2){
-        return -1;
-    }
-    
-    if (time1 > time2) {
-        return 1;
-    }
-    
-    return 0;
-}
-
-int cmp_by_dates(const Transaction& a, const Transaction& b) {
-    return cmp_dates(a.date, b.date);
-}
-
 int cmp_by_amount_date_location(const Transaction& a, const Transaction& b) {
     if (a.amount != b.amount) {
         return a.amount > b.amount ? 1 : -1;

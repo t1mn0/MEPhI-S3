@@ -34,7 +34,7 @@ Transaction generate_random_transaction() {
     std::uniform_int_distribution<int> bool_distribution(0, 1);
     std::uniform_int_distribution<int> status_distribution(0, 2);
 
-    std::vector<std::string> payment_methods = { "Credit Card", "Debit Card", "PayPal", "Bank Transfer", "MIR pay", "Google pay", "Apple pay" };
+    std::vector<std::string> payment_methods = { "Credit_Card", "Debit_Card", "PayPal", "Bank_Transfer", "MIR_pay", "Google_pay", "Apple_pay" };
     std::vector<std::string> currencies = { "USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF","CNY"};
     std::uniform_int_distribution<int> payment_distribution(0, payment_methods.size() - 1);
     std::uniform_int_distribution<int> currencie_distribution(0, currencies.size() - 1);
@@ -43,7 +43,7 @@ Transaction generate_random_transaction() {
     t.transaction_id = "TXN-" + std::to_string(int_distribution(generator));
     t.user_id = "USER-" + std::to_string(int_distribution(generator));
     t.payment_method = payment_methods[payment_distribution(generator)];
-    t.details = "Random transaction details";
+    t.details = "Random_transaction_details";
     t.date = generate_random_date();
     t.amount = double_distribution(generator);
     t.tax_amount = double_distribution(generator) /10;
@@ -65,12 +65,26 @@ void generate_transactions_to_file(long long target_size_bytes, std::string file
     }
 
     long long current_size = 0;
+    long long transaction_count = 0;
+
     while (current_size < target_size_bytes) {
         Transaction t = generate_random_transaction();
         std::string s = to_string(t);
         file << s << "\n";
         current_size += s.size() + 1;
+        transaction_count++;
+
+        if (transaction_count % 1000 == 0) {
+            double percentage = static_cast<double>(current_size) / target_size_bytes * 100.0;
+            double current_size_gb = static_cast<double>(current_size) / (1024 * 1024 * 1024);
+            double target_size_gb = static_cast<double>(target_size_bytes) / (1024 * 1024 * 1024);
+            std::cout << "\rGenerated " << transaction_count << " transactions, "
+                << std::fixed << std::setprecision(2) << percentage << "% "
+                << "(" << std::fixed << std::setprecision(2) << current_size_gb << " / " << target_size_gb << " GB)" << std::flush;
+        }
     }
+
+    std::cout << "\nTransactions generation complete." << std::endl;
 
     file.close();
 }

@@ -45,9 +45,20 @@ Transaction from_string(const std::string& s) {
 }
 
 bool Transaction::operator>(const Transaction& other) const {
-    return transaction_id > other.transaction_id;
+    std::stringstream ss1(transaction_id.substr(4));
+      std::stringstream ss2(other.transaction_id.substr(4));
+    int id1, id2;
+    ss1 >> id1;
+    ss2 >> id2;
+     return id1 > id2;
+
 }
 
 bool Transaction::operator<(const Transaction& other) const {
-    return transaction_id < other.transaction_id;
+      std::stringstream ss1(transaction_id.substr(4));
+    std::stringstream ss2(other.transaction_id.substr(4));
+       int id1, id2;
+    ss1 >> id1;
+      ss2 >> id2;
+    return id1 < id2;
 }

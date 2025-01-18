@@ -20,7 +20,7 @@ void draw_state(tmn::sequence::Sequence<int>& seq, SDL_Renderer* renderer, unsig
     }
 }
 
-sequence::Sequence<int>& VisualHeapSort::operator()(sequence::Sequence<int>& sequence, CmpFunction cmp) const noexcept {
+sequence::Sequence<int>& VisualHeapSort::operator()(sequence::Sequence<int>& sequence, CmpFunction& cmp) const noexcept {
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
     SDL_CreateWindowAndRenderer(50*10, 100*10, 0, &window, &renderer);
@@ -46,7 +46,12 @@ sequence::Sequence<int>& VisualHeapSort::operator()(sequence::Sequence<int>& seq
     return sequence;
 }
 
-void VisualHeapSort::heapify(sequence::Sequence<int>& sequence, int n, int i, CmpFunction cmp, SDL_Renderer* renderer) const {
+sequence::Sequence<int>& VisualHeapSort::operator()(sequence::Sequence<int>& sequence) const noexcept {
+    CmpFunction def_cmp(default_comparator<int>);
+    return operator()(sequence, def_cmp);
+}
+
+void VisualHeapSort::heapify(sequence::Sequence<int>& sequence, int n, int i, CmpFunction& cmp, SDL_Renderer* renderer) const {
     int largest = i; 
     int l = 2 * i + 1; 
     int r = 2 * i + 2;
@@ -71,14 +76,14 @@ void VisualHeapSort::heapify(sequence::Sequence<int>& sequence, int n, int i, Cm
     }
 }
 
-void VisualHeapSort::build_heap(sequence::Sequence<int>& sequence, CmpFunction cmp, SDL_Renderer* renderer) const {
+void VisualHeapSort::build_heap(sequence::Sequence<int>& sequence, CmpFunction& cmp, SDL_Renderer* renderer) const {
     int size = sequence.size();
     for (int i = size / 2 - 1; i >= 0; i--) {
         heapify(sequence, size, i, cmp, renderer);
     }
 }
 
-sequence::Sequence<int>& VisualShellSort::operator()(sequence::Sequence<int>& sequence, CmpFunction cmp) const noexcept {
+sequence::Sequence<int>& VisualShellSort::operator()(sequence::Sequence<int>& sequence, CmpFunction& cmp) const noexcept {
     size_t size = sequence.size();
     if (size <= 1) {
         return sequence;
@@ -121,7 +126,12 @@ sequence::Sequence<int>& VisualShellSort::operator()(sequence::Sequence<int>& se
     return sequence;
 }
 
-sequence::Sequence<int>& VisualQuickSort::operator()(sequence::Sequence<int>& sequence, CmpFunction cmp) const noexcept {
+sequence::Sequence<int>& VisualShellSort::operator()(sequence::Sequence<int>& sequence) const noexcept {
+    CmpFunction def_cmp(default_comparator<int>);
+    return operator()(sequence, def_cmp);
+}
+
+sequence::Sequence<int>& VisualQuickSort::operator()(sequence::Sequence<int>& sequence, CmpFunction& cmp) const noexcept {
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
     SDL_CreateWindowAndRenderer(50*10, 100*10, 0, &window, &renderer);
@@ -139,7 +149,12 @@ sequence::Sequence<int>& VisualQuickSort::operator()(sequence::Sequence<int>& se
     return sequence;
 }
 
-int VisualQuickSort::partition(sequence::Sequence<int> &sequence, int low, int high, CmpFunction cmp, SDL_Renderer* renderer) const {
+sequence::Sequence<int>& VisualQuickSort::operator()(sequence::Sequence<int>& sequence) const noexcept {
+    CmpFunction def_cmp(default_comparator<int>);
+    return operator()(sequence, def_cmp);
+}
+
+int VisualQuickSort::partition(sequence::Sequence<int> &sequence, int low, int high, CmpFunction& cmp, SDL_Renderer* renderer) const {
     int pivot = sequence.get(high);
     int i = (low - 1);
     for (int j = low; j <= high - 1; j++) {
@@ -163,7 +178,7 @@ int VisualQuickSort::partition(sequence::Sequence<int> &sequence, int low, int h
     return (i + 1);
 }
 
-void VisualQuickSort::helper(sequence::Sequence<int>& sequence, int low, int high, CmpFunction cmp, SDL_Renderer* renderer) const {
+void VisualQuickSort::helper(sequence::Sequence<int>& sequence, int low, int high, CmpFunction& cmp, SDL_Renderer* renderer) const {
     if (low < high) {
         int pi = partition(sequence, low, high, cmp, renderer);
         helper(sequence, low, pi - 1, cmp, renderer);

@@ -13,7 +13,7 @@ int default_comparator(const T& a, const T& b) {
 }
 
 template <typename T>
-auto InsertionSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction cmp) const noexcept
+auto InsertionSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction& cmp) const noexcept
     -> sequence::Sequence<T>& {
 
     size_t size = sequence.size();
@@ -37,30 +37,30 @@ auto InsertionSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction c
 }
 
 template <typename T>
-auto ShellSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction cmp) const noexcept
+auto InsertionSort<T>::operator()(sequence::Sequence<T>& sequence) const noexcept
     -> sequence::Sequence<T>& {
 
-    size_t size = sequence.size();
-    if (size <= 1) {
-        return sequence;
-    }
-
-    for (size_t gap = size / 2; gap > 0; gap /= 2) {
-        for (size_t i = gap; i < size; i++) {
-            T temp = sequence.get(i);
-            size_t j;
-            for (j = i; j >= gap && cmp(sequence.get(j - gap), temp) > 0; j -= gap) {
-                sequence.get(j) = sequence.get(j - gap) ;
-            }
-            sequence.get(j) = temp;
-        }
-    }
-
-    return sequence;
+    CmpFunction def_cmp(default_comparator<T>);
+    return operator()(sequence, def_cmp);
 }
 
 template <typename T>
-auto ShellSort<T>::operator()(sequence::Sequence<T>& sequence, size_t gap_coef, CmpFunction cmp) const
+auto ShellSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction& cmp) const noexcept
+    -> sequence::Sequence<T>& {
+
+    return operator()(sequence, 2, cmp);
+}
+
+template <typename T>
+auto ShellSort<T>::operator()(sequence::Sequence<T>& sequence) const noexcept
+    -> sequence::Sequence<T>& {
+
+    CmpFunction def_cmp(default_comparator<T>);
+    return operator()(sequence, 2, def_cmp);
+}
+
+template <typename T>
+auto ShellSort<T>::operator()(sequence::Sequence<T>& sequence, size_t gap_coef, CmpFunction& cmp) const noexcept
     -> sequence::Sequence<T>& {
 
     if (gap_coef <= 1){
@@ -87,7 +87,15 @@ auto ShellSort<T>::operator()(sequence::Sequence<T>& sequence, size_t gap_coef, 
 }
 
 template <typename T>
-void QuickSort<T>::helper(sequence::Sequence<T>& sequence, int low, int high, CmpFunction cmp) const {
+auto ShellSort<T>::operator()(sequence::Sequence<T>& sequence, size_t gap_coef) const noexcept
+    -> sequence::Sequence<T>& {
+
+    CmpFunction def_cmp(default_comparator<T>);
+    return operator()(sequence, gap_coef, def_cmp);
+}
+
+template <typename T>
+void QuickSort<T>::helper(sequence::Sequence<T>& sequence, int low, int high, CmpFunction& cmp) const {
     if (low < high) {
         int pi = partition(sequence, low, high, cmp);
         helper(sequence, low, pi - 1, cmp);
@@ -96,7 +104,7 @@ void QuickSort<T>::helper(sequence::Sequence<T>& sequence, int low, int high, Cm
 }
 
 template <typename T>
-int QuickSort<T>::partition(sequence::Sequence<T>& sequence, int low, int high, CmpFunction cmp) const {
+int QuickSort<T>::partition(sequence::Sequence<T>& sequence, int low, int high, CmpFunction& cmp) const {
     T pivot = sequence.get(high);
     int i = (low - 1);
     for (int j = low; j <= high - 1; j++) {
@@ -111,7 +119,7 @@ int QuickSort<T>::partition(sequence::Sequence<T>& sequence, int low, int high, 
 }
 
 template <typename T>
-auto QuickSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction cmp) const noexcept 
+auto QuickSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction& cmp) const noexcept 
     -> sequence::Sequence<T>& {
 
     helper(sequence, 0, sequence.size() - 1, cmp);
@@ -119,7 +127,15 @@ auto QuickSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction cmp) 
 }
 
 template <typename T>
-void HeapSort<T>::heapify(sequence::Sequence<T>& sequence, int n, int i, CmpFunction cmp) const {
+auto QuickSort<T>::operator()(sequence::Sequence<T>& sequence) const noexcept 
+    -> sequence::Sequence<T>& {
+
+    CmpFunction def_cmp(default_comparator<T>);
+    return operator()(sequence, def_cmp);
+}
+
+template <typename T>
+void HeapSort<T>::heapify(sequence::Sequence<T>& sequence, int n, int i, CmpFunction& cmp) const {
     int largest = i; 
     int l = 2 * i + 1; 
     int r = 2 * i + 2;
@@ -139,7 +155,7 @@ void HeapSort<T>::heapify(sequence::Sequence<T>& sequence, int n, int i, CmpFunc
 }
 
 template <typename T>
-void  HeapSort<T>::build_heap(sequence::Sequence<T>& sequence, CmpFunction cmp) const{
+void  HeapSort<T>::build_heap(sequence::Sequence<T>& sequence, CmpFunction& cmp) const{
     int size = sequence.size();
     for (int i = size / 2 - 1; i >= 0; i--) {
         heapify(sequence, size, i, cmp);
@@ -147,7 +163,7 @@ void  HeapSort<T>::build_heap(sequence::Sequence<T>& sequence, CmpFunction cmp) 
 }
 
 template <typename T>
-auto HeapSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction cmp) const noexcept
+auto HeapSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction& cmp) const noexcept
     -> sequence::Sequence<T>& {
 
     int size = sequence.size();
@@ -157,6 +173,14 @@ auto HeapSort<T>::operator()(sequence::Sequence<T>& sequence, CmpFunction cmp) c
         heapify(sequence, i, 0, cmp);
     }
     return sequence;
+}
+
+template <typename T>
+auto HeapSort<T>::operator()(sequence::Sequence<T>& sequence) const noexcept
+    -> sequence::Sequence<T>& {
+
+    CmpFunction def_cmp(default_comparator<T>);
+    return operator()(sequence, def_cmp);
 }
 
 }
